@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/azkaazkun/be-samarta/cmd"
-	"github.com/azkaazkun/be-samarta/internal/config"
+	"github.com/Flexoo-Academy/Golang-Template/cmd"
+	"github.com/Flexoo-Academy/Golang-Template/internal/config"
 	"github.com/joho/godotenv"
 )
 
@@ -27,3 +27,4 @@ func main() {
 	RestApi := config.NewRest()
 	RestApi.Start()
 }
+

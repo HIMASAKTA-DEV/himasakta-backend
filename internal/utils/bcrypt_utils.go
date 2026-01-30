@@ -14,3 +14,4 @@ func CheckPassword(hashPassword string, plainPassword []byte) (bool, error) {
 	}
 	return true, nil
 }
+

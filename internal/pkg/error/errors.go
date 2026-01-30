@@ -22,3 +22,4 @@ func New(msg string, statusCode int) Error {
 func (e Error) Error() string {
 	return e.Message
 }
+

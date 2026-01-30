@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"github.com/azkaazkun/be-samarta/internal/dto"
+	"github.com/Flexoo-Academy/Golang-Template/internal/dto"
 	"github.com/google/uuid"
 )
 
@@ -35,3 +35,4 @@ func (u *User) ToInfo() dto.PersonalInfo {
 		Role:  string(u.Role),
 	}
 }
+

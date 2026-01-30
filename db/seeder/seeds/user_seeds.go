@@ -5,9 +5,9 @@ import (
 
 	"os"
 
-	"github.com/azkaazkun/be-samarta/internal/entity"
-	mylog "github.com/azkaazkun/be-samarta/internal/pkg/logger"
-	"github.com/azkaazkun/be-samarta/internal/utils"
+	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
+	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
+	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
 	"gorm.io/gorm"
 )
 
@@ -35,3 +35,4 @@ func SeederUser(db *gorm.DB) error {
 	mylog.Infof("[COMPLETE] Seeding users completed")
 	return nil
 }
+

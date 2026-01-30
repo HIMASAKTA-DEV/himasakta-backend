@@ -29,3 +29,4 @@ func (m Mailer) MakeMail(path string, data any) Mailer {
 
 	return m
 }
+

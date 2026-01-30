@@ -6,14 +6,14 @@ import (
 	"log"
 	"os"
 
-	"github.com/azkaazkun/be-samarta/db"
-	"github.com/azkaazkun/be-samarta/internal/api/controller"
-	"github.com/azkaazkun/be-samarta/internal/api/repository"
-	"github.com/azkaazkun/be-samarta/internal/api/routes"
-	"github.com/azkaazkun/be-samarta/internal/api/service"
-	"github.com/azkaazkun/be-samarta/internal/middleware"
-	mailer "github.com/azkaazkun/be-samarta/internal/pkg/email"
-	"github.com/azkaazkun/be-samarta/internal/pkg/google/oauth"
+	"github.com/Flexoo-Academy/Golang-Template/db"
+	"github.com/Flexoo-Academy/Golang-Template/internal/api/controller"
+	"github.com/Flexoo-Academy/Golang-Template/internal/api/repository"
+	"github.com/Flexoo-Academy/Golang-Template/internal/api/routes"
+	"github.com/Flexoo-Academy/Golang-Template/internal/api/service"
+	"github.com/Flexoo-Academy/Golang-Template/internal/middleware"
+	mailer "github.com/Flexoo-Academy/Golang-Template/internal/pkg/email"
+	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/google/oauth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,34 +36,18 @@ func NewRest() RestConfig {
 		//=========== (REPOSITORY) ===========//
 		userRepository         repository.UserRepository         = repository.NewUser(db)
 		refreshTokenRepository repository.RefreshTokenRepository = repository.NewRefreshTokenRepository(db)
-		sptjmRepository        repository.SPTJMRepository        = repository.NewSPTJM(db)
-		sshRepository          repository.SSHRepository          = repository.NewSSH(db)
-		itemRepository         repository.ItemRepository         = repository.NewItem(db)
-		proposalRepository     repository.ProposalRepository     = repository.NewProposal(db)
 
 		//=========== (SERVICE) ===========//
-		authService     service.AuthService     = service.NewAuth(userRepository, refreshTokenRepository, mailerService, oauthService, db)
-		sptjmService    service.SPTJMService    = service.NewSPTJM(sptjmRepository, db)
-		sshService      service.SSHService      = service.NewSSH(sshRepository, itemRepository, proposalRepository, db)
-		itemService     service.ItemService     = service.NewItem(itemRepository, db)
-		proposalService service.ProposalService = service.NewProposal(proposalRepository, db)
+		authService service.AuthService = service.NewAuth(userRepository, refreshTokenRepository, mailerService, oauthService, db)
 		// userService                   service.UserService                   = service.NewUser(userRepository, userDisciplineRepository, disciplineGroupConsolidatorRepository, disciplineListDocumentConsolidatorRepository, packageRepository, db)
 
 		//=========== (CONTROLLER) ===========//
-		authController     controller.AuthController     = controller.NewAuth(authService)
-		sptjmController    controller.SPTJMController    = controller.NewSPTJM(sptjmService)
-		sshController      controller.SSHController      = controller.NewSSH(sshService)
-		itemController     controller.ItemController     = controller.NewItem(itemService)
-		proposalController controller.ProposalController = controller.NewProposal(proposalService)
+		authController controller.AuthController = controller.NewAuth(authService)
 		// userController                   controller.UserController                   = controller.NewUser(userService)
 	)
 
 	// Register all routes
 	routes.Auth(server, authController, middleware)
-	routes.SPTJM(server, sptjmController, middleware)
-	routes.SSH(server, sshController, middleware)
-	routes.Item(server, itemController, middleware)
-	routes.Proposal(server, proposalController, middleware)
 
 	return RestConfig{
 		server: server,

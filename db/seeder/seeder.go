@@ -3,8 +3,8 @@ package seeders
 import (
 	"fmt"
 
-	"github.com/azkaazkun/be-samarta/db/seeder/seeds"
-	mylog "github.com/azkaazkun/be-samarta/internal/pkg/logger"
+	"github.com/Flexoo-Academy/Golang-Template/db/seeder/seeds"
+	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
 	"gorm.io/gorm"
 )
 
@@ -24,3 +24,4 @@ func Seeding(db *gorm.DB) error {
 
 	return nil
 }
+

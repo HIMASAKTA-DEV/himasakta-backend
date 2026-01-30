@@ -5,9 +5,9 @@ import (
 	"net/http"
 	"strings"
 
-	myerror "github.com/azkaazkun/be-samarta/internal/pkg/error"
-	myjwt "github.com/azkaazkun/be-samarta/internal/pkg/jwt"
-	"github.com/azkaazkun/be-samarta/internal/pkg/response"
+	myerror "github.com/Flexoo-Academy/Golang-Template/internal/pkg/error"
+	myjwt "github.com/Flexoo-Academy/Golang-Template/internal/pkg/jwt"
+	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -83,3 +83,4 @@ func (m Middleware) Authenticate() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
+

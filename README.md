@@ -1,67 +1,81 @@
-# CRS Backend
+# Flexoo Academy Golang Template
+
+## About
+
+This is the standard backend template for Flexoo Academy projects, built with Golang. It includes setups for Docker, Database seeding, Migrations, and standard API structures.
 
 ## Getting Started
 
-setup env for prod and dev
+### Environment Setup
 
-dev
+Setup environment variables for development and production.
 
+**Development:**
 ```bash
-.env
+cp .env.example .env
 ```
 
-prod
-
+**Production:**
 ```bash
-.env.prod
+cp .env.example .env.prod
 ```
 
-### Run program
+### Running the Application
 
+**Local Development:**
 ```bash
 go run main.go
 ```
 
-### Run migrate
-
-```bash
-go run main.go --migrate
-```
-
-### Run seeder
-
-```bash
-go run main.go --seeder
-```
-
-### Run Air (auto loading for development)
-
+**With Auto-Reload (Air):**
 ```bash
 go run main.go --watch
 ```
 
-### Deploy Using Docker
+## Database Management
 
-You can run it using the Makefile. For instructions, refer to the 'run' guide.
-
-#### Deploy
-
-initialize dev deployment
-
+### Migrations
 ```bash
-make init-[prod/dev]
+go run main.go --migrate
 ```
 
-#### Redeploy
-
+### Seeding
 ```bash
-make rebuild-[prod/dev]
+go run main.go --seeder
 ```
 
-### Additional
+## Docker Deployment
 
-You can run it using the Makefile. For instructions, refer to the 'run' guide.
+This project uses `Makefile` to simplify Docker operations.
 
+### Initialization
+
+Initialize development environment:
 ```bash
-make help
+make init-dev
 ```
+
+Initialize production environment:
+```bash
+make init-prod
+```
+
+### Useful Commands
+
+| Command | Description |
+|---------|-------------|
+| `make up-dev` | Start development containers |
+| `make down-dev` | Stop development containers |
+| `make logs-dev` | View development logs |
+| `make rebuild-dev` | Rebuild and restart development containers |
+| `make help` | Show all available commands |
+
+## Project Structure
+
+- `cmd/`: Application entrypoints
+- `internal/`: Private application code
+- `db/`: Database migrations and seeds
+
+## License
+
+Flexoo Academy

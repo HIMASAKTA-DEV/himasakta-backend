@@ -28,3 +28,4 @@ type SSH struct {
 func (s *SSH) TableName() string {
 	return "sshs"
 }
+

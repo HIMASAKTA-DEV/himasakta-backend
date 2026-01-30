@@ -5,9 +5,9 @@ import (
 	"errors"
 	"net/http"
 
-	"github.com/azkaazkun/be-samarta/internal/entity"
-	myerror "github.com/azkaazkun/be-samarta/internal/pkg/error"
-	"github.com/azkaazkun/be-samarta/internal/pkg/meta"
+	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
+	myerror "github.com/Flexoo-Academy/Golang-Template/internal/pkg/error"
+	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/meta"
 	"gorm.io/gorm"
 )
 
@@ -131,3 +131,4 @@ func (r *userRepository) Delete(ctx context.Context, tx *gorm.DB, user entity.Us
 
 	return nil
 }
+

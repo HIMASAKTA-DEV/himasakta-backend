@@ -25,3 +25,4 @@ func CORSMiddleware() gin.HandlerFunc {
 
 	}
 }
+

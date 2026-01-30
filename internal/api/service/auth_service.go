@@ -5,14 +5,14 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/azkaazkun/be-samarta/internal/api/repository"
-	"github.com/azkaazkun/be-samarta/internal/dto"
-	"github.com/azkaazkun/be-samarta/internal/entity"
-	mailer "github.com/azkaazkun/be-samarta/internal/pkg/email"
-	myerror "github.com/azkaazkun/be-samarta/internal/pkg/error"
-	"github.com/azkaazkun/be-samarta/internal/pkg/google/oauth"
-	myjwt "github.com/azkaazkun/be-samarta/internal/pkg/jwt"
-	"github.com/azkaazkun/be-samarta/internal/utils"
+	"github.com/Flexoo-Academy/Golang-Template/internal/api/repository"
+	"github.com/Flexoo-Academy/Golang-Template/internal/dto"
+	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
+	mailer "github.com/Flexoo-Academy/Golang-Template/internal/pkg/email"
+	myerror "github.com/Flexoo-Academy/Golang-Template/internal/pkg/error"
+	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/google/oauth"
+	myjwt "github.com/Flexoo-Academy/Golang-Template/internal/pkg/jwt"
+	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
 
 	"net/http"
 	"os"
@@ -86,7 +86,6 @@ func (s *authService) Login(ctx context.Context, req dto.LoginRequest) (dto.Logi
 	}
 
 	if req.RememberMe {
-		// Enforce One Token Per User Agent by cleaning up existing token
 		_ = s.refreshTokenRepository.DeleteByUserIDAndUserAgent(ctx, nil, user.ID, req.UserAgent)
 
 		refreshTokenJTI, err := utils.GenerateRandomString(32)
@@ -142,8 +141,8 @@ func (s *authService) Register(ctx context.Context, req dto.RegisterRequest) (dt
 		Name:       req.Name,
 		Email:      req.Email,
 		Password:   hashedPassword,
-		Role:       entity.RoleUser, // Default role
-		IsVerified: false,           // Require verification
+		Role:       entity.RoleUser,
+		IsVerified: false,
 	}
 
 	newUser, err := s.userRepository.Create(ctx, nil, user)
@@ -167,8 +166,6 @@ func (s *authService) Register(ctx context.Context, req dto.RegisterRequest) (dt
 		"Name":   newUser.Name,
 		"Verify": verifyLink,
 	}).Send(newUser.Email, "Verify Your Account").Error; err != nil {
-		// Log error but don't fail registration? Or fail?
-		// For now, let's return error so user knows/can retry
 		return dto.UserResponse{}, err
 	}
 

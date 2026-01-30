@@ -22,3 +22,4 @@ type SPTJM struct {
 func (s *SPTJM) TableName() string {
 	return "sptjms"
 }
+

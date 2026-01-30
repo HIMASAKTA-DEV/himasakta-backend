@@ -66,3 +66,4 @@ func (m Mailer) Send(toEmail, subject string) Mailer {
 
 	return m
 }
+

@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"os"
 
-	"github.com/azkaazkun/be-samarta/internal/entity"
-	mylog "github.com/azkaazkun/be-samarta/internal/pkg/logger"
+	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
+	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
 	"gorm.io/gorm"
 )
 
@@ -33,3 +33,4 @@ func SeederItem(db *gorm.DB) error {
 	mylog.Infof("[COMPLETE] Seeding items completed")
 	return nil
 }
+

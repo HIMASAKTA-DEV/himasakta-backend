@@ -24,3 +24,4 @@ type (
 		Role       string `json:"role"`
 	}
 )
+

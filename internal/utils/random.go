@@ -12,3 +12,4 @@ func GenerateRandomString(n int) (string, error) {
 	}
 	return hex.EncodeToString(bytes), nil
 }
+

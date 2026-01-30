@@ -3,8 +3,8 @@ package migrations
 import (
 	"fmt"
 
-	"github.com/azkaazkun/be-samarta/internal/entity"
-	mylog "github.com/azkaazkun/be-samarta/internal/pkg/logger"
+	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
+	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
 	"gorm.io/gorm"
 )
 
@@ -34,3 +34,4 @@ func Migrate(db *gorm.DB) error {
 
 	return nil
 }
+

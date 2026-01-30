@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"time"
 
-	myerror "github.com/azkaazkun/be-samarta/internal/pkg/error"
-	"github.com/azkaazkun/be-samarta/internal/pkg/response"
+	myerror "github.com/Flexoo-Academy/Golang-Template/internal/pkg/error"
+	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
@@ -129,3 +129,4 @@ func (m Middleware) NotInRange(start, end string) LockOption {
 // 		}
 // 	}
 // }
+

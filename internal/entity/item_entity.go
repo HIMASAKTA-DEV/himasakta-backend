@@ -18,3 +18,4 @@ type Item struct {
 func (i *Item) TableName() string {
 	return "items"
 }
+

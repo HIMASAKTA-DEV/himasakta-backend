@@ -10,3 +10,4 @@ package routes
 // 		routes.DELETE("/:id", middleware.Authenticate(), middleware.OnlyAllow(string(entity.RoleSuperAdmin)), usercontroller.Delete)
 // 	}
 // }
+

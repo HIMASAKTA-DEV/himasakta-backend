@@ -1,8 +1,8 @@
 package routes
 
 import (
-	"github.com/azkaazkun/be-samarta/internal/api/controller"
-	"github.com/azkaazkun/be-samarta/internal/middleware"
+	"github.com/Flexoo-Academy/Golang-Template/internal/api/controller"
+	"github.com/Flexoo-Academy/Golang-Template/internal/middleware"
 	"github.com/gin-gonic/gin"
 )
 
@@ -18,3 +18,4 @@ func Auth(app *gin.Engine, authcontroller controller.AuthController, middleware 
 		routes.GET("/me", middleware.Authenticate(), authcontroller.Me)
 	}
 }
+

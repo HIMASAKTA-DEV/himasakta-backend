@@ -1,12 +1,12 @@
 package controller
 
 import (
-	"github.com/azkaazkun/be-samarta/internal/api/service"
-	"github.com/azkaazkun/be-samarta/internal/dto"
-	myerror "github.com/azkaazkun/be-samarta/internal/pkg/error"
-	myjwt "github.com/azkaazkun/be-samarta/internal/pkg/jwt"
-	"github.com/azkaazkun/be-samarta/internal/pkg/response"
-	"github.com/azkaazkun/be-samarta/internal/utils"
+	"github.com/Flexoo-Academy/Golang-Template/internal/api/service"
+	"github.com/Flexoo-Academy/Golang-Template/internal/dto"
+	myerror "github.com/Flexoo-Academy/Golang-Template/internal/pkg/error"
+	myjwt "github.com/Flexoo-Academy/Golang-Template/internal/pkg/jwt"
+	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/response"
+	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -152,3 +152,4 @@ func (c *authController) Me(ctx *gin.Context) {
 
 	response.NewSuccess("success get me", res).Send(ctx)
 }
+

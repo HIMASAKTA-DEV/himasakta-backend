@@ -74,3 +74,4 @@ func GetMimetype(f multipart.File) (string, error) {
 
 	return mimeType, nil
 }
+

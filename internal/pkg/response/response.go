@@ -3,7 +3,7 @@ package response
 import (
 	"net/http"
 
-	myerror "github.com/azkaazkun/be-samarta/internal/pkg/error"
+	myerror "github.com/Flexoo-Academy/Golang-Template/internal/pkg/error"
 	"github.com/gin-gonic/gin"
 )
 
@@ -66,3 +66,4 @@ func (r Response) SendWithAbort(ctx *gin.Context) {
 	sendStatus := r.StatusCode
 	ctx.AbortWithStatusJSON(sendStatus, r)
 }
+

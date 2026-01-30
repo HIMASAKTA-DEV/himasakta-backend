@@ -13,3 +13,4 @@ func New(db *gorm.DB) Middleware {
 		db: db,
 	}
 }
+

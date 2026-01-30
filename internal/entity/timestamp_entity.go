@@ -11,3 +11,4 @@ type Timestamp struct {
 	UpdatedAt time.Time `gorm:"type:timestamp without time zone" json:"updated_at"`
 	DeletedAt gorm.DeletedAt
 }
+

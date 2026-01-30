@@ -3,7 +3,7 @@ package repository
 import (
 	"context"
 
-	"github.com/azkaazkun/be-samarta/internal/entity"
+	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )

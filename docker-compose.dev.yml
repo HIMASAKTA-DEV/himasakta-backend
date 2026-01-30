@@ -5,7 +5,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile.dev
-    container_name: crs-backend-app-dev
+    container_name: flexoo-backend-app-dev
     volumes:
       - .:/app
     ports:
@@ -15,11 +15,11 @@ services:
     depends_on:
       - db-dev
     networks:
-      - crs-app-dev-net
+      - flexoo-app-dev-net
 
   db-dev:
     image: postgres:17
-    container_name: crs-backend-db-dev
+    container_name: flexoo-backend-db-dev
     env_file:
       - .env
     ports:
@@ -27,11 +27,11 @@ services:
     volumes:
       - pgdata_dev:/var/lib/postgresql/data
     networks:
-      - crs-app-dev-net
+      - flexoo-app-dev-net
 
 volumes:
   pgdata_dev:
 
 networks:
-  crs-app-dev-net:
+  flexoo-app-dev-net:
     driver: bridge

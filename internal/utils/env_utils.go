@@ -26,3 +26,4 @@ func GetDomain() (string, bool) {
 		return value, true
 	}
 }
+

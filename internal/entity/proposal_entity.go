@@ -19,3 +19,4 @@ type Proposal struct {
 func (p *Proposal) TableName() string {
 	return "proposals"
 }
+

@@ -13,7 +13,7 @@ import (
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/azkaazkun/be-samarta/internal/utils"
+	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
 )
 
 type (
@@ -230,3 +230,4 @@ func (a *awsS3) Rollback() {
 
 	a.Commit()
 }
+
