@@ -20,10 +20,6 @@ func Migrate(db *gorm.DB) error {
 	if err := db.AutoMigrate(
 		&entity.User{},
 		&entity.RefreshToken{},
-		&entity.SPTJM{},
-		&entity.Item{},
-		&entity.Proposal{},
-		&entity.SSH{},
 	); err != nil {
 		return err
 	}
@@ -34,4 +30,3 @@ func Migrate(db *gorm.DB) error {
 
 	return nil
 }
-
