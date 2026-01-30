@@ -1,0 +1,100 @@
+[
+    {
+        "category_code": "1.1.12.01.01.0001",
+        "category_name": "Bahan Bangunan dan Konstruksi",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0001",
+        "description": "Belanja Bahan-Bahan Bangunan dan Konstruksi"
+    },
+    {
+        "category_code": "1.1.12.01.01.0002",
+        "category_name": "Bahan Kimia",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0002",
+        "description": "Belanja Bahan-Bahan Kimia"
+    },
+    {
+        "category_code": "1.1.12.01.01.0004",
+        "category_name": "Bahan Bakar dan Pelumas",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0004",
+        "description": "Belanja Bahan-Bahan Bakar dan Pelumas"
+    },
+    {
+        "category_code": "1.1.12.01.01.0005",
+        "category_name": "Bahan Baku",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0005",
+        "description": "Belanja Bahan-Bahan Baku"
+    },
+    {
+        "category_code": "1.1.12.01.01.0006",
+        "category_name": "Bahan Kimia Nuklir",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0006",
+        "description": "Belanja Bahan-Bahan Kimia Nuklir"
+    },
+    {
+        "category_code": "1.1.12.01.01.0007",
+        "category_name": "Barang Dalam Proses",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0007",
+        "description": "Belanja Bahan-Barang dalam Proses"
+    },
+    {
+        "category_code": "1.1.12.01.01.0008",
+        "category_name": "Bahan/Bibit Tanaman",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0008",
+        "description": "Belanja Bahan-Bahan/Bibit Tanaman"
+    },
+    {
+        "category_code": "1.1.12.01.01.0009",
+        "category_name": "Isi Tabung Pemadam Kebakaran",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0009",
+        "description": "Belanja Bahan-Isi Tabung Pemadam Kebakaran"
+    },
+    {
+        "category_code": "1.1.12.01.01.0010",
+        "category_name": "Isi Tabung Gas",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0010",
+        "description": "Belanja Bahan-Isi Tabung Gas"
+    },
+    {
+        "category_code": "1.1.12.01.01.0011",
+        "category_name": "Bahan/Bibit Ternak/Bibit Ikan",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0011",
+        "description": "Belanja Bahan-Bahan/Bibit Ternak/Bibit Ikan"
+    },
+    {
+        "category_code": "1.1.12.01.01.0012",
+        "category_name": "Bahan Lainnya",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0012",
+        "description": "Belanja Bahan-Bahan Lainnya"
+    },
+    {
+        "category_code": "1.1.12.01.02.0001",
+        "category_name": "Suku Cadang Alat Angkutan",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0013",
+        "description": "Belanja Suku Cadang-Suku Cadang Alat Angkutan"
+    },
+    {
+        "category_code": "1.1.12.01.02.0002",
+        "category_name": "Suku Cadang Alat Besar",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0014",
+        "description": "Belanja Suku Cadang-Suku Cadang Alat Besar"
+    },
+    {
+        "category_code": "1.1.12.01.02.0003",
+        "category_name": "Suku Cadang Alat Kedokteran",
+        "group": "SSH",
+        "account_code": "5.1.02.01.01.0015",
+        "description": "Belanja Suku Cadang-Suku Cadang Alat Kedokteran"
+    }
+]

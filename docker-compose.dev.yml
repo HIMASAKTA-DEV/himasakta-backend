@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: crs-backend-app-dev
+    volumes:
+      - .:/app
+    ports:
+      - "8811:8811"
+    env_file:
+      - .env
+    depends_on:
+      - db-dev
+    networks:
+      - crs-app-dev-net
+
+  db-dev:
+    image: postgres:17
+    container_name: crs-backend-db-dev
+    env_file:
+      - .env
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_dev:/var/lib/postgresql/data
+    networks:
+      - crs-app-dev-net
+
+volumes:
+  pgdata_dev:
+
+networks:
+  crs-app-dev-net:
+    driver: bridge

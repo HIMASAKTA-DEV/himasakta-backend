@@ -1,0 +1,41 @@
+version: "3.9"
+
+services:
+  app-prod:
+    image: ghcr.io/${GHCR_USERNAME}/crs:latest
+    container_name: crs-backend-app-prod
+    expose:
+      - "8888"
+    env_file:
+      - .env.prod
+    volumes:
+      - ./assets/uploads:/app/assets/uploads
+    depends_on:
+      db-prod:
+        condition: service_healthy
+    networks:
+      - backend_net
+
+  db-prod:
+    image: postgres:17
+    container_name: crs-backend-db-prod
+    env_file:
+      - .env.prod
+    ports:
+      - "5435:5432"
+    volumes:
+      - pgdata_prod:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U crs-prod -d crsDB-prod"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - backend_net
+
+volumes:
+  pgdata_prod:
+
+networks:
+  backend_net:
+    external: true
