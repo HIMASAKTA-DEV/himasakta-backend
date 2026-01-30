@@ -15,7 +15,7 @@ func Auth(app *gin.Engine, authcontroller controller.AuthController, middleware 
 		routes.POST("/change", authcontroller.ChangePassword)
 		routes.GET("/verify-email", authcontroller.VerifyEmail)
 		routes.GET("/refresh-token", authcontroller.RefreshToken)
+		routes.POST("/logout", authcontroller.Logout)
 		routes.GET("/me", middleware.Authenticate(), authcontroller.Me)
 	}
 }
-

@@ -10,7 +10,6 @@ import (
 	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
 	mailer "github.com/Flexoo-Academy/Golang-Template/internal/pkg/email"
 	myerror "github.com/Flexoo-Academy/Golang-Template/internal/pkg/error"
-	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/google/oauth"
 	myjwt "github.com/Flexoo-Academy/Golang-Template/internal/pkg/jwt"
 	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
 
@@ -18,7 +17,6 @@ import (
 	"os"
 	"time"
 
-	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
 
@@ -28,6 +26,7 @@ type (
 		Register(ctx context.Context, req dto.RegisterRequest) (dto.UserResponse, error)
 		VerifyEmail(ctx context.Context, token string) error
 		RefreshToken(ctx context.Context, refreshToken string) (dto.LoginResponse, error)
+		Logout(ctx context.Context, req dto.LogoutRequest) error
 		ForgetPassword(ctx context.Context, req dto.ForgetPasswordRequest) error
 		ChangePassword(ctx context.Context, req dto.ChangePasswordRequest) error
 		GetMe(ctx context.Context, userId string) (dto.GetMe, error)
@@ -37,7 +36,6 @@ type (
 		userRepository         repository.UserRepository
 		refreshTokenRepository repository.RefreshTokenRepository
 		mailService            mailer.Mailer
-		oauthService           oauth.Oauth
 		db                     *gorm.DB
 	}
 )
@@ -45,13 +43,11 @@ type (
 func NewAuth(userRepository repository.UserRepository,
 	refreshTokenRepository repository.RefreshTokenRepository,
 	mailService mailer.Mailer,
-	oauthService oauth.Oauth,
 	db *gorm.DB) AuthService {
 	return &authService{
 		userRepository:         userRepository,
 		refreshTokenRepository: refreshTokenRepository,
 		mailService:            mailService,
-		oauthService:           oauthService,
 		db:                     db,
 	}
 }
@@ -103,17 +99,12 @@ func (s *authService) Login(ctx context.Context, req dto.LoginRequest) (dto.Logi
 			return dto.LoginResponse{}, err
 		}
 
-		refreshTokenHash, err := utils.HashPassword(refreshTokenJTI)
-		if err != nil {
-			return dto.LoginResponse{}, err
-		}
-
 		_, err = s.refreshTokenRepository.Create(ctx, nil, entity.RefreshToken{
-			UserID:           user.ID,
-			RefreshTokenHash: refreshTokenHash,
-			UserAgent:        req.UserAgent,
-			IP:               req.IP,
-			ExpiresAt:        time.Now().Add(30 * 24 * time.Hour), // 30 days
+			UserID:       user.ID,
+			RefreshToken: refreshToken,
+			UserAgent:    req.UserAgent,
+			IP:           req.IP,
+			ExpiresAt:    time.Now().Add(30 * 24 * time.Hour), // 30 days
 		})
 		if err != nil {
 			return dto.LoginResponse{}, err
@@ -218,38 +209,18 @@ func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (dt
 	}
 
 	userID := claims["user_id"]
-	jti := claims["jti"]
 
-	// Get all refresh tokens for user
-	userUUID, err := uuid.Parse(userID)
+	// Find matching token directly from DB
+	foundToken, err := s.refreshTokenRepository.GetByRefreshToken(ctx, nil, refreshToken)
 	if err != nil {
-		return dto.LoginResponse{}, err
+		return dto.LoginResponse{}, myerror.New("refresh token invalid", http.StatusUnauthorized)
 	}
 
-	refreshTokens, err := s.refreshTokenRepository.GetAllByUserID(ctx, nil, userUUID)
-	if err != nil {
-		return dto.LoginResponse{}, err
-	}
-
-	var foundToken entity.RefreshToken
-	var found bool
-
-	// Find matching token by validating JTI hash
-	for _, rt := range refreshTokens {
-		isValid, _ := utils.CheckPassword(rt.RefreshTokenHash, []byte(jti))
-		if isValid {
-			foundToken = rt
-			found = true
-			break
-		}
-	}
-
-	if !found {
+	if foundToken.UserID.String() != userID {
 		return dto.LoginResponse{}, myerror.New("refresh token invalid", http.StatusUnauthorized)
 	}
 
 	if foundToken.ExpiresAt.Before(time.Now()) {
-		// delete expired token
 		_ = s.refreshTokenRepository.Delete(ctx, nil, foundToken.ID)
 		return dto.LoginResponse{}, myerror.New("refresh token expired", http.StatusUnauthorized)
 	}
@@ -275,23 +246,13 @@ func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (dt
 		return dto.LoginResponse{}, err
 	}
 
-	newRefreshTokenHash, err := utils.HashPassword(newJTI)
-	if err != nil {
-		return dto.LoginResponse{}, err
-	}
-
-	// delete old token
-	if err := s.refreshTokenRepository.Delete(ctx, nil, foundToken.ID); err != nil {
-		return dto.LoginResponse{}, err
-	}
-
 	// create new token with same expiration
 	_, err = s.refreshTokenRepository.Create(ctx, nil, entity.RefreshToken{
-		UserID:           user.ID,
-		RefreshTokenHash: newRefreshTokenHash,
-		UserAgent:        foundToken.UserAgent,
-		IP:               foundToken.IP,
-		ExpiresAt:        foundToken.ExpiresAt,
+		UserID:       user.ID,
+		RefreshToken: newRefreshToken,
+		UserAgent:    foundToken.UserAgent,
+		IP:           foundToken.IP,
+		ExpiresAt:    foundToken.ExpiresAt,
 	})
 	if err != nil {
 		return dto.LoginResponse{}, err
@@ -312,6 +273,38 @@ func (s *authService) RefreshToken(ctx context.Context, refreshToken string) (dt
 		RefreshToken: &newRefreshToken,
 		Role:         string(user.Role),
 	}, nil
+}
+
+func (s *authService) Logout(ctx context.Context, req dto.LogoutRequest) error {
+	// Parse JWT
+	claims, err := myjwt.GetPayloadInsideToken(req.RefreshToken)
+	if err != nil {
+		return myerror.New("refresh token invalid", http.StatusUnauthorized)
+	}
+
+	// Validate token type
+	if claims["type"] != "refresh" {
+		return myerror.New("invalid token type", http.StatusUnauthorized)
+	}
+
+	userID := claims["user_id"]
+
+	// Get all refresh tokens for user
+	// Find matching token directly from DB
+	foundToken, err := s.refreshTokenRepository.GetByRefreshToken(ctx, nil, req.RefreshToken)
+	if err != nil {
+		return myerror.New("refresh token invalid", http.StatusUnauthorized)
+	}
+
+	if foundToken.UserID.String() != userID {
+		return myerror.New("refresh token invalid", http.StatusUnauthorized)
+	}
+
+	if err := s.refreshTokenRepository.Delete(ctx, nil, foundToken.ID); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (s *authService) ForgetPassword(ctx context.Context, req dto.ForgetPasswordRequest) error {

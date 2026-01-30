@@ -13,6 +13,10 @@ type (
 		RefreshToken string `json:"refresh_token" binding:"required"`
 	}
 
+	LogoutRequest struct {
+		RefreshToken string `json:"refresh_token" binding:"required"`
+	}
+
 	RegisterRequest struct {
 		Name     string `json:"name" binding:"required"`
 		Email    string `json:"email" binding:"required,email"`
@@ -56,4 +60,3 @@ type (
 		Role  string `json:"role"`
 	}
 )
-

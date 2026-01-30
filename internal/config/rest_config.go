@@ -13,7 +13,6 @@ import (
 	"github.com/Flexoo-Academy/Golang-Template/internal/api/service"
 	"github.com/Flexoo-Academy/Golang-Template/internal/middleware"
 	mailer "github.com/Flexoo-Academy/Golang-Template/internal/pkg/email"
-	"github.com/Flexoo-Academy/Golang-Template/internal/pkg/google/oauth"
 	"github.com/gin-gonic/gin"
 )
 
@@ -30,7 +29,7 @@ func NewRest() RestConfig {
 	var (
 		//=========== (PACKAGE) ===========//
 		mailerService mailer.Mailer = mailer.New()
-		oauthService  oauth.Oauth   = oauth.New()
+		// oauthService  oauth.Oauth   = oauth.New()
 		// awsS3Service  storage.AwsS3 = storage.NewAwsS3()
 
 		//=========== (REPOSITORY) ===========//
@@ -38,7 +37,7 @@ func NewRest() RestConfig {
 		refreshTokenRepository repository.RefreshTokenRepository = repository.NewRefreshTokenRepository(db)
 
 		//=========== (SERVICE) ===========//
-		authService service.AuthService = service.NewAuth(userRepository, refreshTokenRepository, mailerService, oauthService, db)
+		authService service.AuthService = service.NewAuth(userRepository, refreshTokenRepository, mailerService, db)
 		// userService                   service.UserService                   = service.NewUser(userRepository, userDisciplineRepository, disciplineGroupConsolidatorRepository, disciplineListDocumentConsolidatorRepository, packageRepository, db)
 
 		//=========== (CONTROLLER) ===========//

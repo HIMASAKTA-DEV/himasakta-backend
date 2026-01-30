@@ -13,7 +13,7 @@ type RefreshTokenRepository interface {
 	GetByUserID(ctx context.Context, tx *gorm.DB, userID uuid.UUID) (entity.RefreshToken, error)
 	GetAllByUserID(ctx context.Context, tx *gorm.DB, userID uuid.UUID) ([]entity.RefreshToken, error)
 	GetByUserIDAndUserAgent(ctx context.Context, tx *gorm.DB, userID uuid.UUID, userAgent string) (entity.RefreshToken, error)
-	GetByRefreshTokenHash(ctx context.Context, tx *gorm.DB, refreshTokenHash string) (entity.RefreshToken, error)
+	GetByRefreshToken(ctx context.Context, tx *gorm.DB, refreshToken string) (entity.RefreshToken, error)
 	Delete(ctx context.Context, tx *gorm.DB, id uuid.UUID) error
 	DeleteByUserIDAndUserAgent(ctx context.Context, tx *gorm.DB, userID uuid.UUID, userAgent string) error
 }
@@ -79,17 +79,17 @@ func (r *refreshTokenRepository) GetByUserIDAndUserAgent(ctx context.Context, tx
 	return refreshToken, nil
 }
 
-func (r *refreshTokenRepository) GetByRefreshTokenHash(ctx context.Context, tx *gorm.DB, refreshTokenHash string) (entity.RefreshToken, error) {
+func (r *refreshTokenRepository) GetByRefreshToken(ctx context.Context, tx *gorm.DB, refreshToken string) (entity.RefreshToken, error) {
 	if tx == nil {
 		tx = r.db
 	}
 
-	var refreshToken entity.RefreshToken
-	if err := tx.WithContext(ctx).Where("refresh_token_hash = ?", refreshTokenHash).First(&refreshToken).Error; err != nil {
+	var token entity.RefreshToken
+	if err := tx.WithContext(ctx).Where("refresh_token = ?", refreshToken).First(&token).Error; err != nil {
 		return entity.RefreshToken{}, err
 	}
 
-	return refreshToken, nil
+	return token, nil
 }
 
 func (r *refreshTokenRepository) DeleteByUserIDAndUserAgent(ctx context.Context, tx *gorm.DB, userID uuid.UUID, userAgent string) error {

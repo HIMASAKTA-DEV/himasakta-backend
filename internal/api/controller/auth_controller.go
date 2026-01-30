@@ -16,6 +16,7 @@ type (
 		Register(ctx *gin.Context)
 		VerifyEmail(ctx *gin.Context)
 		RefreshToken(ctx *gin.Context)
+		Logout(ctx *gin.Context)
 		ForgetPassword(ctx *gin.Context)
 		ChangePassword(ctx *gin.Context)
 		Me(ctx *gin.Context)
@@ -91,6 +92,22 @@ func (c *authController) RefreshToken(ctx *gin.Context) {
 	response.NewSuccess("success refresh token", result).Send(ctx)
 }
 
+func (c *authController) Logout(ctx *gin.Context) {
+	var req dto.LogoutRequest
+	if err := ctx.ShouldBind(&req); err != nil {
+		err = myerror.GetErrBodyRequest(err, dto.LogoutRequest{})
+		response.NewFailed("failed get data from body", err).Send(ctx)
+		return
+	}
+
+	if err := c.authService.Logout(ctx.Request.Context(), req); err != nil {
+		response.NewFailed("failed logout", err).Send(ctx)
+		return
+	}
+
+	response.NewSuccess("success logout", nil).Send(ctx)
+}
+
 func (c *authController) ForgetPassword(ctx *gin.Context) {
 	var req dto.ForgetPasswordRequest
 
@@ -152,4 +169,3 @@ func (c *authController) Me(ctx *gin.Context) {
 
 	response.NewSuccess("success get me", res).Send(ctx)
 }
-
