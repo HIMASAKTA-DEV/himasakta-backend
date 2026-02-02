@@ -1,0 +1,9 @@
+{
+  "version": "1",
+  "name": "Dokumentasi-Flexoo-Template",
+  "type": "collection",
+  "ignore": [
+    "node_modules",
+    ".git"
+  ]
+}

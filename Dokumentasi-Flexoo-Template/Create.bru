@@ -1,0 +1,20 @@
+meta {
+  name: Create
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{host}}/api/v1/task
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "photo_url": "assets-01KGFA089CM1M1YN1EXCCKBM4A.png",
+    "description": "ini task",
+    "deadline": "2026-02-01T14:57:41Z",
+    "status": "Pending"
+  }
+}

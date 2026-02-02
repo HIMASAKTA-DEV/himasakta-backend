@@ -1,0 +1,15 @@
+meta {
+  name: Get Image
+  type: http
+  seq: 3
+}
+
+get {
+  url: {{host}}/api/static/:filepath
+  body: none
+  auth: inherit
+}
+
+params:path {
+  filepath: assets-01KGFA089CM1M1YN1EXCCKBM4A.png
+}

@@ -1,0 +1,15 @@
+meta {
+  name: Upload
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/api/v1/uploads
+  body: multipartForm
+  auth: inherit
+}
+
+body:multipart-form {
+  file: @file(C:\Users\DATA\OneDrive\Pictures\Screenshots\Screenshot 2024-05-10 102312.png)
+}
