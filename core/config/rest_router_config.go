@@ -2,20 +2,21 @@ package config
 
 import (
 	"fmt"
-
 	"net/http"
 	"os"
 	"runtime/debug"
+	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/middleware"
 	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/storage"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/oklog/ulid/v2"
 )
 
-func NewRouter(server *gin.Engine) *gin.Engine {
+func NewRouter(server *gin.Engine, s3 storage.AwsS3) *gin.Engine {
 	server.NoRoute(func(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"status":  http.StatusNotFound,
@@ -40,16 +41,25 @@ func NewRouter(server *gin.Engine) *gin.Engine {
 		}
 
 		filename := fmt.Sprintf("assets-%s.%s", ulid.Make(), utils.GetExtensions(file.Filename))
-		if err := utils.UploadFile(file, filename); err != nil {
-			response.NewFailed("failed upload image", err).SendWithAbort(ctx)
+
+		// Map the folders based on extensions or just one folder
+		folderName := "others"
+		ext := strings.ToLower(utils.GetExtensions(file.Filename))
+		if ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "webp" {
+			folderName = "images"
+		}
+
+		objectKey, err := s3.UploadFile(filename, file, folderName)
+		if err != nil {
+			response.NewFailed("failed upload to s3", err).SendWithAbort(ctx)
 			return
 		}
 
-		fileURL := fmt.Sprintf("%s/api/static/%s", ctx.Request.Host, filename)
+		fileURL := s3.GetPublicLink(objectKey)
 
 		response.NewSuccess("success upload image", gin.H{
 			"url":  fileURL,
-			"path": filename,
+			"path": objectKey,
 		}).Send(ctx)
 	})
 
@@ -81,4 +91,3 @@ func customRecovery() gin.HandlerFunc {
 		ctx.Next()
 	}
 }
-

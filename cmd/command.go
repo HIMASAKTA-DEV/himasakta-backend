@@ -7,10 +7,10 @@ import (
 	"os/exec"
 	"runtime"
 
+	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db/migrations"
 	seeders "github.com/HIMASAKTA-DEV/himasakta-backend/db/seeder"
-	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"gorm.io/gorm"
 )
 
@@ -47,6 +47,9 @@ func getParams(db *gorm.DB) error {
 	}
 
 	if seeder {
+		if db == nil {
+			return fmt.Errorf("seeding failed: database connection is nil")
+		}
 		if err := seeders.Seeding(db); err != nil {
 			return fmt.Errorf("seeding failed: %w", err)
 		}
@@ -92,4 +95,3 @@ func runWatch() error {
 	mylog.Infoln("Command executed successfully")
 	return nil
 }
-

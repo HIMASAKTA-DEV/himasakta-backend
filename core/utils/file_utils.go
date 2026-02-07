@@ -65,13 +65,25 @@ func GetMimetype(f multipart.File) (string, error) {
 		return "", err
 	}
 
-	mimeType := http.DetectContentType(buffer)
-
 	_, err = f.Seek(0, io.SeekStart)
 	if err != nil {
 		return "", err
 	}
 
-	return mimeType, nil
-}
+	// Check for HEIF/HEIC signatures
+	if len(buffer) > 12 {
+		if string(buffer[4:12]) == "ftypheic" ||
+			string(buffer[4:12]) == "ftypheix" ||
+			string(buffer[4:12]) == "ftypmif1" ||
+			string(buffer[4:12]) == "ftypmsf1" {
+			return "image/heic", nil
+		}
+	}
 
+	// Check for WEBP
+	if len(buffer) > 12 && string(buffer[0:4]) == "RIFF" && string(buffer[8:12]) == "WEBP" {
+		return "image/webp", nil
+	}
+
+	return http.DetectContentType(buffer), nil
+}

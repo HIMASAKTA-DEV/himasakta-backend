@@ -11,6 +11,8 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/routes"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/service"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/middleware"
+	myjwt "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/jwt"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/storage"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
 	"github.com/gin-gonic/gin"
 )
@@ -25,34 +27,57 @@ func NewRest() (RestConfig, error) {
 		return RestConfig{}, fmt.Errorf("database connection failed")
 	}
 	app := gin.Default()
-	server := NewRouter(app)
-	middleware := middleware.New(db)
+	s3 := storage.NewAwsS3()
+	server := NewRouter(app, s3)
+	_ = middleware.New(db)
 
-	var (
-		//=========== (PACKAGE) ===========//
-		// mailerService mailer.Mailer = mailer.New()
-		// oauthService  oauth.Oauth   = oauth.New()
-		// awsS3Service  storage.AwsS3 = storage.NewAwsS3()
+	// Injections
+	galleryRepo := repository.NewGallery(db)
+	galleryService := service.NewGallery(galleryRepo)
+	galleryController := controller.NewGallery(galleryService, s3)
 
-		//=========== (REPOSITORY) ===========//
-		// userRepository         repository.UserRepository         = repository.NewUser(db)
-		// refreshTokenRepository repository.RefreshTokenRepository = repository.NewRefreshTokenRepository(db)
-		taskRepository repository.TaskRepository = repository.NewTask(db)
+	deptRepo := repository.NewDepartment(db)
+	deptService := service.NewDepartment(deptRepo)
+	deptController := controller.NewDepartment(deptService)
 
-		//=========== (SERVICE) ===========//
-		// authService service.AuthService = service.NewAuth(userRepository, refreshTokenRepository, mailerService, db)
-		taskService service.TaskService = service.NewTask(taskRepository)
-		// userService                   service.UserService                   = service.NewUser(userRepository, userDisciplineRepository, disciplineGroupConsolidatorRepository, disciplineListDocumentConsolidatorRepository, packageRepository, db)
+	cabinetRepo := repository.NewCabinetInfo(db)
+	cabinetService := service.NewCabinetInfo(cabinetRepo)
+	cabinetController := controller.NewCabinetInfo(cabinetService)
 
-		//=========== (CONTROLLER) ===========//
-		// authController controller.AuthController = controller.NewAuth(authService)
-		taskController controller.TaskController = controller.NewTask(taskService)
-		// userController                   controller.UserController                   = controller.NewUser(userService)
-	)
+	memberRepo := repository.NewMember(db)
+	memberService := service.NewMember(memberRepo)
+	memberController := controller.NewMember(memberService)
+
+	progendaRepo := repository.NewProgenda(db)
+	progendaService := service.NewProgenda(progendaRepo)
+	progendaController := controller.NewProgenda(progendaService)
+
+	monthlyEventRepo := repository.NewMonthlyEvent(db)
+	monthlyEventService := service.NewMonthlyEvent(monthlyEventRepo)
+	monthlyEventController := controller.NewMonthlyEvent(monthlyEventService)
+
+	newsRepo := repository.NewNews(db)
+	newsService := service.NewNews(newsRepo)
+	newsController := controller.NewNews(newsService)
+
+	jwtService := myjwt.NewJWT()
+	authService := service.NewAuth(jwtService)
+	authController := controller.NewAuth(authService)
+
+	indexController := controller.NewIndex()
+
+	m := middleware.New(db)
 
 	// Register all routes
-	// routes.Auth(server, authController, middleware)
-	routes.Task(server, taskController, middleware)
+	server.GET("/", indexController.Index)
+	routes.Auth(server, authController)
+	routes.Gallery(server, galleryController, m)
+	routes.Department(server, deptController, m)
+	routes.CabinetInfo(server, cabinetController, m)
+	routes.Member(server, memberController, m)
+	routes.Progenda(server, progendaController, m)
+	routes.MonthlyEvent(server, monthlyEventController, m)
+	routes.News(server, newsController, m)
 
 	return RestConfig{
 		server: server,

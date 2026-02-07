@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HIMASAKTA Interactive API Documentation</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
+        rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+
+        h1 {
+            color: #2563eb;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .auth-box {
+            background: white;
+            border: 2px solid #2563eb;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+        }
+
+        .auth-box h2 {
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+        }
+
+        .auth-inputs {
+            display: flex;
+            gap: 10px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        input,
+        textarea {
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-family: inherit;
+        }
+
+        input {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        button {
+            padding: 10px 24px;
+            background: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        #token-display {
+            margin-top: 15px;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.875rem;
+            word-break: break-all;
+            display: none;
+        }
+
+        .success {
+            background: #dcfce7;
+            color: #166534;
+            border: 1px solid #166534;
+        }
+
+        .error {
+            background: #fee2e2;
+            color: #991b1b;
+            border: 1px solid #991b1b;
+        }
+
+        .endpoint {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+
+        .endpoint-header {
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #fdfdfd;
+            cursor: pointer;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .method {
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 6px;
+            color: white;
+            min-width: 60px;
+            text-align: center;
+        }
+
+        .method.GET {
+            background: #10b981;
+        }
+
+        .method.POST {
+            background: #3b82f6;
+        }
+
+        .method.PUT {
+            background: #f59e0b;
+        }
+
+        .method.DELETE {
+            background: #ef4444;
+        }
+
+        .path {
+            font-family: 'Fira Code', monospace;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .desc {
+            color: #64748b;
+            font-size: 0.875rem;
+        }
+
+        .endpoint-body {
+            padding: 25px;
+            display: none;
+        }
+
+        .endpoint-body.active {
+            display: block;
+        }
+
+        .fold {
+            margin-bottom: 20px;
+        }
+
+        .fold-title {
+            color: #2563eb;
+            font-weight: 600;
+            cursor: pointer;
+            margin-bottom: 10px;
+            font-size: 0.875rem;
+            user-select: none;
+        }
+
+        .fold-title:hover {
+            text-decoration: underline;
+        }
+
+        .fold-content {
+            display: none;
+            background: #1e293b;
+            color: #f8fafc;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            overflow-x: auto;
+        }
+
+        .fold-content.active {
+            display: block;
+        }
+
+        .try-section {
+            border-top: 1px solid #e2e8f0;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            font-size: 0.75rem;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            font-family: 'Fira Code', monospace;
+        }
+
+        .btn-execute {
+            width: 100%;
+            background: #1e293b;
+            margin-top: 10px;
+        }
+
+        .response-area {
+            margin-top: 20px;
+            display: none;
+        }
+
+        .response-area.active {
+            display: block;
+        }
+
+        .response-status {
+            font-weight: 600;
+            padding: 8px 12px;
+            border-radius: 6px;
+            margin-bottom: 10px;
+            font-size: 0.875rem;
+        }
+
+        .response-body {
+            background: #f1f5f9;
+            padding: 15px;
+            border-radius: 8px;
+            font-family: 'Fira Code', monospace;
+            font-size: 0.8rem;
+            white-space: pre-wrap;
+            border: 1px solid #e2e8f0;
+            overflow-x: auto;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🚀 HIMASAKTA API v1</h1>
+            <p>Interactive Documentation for Developers</p>
+        </header>
+
+        <div class="auth-box">
+            <h2>🔑 Authentication</h2>
+            <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 15px;">Login to get JWT token for testing
+                protected endpoints.</p>
+            <div class="auth-inputs">
+                <input type="text" id="username" placeholder="Username" value="">
+                <input type="password" id="password" placeholder="Password" value="">
+                <button onclick="handleLogin()">Login & Authorize</button>
+            </div>
+            <div id="token-display"></div>
+        </div>
+
+        <div id="endpoints"></div>
+    </div>
+
+    <script>
+        const API = '/api/v1';
+        const routes = [
+            {
+                section: 'Authentication', items: [
+                    {
+                        method: 'POST', path: '/auth/login', desc: 'Generate JWT token',
+                        body: '{\n  "username": "admin",\n  "password": "admin"\n}',
+                        resp: '{\n  "success": true,\n  "message": "login success",\n  "data": { "token": "JWT_HERE" }\n}'
+                    }
+                ]
+            },
+            {
+                section: 'Gallery', items: [
+                    {
+                        method: 'GET', path: '/gallery', desc: 'Get all gallery items with pagination',
+                        params: [
+                            { name: 'caption', ph: 'Search by caption...' },
+                            { name: 'page', ph: '1' },
+                            { name: 'limit', ph: '10' }
+                        ],
+                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                    },
+                    {
+                        method: 'POST', path: '/gallery', desc: 'Upload gallery image file',
+                        isFileUpload: true,
+                        fileFields: [
+                            { name: 'image', type: 'file', label: 'Image File (max 50MB)' },
+                            { name: 'caption', type: 'text', label: 'Caption', ph: 'Enter caption...' },
+                            { name: 'category', type: 'text', label: 'Category', ph: 'logo, event, etc.' },
+                            { name: 'department_id', type: 'text', label: 'Department ID (UUID, optional)', ph: 'UUID...' }
+                        ],
+                        resp: '{\n  "success": true,\n  "message": "success create gallery",\n  "data": { "id": "uuid", "image_url": "/uploads/filename.jpg" }\n}'
+                    }
+                ]
+            },
+            {
+                section: 'Departments', items: [
+                    {
+                        method: 'GET', path: '/department', desc: 'Get all departments with pagination',
+                        params: [
+                            { name: 'name', ph: 'Filter by name...' },
+                            { name: 'page', ph: '1' },
+                            { name: 'limit', ph: '10' }
+                        ],
+                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                    },
+                    {
+                        method: 'POST', path: '/department', desc: 'Create department',
+                        body: '{\n  "name": "IT",\n  "description": "...",\n  "logo_id": "UUID"\n}',
+                        resp: '{\n  "success": true,\n  "data": {}\n}'
+                    }
+                ]
+            },
+            {
+                section: 'Members', items: [
+                    {
+                        method: 'GET', path: '/member', desc: 'Get all members with pagination',
+                        params: [
+                            { name: 'name', ph: 'Search member...' },
+                            { name: 'page', ph: '1' },
+                            { name: 'limit', ph: '10' }
+                        ],
+                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                    }
+                ]
+            },
+            {
+                section: 'News', items: [
+                    {
+                        method: 'GET', path: '/news', desc: 'Get news articles with pagination',
+                        params: [
+                            { name: 'search', ph: 'Keyword...' },
+                            { name: 'page', ph: '1' },
+                            { name: 'limit', ph: '10' }
+                        ],
+                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                    },
+                    {
+                        method: 'POST', path: '/news', desc: 'Create news article',
+                        body: '{\n  "title": "Event",\n  "content": "# Markdown",\n  "thumbnail_id": "UUID"\n}',
+                        resp: '{\n  "success": true,\n  "data": {}\n}'
+                    }
+                ]
+            }
+        ];
+
+        function render() {
+            const box = document.getElementById('endpoints');
+            routes.forEach(function (sec) {
+                const title = document.createElement('h2');
+                title.style.marginTop = '40px';
+                title.style.marginBottom = '20px';
+                title.textContent = sec.section;
+                box.appendChild(title);
+
+                sec.items.forEach(function (r, idx) {
+                    const id = sec.section.toLowerCase().replace(/\s+/g, '-') + '-' + idx;
+                    const card = document.createElement('div');
+                    card.className = 'endpoint';
+
+                    const header = document.createElement('div');
+                    header.className = 'endpoint-header';
+                    header.onclick = function () { toggleBody(id); };
+                    header.innerHTML = '<span class="method ' + r.method + '">' + r.method + '</span>' +
+                        '<span class="path">' + r.path + '</span>' +
+                        '<span class="desc">' + r.desc + '</span>';
+
+                    const body = document.createElement('div');
+                    body.className = 'endpoint-body';
+                    body.id = id;
+
+                    let html = '<div class="fold">' +
+                        '<div class="fold-title" onclick="toggleFold(\'' + id + '-req\')">▶ Example Request (JavaScript)</div>' +
+                        '<div class="fold-content" id="' + id + '-req">' + genFetch(r) + '</div>' +
+                        '</div>' +
+                        '<div class="fold">' +
+                        '<div class="fold-title" onclick="toggleFold(\'' + id + '-resp\')">▶ Example Response</div>' +
+                        '<div class="fold-content" id="' + id + '-resp">' + (r.resp || '{}') + '</div>' +
+                        '</div>' +
+                        '<div class="try-section"><h4>Try It Out</h4>';
+
+                    if (r.params) {
+                        r.params.forEach(function (p) {
+                            html += '<div class="input-group">' +
+                                '<label>' + p.name + '</label>' +
+                                '<input type="text" id="' + id + '-p-' + p.name + '" placeholder="' + p.ph + '">' +
+                                '</div>';
+                        });
+                    }
+
+                    if (r.isFileUpload && r.fileFields) {
+                        r.fileFields.forEach(function (f) {
+                            if (f.type === 'file') {
+                                html += '<div class="input-group">' +
+                                    '<label>' + f.label + '</label>' +
+                                    '<input type="file" id="' + id + '-file-' + f.name + '" accept="image/*">' +
+                                    '</div>';
+                            } else {
+                                html += '<div class="input-group">' +
+                                    '<label>' + f.label + '</label>' +
+                                    '<input type="text" id="' + id + '-field-' + f.name + '" placeholder="' + (f.ph || '') + '">' +
+                                    '</div>';
+                            }
+                        });
+                    } else if (r.method !== 'GET' && r.body) {
+                        html += '<div class="input-group">' +
+                            '<label>Request Body (JSON)</label>' +
+                            '<textarea id="' + id + '-body">' + r.body + '</textarea>' +
+                            '</div>';
+                    }
+
+                    html += '<button class="btn-execute" onclick="exec(\'' + id + '\', \'' + r.method + '\', \'' + r.path + '\', ' +
+                        (r.params ? 'true' : 'false') + ', ' + (r.body || r.isFileUpload ? 'true' : 'false') + ', ' + (r.isFileUpload ? 'true' : 'false') + ')">' +
+                        'Execute</button>' +
+                        '<div class="response-area" id="' + id + '-res">' +
+                        '<div class="response-status" id="' + id + '-status"></div>' +
+                        '<pre class="response-body" id="' + id + '-data"></pre>' +
+                        '</div></div>';
+
+                    body.innerHTML = html;
+                    card.appendChild(header);
+                    card.appendChild(body);
+                    box.appendChild(card);
+                });
+            });
+        }
+
+        function genFetch(r) {
+            let c = 'const token = localStorage.getItem("docs_token");\n\n';
+
+            if (r.isFileUpload) {
+                c += 'const formData = new FormData();\n';
+                if (r.fileFields) {
+                    r.fileFields.forEach(function (f) {
+                        if (f.type === 'file') {
+                            c += 'formData.append("' + f.name + '", fileInput.files[0]);\n';
+                        } else {
+                            c += 'formData.append("' + f.name + '", "' + (f.ph || 'value') + '");\n';
+                        }
+                    });
+                }
+                c += '\nfetch("' + API + r.path + '", {\n';
+                c += '  method: "' + r.method + '",\n';
+                c += '  headers: {\n';
+                c += '    "Authorization": "Bearer " + token\n';
+                c += '  },\n';
+                c += '  body: formData\n';
+            } else {
+                c += 'fetch("' + API + r.path + '", {\n';
+                c += '  method: "' + r.method + '",\n';
+                c += '  headers: {\n';
+                c += '    "Content-Type": "application/json",\n';
+                c += '    "Authorization": "Bearer " + token\n';
+                c += '  }';
+                if (r.method !== 'GET' && r.body) {
+                    c += ',\n  body: ' + r.body;
+                }
+            }
+            c += '\n})\n.then(r => r.json())\n.then(console.log);';
+            return c;
+        }
+
+        function toggleBody(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        function toggleFold(id) {
+            document.getElementById(id).classList.toggle('active');
+        }
+
+        function handleLogin() {
+            const u = document.getElementById('username').value;
+            const p = document.getElementById('password').value;
+            const disp = document.getElementById('token-display');
+
+            fetch(API + '/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username: u, password: p })
+            })
+                .then(function (res) { return res.json(); })
+                .then(function (data) {
+                    if (data.success) {
+                        localStorage.setItem('docs_token', data.data.token);
+                        disp.innerHTML = '<strong>✓ Authorized!</strong> ' + data.data.token;
+                        disp.className = 'success';
+                        disp.style.display = 'block';
+                    } else {
+                        disp.innerHTML = '<strong>✗ Failed:</strong> ' + data.message;
+                        disp.className = 'error';
+                        disp.style.display = 'block';
+                    }
+                })
+                .catch(function (e) {
+                    alert('Login failed: ' + e.message);
+                });
+        }
+
+        function exec(id, method, path, hasParams, hasBody, isFileUpload) {
+            const area = document.getElementById(id + '-res');
+            const status = document.getElementById(id + '-status');
+            const dataBox = document.getElementById(id + '-data');
+            const token = localStorage.getItem('docs_token');
+
+            area.classList.add('active');
+            status.textContent = 'Executing...';
+            status.className = 'response-status';
+            dataBox.textContent = '';
+
+            let url = API + path;
+            if (hasParams) {
+                const params = [];
+                document.querySelectorAll('[id^="' + id + '-p-"]').forEach(function (inp) {
+                    if (inp.value) {
+                        const name = inp.id.split('-p-')[1];
+                        params.push(name + '=' + encodeURIComponent(inp.value));
+                    }
+                });
+                if (params.length) url += '?' + params.join('&');
+            }
+
+            const opts = {
+                method: method,
+                headers: {}
+            };
+
+            if (token) opts.headers['Authorization'] = 'Bearer ' + token;
+
+            if (isFileUpload) {
+                const formData = new FormData();
+                document.querySelectorAll('[id^="' + id + '-file-"]').forEach(function (inp) {
+                    if (inp.files && inp.files[0]) {
+                        const name = inp.id.split('-file-')[1];
+                        formData.append(name, inp.files[0]);
+                    }
+                });
+                document.querySelectorAll('[id^="' + id + '-field-"]').forEach(function (inp) {
+                    if (inp.value) {
+                        const name = inp.id.split('-field-')[1];
+                        formData.append(name, inp.value);
+                    }
+                });
+                opts.body = formData;
+            } else {
+                opts.headers['Content-Type'] = 'application/json';
+                if (hasBody) {
+                    const bodyEl = document.getElementById(id + '-body');
+                    if (bodyEl) opts.body = bodyEl.value;
+                }
+            }
+
+            const startTime = performance.now();
+            fetch(url, opts)
+                .then(function (res) {
+                    const duration = Math.round(performance.now() - startTime);
+                    status.textContent = 'Status: ' + res.status + ' ' + res.statusText + ' (' + duration + 'ms)';
+                    status.className = 'response-status ' + (res.ok ? 'success' : 'error');
+                    return res.json();
+                })
+                .then(function (data) {
+                    dataBox.textContent = JSON.stringify(data, null, 2);
+                })
+                .catch(function (e) {
+                    const duration = Math.round(performance.now() - startTime);
+                    status.textContent = 'Error: ' + e.message + ' (' + duration + 'ms)';
+                    status.className = 'response-status error';
+                    dataBox.textContent = e.stack || e.message;
+                });
+        }
+
+        window.onload = function () {
+            render();
+            const saved = localStorage.getItem('docs_token');
+            if (saved) {
+                const d = document.getElementById('token-display');
+                d.innerHTML = '<strong>Token loaded from session</strong>';
+                d.style.background = '#eff6ff';
+                d.style.color = '#1e40af';
+                d.style.border = '1px solid #3b82f6';
+                d.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+
+</html>

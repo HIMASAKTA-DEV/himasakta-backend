@@ -1,81 +1,89 @@
-# Flexoo Academy Golang Template
+# HIMASAKTA Web API
 
 ## About
+The official backend API for HIMASAKTA (Himpunan Mahasiswa Teknik Aktuaria) ITS Web Platform. Built with Go, Gin, GORM, and PostgreSQL (Supabase).
 
-This is the standard backend template for Flexoo Academy projects, built with Golang. It includes setups for Docker, Database seeding, Migrations, and standard API structures.
+## Features
+- **Superadmin Authentication**: Secure login using JWT and environment variables.
+- **Centralized Gallery**: All media assets (images, logos, photos) are managed via the Gallery component and stored in Supabase S3.
+- **CMS Entities**:
+  - `CabinetInfo`: Visi, Misi, and Cabinet details.
+  - `Department`: HIMASAKTA departments.
+  - `Member`: Management of members and their roles.
+  - `Progenda`: Program Kerja and Agenda management.
+  - `MonthlyEvent`: Calendar of events.
+  - `News`: News and articles with hashtag filtering.
+
+## Refinements
+- **Unique Identifiers**: Entities like Departments, Members, Progenda, MonthlyEvents, and News have unique `Name` or `Title` fields.
+- **Specialized Queries**: All `GET` routes support exact filtering by `name`, `title`, or `period` via query parameters.
+- **Supabase S3 Integration**: File uploads are automatically stored in Supabase S3 buckets with public URL generation.
 
 ## Getting Started
 
-### Environment Setup
+### Environment Variables (.env)
+```env
+# APP
+APP_PORT=8080
+APP_HOST=localhost
+APP_URL=http://localhost:8080
 
-Setup environment variables for development and production.
+# DATABASE
+DB_HOST=...
+DB_USER=...
+DB_PASSWORD=...
+DB_NAME=...
+DB_PORT=...
 
-**Development:**
-```bash
-cp .env.example .env
+# AUTH
+ADMIN_USERNAME=...
+ADMIN_PASSWORD=...
+JWT_SECRET=...
+
+# STORAGE (Supabase S3)
+S3_BUCKET=...
+S3_ENDPOINT=...
+S3_PUBLIC_URL_PREFIX=...
+AWS_ACCESS_KEY=...
+AWS_SECRET_KEY=...
+AWS_REGION=...
 ```
 
-**Production:**
-```bash
-cp .env.example .env.prod
-```
-
-### Running the Application
-
-**Local Development:**
+### Running Locally
 ```bash
 go run main.go
 ```
 
-**With Auto-Reload (Air):**
+### Database Management
 ```bash
-go run main.go --watch
-```
-
-## Database Management
-
-### Migrations
-```bash
+# Run Migrations
 go run main.go --migrate
-```
 
-### Seeding
-```bash
+# Run Seeders
 go run main.go --seeder
 ```
 
-## Docker Deployment
+## API Routes
 
-This project uses `Makefile` to simplify Docker operations.
+### Authentication
+- `POST /api/v1/auth/login`: Superadmin login.
 
-### Initialization
+### Uploads
+- `POST /api/v1/uploads`: Upload file to S3. Returns `url` and `path`.
 
-Initialize development environment:
-```bash
-make init-dev
-```
+### CMS Entities (All support standard CRUD)
+- `/api/v1/gallery`: Centralized media assets. Query by `?caption=`.
+- `/api/v1/cabinet-info`: Cabinet details. Query by `?period=`.
+- `/api/v1/departments`: Departments. Query by `?name=`.
+- `/api/v1/members`: Members. Query by `?name=`.
+- `/api/v1/progenda`: Programs/Agenda. Query by `?name=`, `?search=`, `?department_id=`.
+- `/api/v1/monthly-events`: Events. Query by `?title=`.
+- `/api/v1/news`: News. Query by `?title=`, `?search=`, `?category=`.
 
-Initialize production environment:
-```bash
-make init-prod
-```
+## Data Structure (Core Entities)
+- All entities use **UUID** as Primary Key.
+- Most entities include a `Timestamp` (Created, Updated, Deleted).
+- Media assets are referenced via `Gallery` (e.g., `LogoId`, `ThumbnailId`).
 
-### Useful Commands
-
-| Command | Description |
-|---------|-------------|
-| `make up-dev` | Start development containers |
-| `make down-dev` | Stop development containers |
-| `make logs-dev` | View development logs |
-| `make rebuild-dev` | Rebuild and restart development containers |
-| `make help` | Show all available commands |
-
-## Project Structure
-
-- `cmd/`: Application entrypoints
-- `internal/`: Private application code
-- `db/`: Database migrations and seeds
-
-## License
-
-Flexoo Academy
+---
+HIMASAKTA Developer Team

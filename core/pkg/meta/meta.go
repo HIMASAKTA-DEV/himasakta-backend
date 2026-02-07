@@ -165,4 +165,3 @@ func (m *Meta) SetSort(sort string) {
 func (m *Meta) SetSortBy(sortBy string) {
 	m.SortBy = sortBy
 }
-

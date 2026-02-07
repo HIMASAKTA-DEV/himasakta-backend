@@ -72,6 +72,7 @@ func NewAwsS3() AwsS3 {
 	}
 
 	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		o.UsePathStyle = true
 		if endpoint != "" {
 			o.BaseEndpoint = aws.String(endpoint)
 		}

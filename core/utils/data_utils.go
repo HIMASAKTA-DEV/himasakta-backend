@@ -40,4 +40,3 @@ func RandomData(length int) (string, error) {
 
 	return string(code), nil
 }
-

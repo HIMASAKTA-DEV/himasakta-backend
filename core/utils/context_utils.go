@@ -20,4 +20,3 @@ func GetUserIdFromCtx(ctx *gin.Context) (string, error) {
 
 	return userId, nil
 }
-

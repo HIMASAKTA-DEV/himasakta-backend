@@ -51,6 +51,21 @@ func NewFailed(msg string, err error, data ...any) Response {
 	return res
 }
 
+func NewFailedWithCode(statusCode int, msg string, err error, data ...any) Response {
+	res := Response{
+		StatusCode: statusCode,
+		Success:    false,
+		Message:    msg,
+		Error:      err.Error(),
+	}
+
+	if len(data) > 0 {
+		res.Data = data
+	}
+
+	return res
+}
+
 func (r Response) ChangeStatusCode(statusCode int) Response {
 	res := r
 	res.StatusCode = statusCode
@@ -66,4 +81,3 @@ func (r Response) SendWithAbort(ctx *gin.Context) {
 	sendStatus := r.StatusCode
 	ctx.AbortWithStatusJSON(sendStatus, r)
 }
-

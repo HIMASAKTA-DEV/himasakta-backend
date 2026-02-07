@@ -217,4 +217,3 @@ func addEmbeddedFields(embedType reflect.Type, ms *MetaService, tablePrefix stri
 		}
 	}
 }
-

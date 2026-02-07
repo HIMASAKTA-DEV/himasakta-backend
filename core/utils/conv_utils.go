@@ -35,4 +35,3 @@ func ExtractAcronym(s string) string {
 
 	return s[start+1 : end]
 }
-

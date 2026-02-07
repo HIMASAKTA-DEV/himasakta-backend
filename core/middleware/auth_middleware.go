@@ -6,7 +6,6 @@ import (
 	"strings"
 
 	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
-	myjwt "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/jwt"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
 	"github.com/gin-gonic/gin"
 )
@@ -44,7 +43,7 @@ func (m Middleware) OnlyAllow(roles ...string) gin.HandlerFunc {
 	}
 }
 
-func (m Middleware) Authenticate() gin.HandlerFunc {
+func (m Middleware) AuthMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		authHeader := ctx.GetHeader("Authorization")
 		if authHeader == "" {
@@ -61,7 +60,7 @@ func (m Middleware) Authenticate() gin.HandlerFunc {
 
 		authHeader = strings.Replace(authHeader, "Bearer ", "", -1)
 
-		idToken, err := myjwt.GetPayloadInsideToken(authHeader)
+		idToken, err := m.jwtService.GetClaims(authHeader)
 		if err != nil {
 			if err.Error() == "token expired" {
 				res := response.NewFailed(MESSAGE_FAILED_VERIFY_TOKEN, ErrTokenExpired)
@@ -77,10 +76,7 @@ func (m Middleware) Authenticate() gin.HandlerFunc {
 		ctx.Set("token", authHeader)
 		ctx.Set("payload", idToken)
 		ctx.Set("user_id", idToken["user_id"])
-		ctx.Set("email", idToken["email"])
-		ctx.Set("role", idToken["role"])
-		fmt.Println(idToken)
+		ctx.Set("username", idToken["username"])
 		ctx.Next()
 	}
 }
-
