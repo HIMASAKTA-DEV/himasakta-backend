@@ -8,6 +8,7 @@ func CORSMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		origin := ctx.Request.Header.Get("Origin")
 		if origin != "" {
+			// Allow all origins or specific ones
 			ctx.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		}
 

@@ -302,39 +302,108 @@
                 ]
             },
             {
-                section: 'Gallery', items: [
+                section: 'Cabinet Info', items: [
                     {
-                        method: 'GET', path: '/gallery', desc: 'Get all gallery items with pagination',
+                        method: 'GET', path: '/cabinet-info', desc: 'Get all cabinet info',
                         params: [
-                            { name: 'caption', ph: 'Search by caption...' },
+                            { name: 'period', ph: '2023-2024' },
                             { name: 'page', ph: '1' },
                             { name: 'limit', ph: '10' }
                         ],
-                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                        resp: '{\n  "success": true,\n  "message": "success get cabinet infos",\n  "data": [ ... ],\n  "meta": { ... }\n}'
                     },
                     {
-                        method: 'POST', path: '/gallery', desc: 'Upload gallery image file',
-                        isFileUpload: true,
-                        fileFields: [
-                            { name: 'image', type: 'file', label: 'Image File (max 50MB)' },
-                            { name: 'caption', type: 'text', label: 'Caption', ph: 'Enter caption...' },
-                            { name: 'category', type: 'text', label: 'Category', ph: 'logo, event, etc.' },
-                            { name: 'department_id', type: 'text', label: 'Department ID (UUID, optional)', ph: 'UUID...' }
+                        method: 'POST', path: '/cabinet-info', desc: 'Create cabinet info',
+                        body: '{\n  "visi": "Menjadi...",\n  "misi": "Melakukan...",\n  "tagline": "Bersinergi",\n  "period": "2023-2024",\n  "logo_id": "uuid-optional",\n  "is_active": true\n}',
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
+                        method: 'PUT', path: '/cabinet-info/:id', desc: 'Update cabinet info',
+                        hasParams: true,
+                        body: '{\n  "visi": "Updated...",\n  "is_active": false\n}',
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
+                        method: 'DELETE', path: '/cabinet-info/:id', desc: 'Delete cabinet info',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": null\n}'
+                    }
+                ]
+            },
+            {
+                section: 'Progenda', items: [
+                    {
+                        method: 'GET', path: '/progenda', desc: 'Get all progenda',
+                        params: [
+                            { name: 'search', ph: 'keyword' },
+                            { name: 'department_id', ph: 'uuid' },
+                            { name: 'name', ph: 'specific name' },
+                            { name: 'page', ph: '1' },
+                            { name: 'limit', ph: '10' }
                         ],
-                        resp: '{\n  "success": true,\n  "message": "success create gallery",\n  "data": { "id": "uuid", "image_url": "/uploads/filename.jpg" }\n}'
+                        resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}'
+                    },
+                    {
+                        method: 'POST', path: '/progenda', desc: 'Create progenda',
+                        body: '{\n  "name": "Program Kerja A",\n  "goal": "Tujuan...",\n  "description": "Deskripsi...",\n  "timeline": "Januari 2024",\n  "website_link": "https://...",\n  "department_id": "uuid"\n}',
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
+                        method: 'PUT', path: '/progenda/:id', desc: 'Update progenda',
+                        hasParams: true,
+                        body: '{\n  "name": "Updated Name",\n  "timeline": "Februari 2024"\n}',
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
+                        method: 'DELETE', path: '/progenda/:id', desc: 'Delete progenda',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": null\n}'
+                    }
+                ]
+            },
+            {
+                section: 'Monthly Event', items: [
+                    {
+                        method: 'GET', path: '/monthly-event', desc: 'Get all monthly events',
+                        params: [
+                            { name: 'title', ph: 'Event Title' },
+                            { name: 'page', ph: '1' },
+                            { name: 'limit', ph: '10' }
+                        ],
+                        resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}'
+                    },
+                    {
+                        method: 'GET', path: '/monthly-event/this-month', desc: 'Get events for current month',
+                        resp: '{\n  "success": true,\n  "data": [ ... ]\n}'
+                    },
+                    {
+                        method: 'POST', path: '/monthly-event', desc: 'Create monthly event',
+                        body: '{\n  "title": "Webinar Tech",\n  "description": "Belajar Go",\n  "month": "2024-02-01T00:00:00Z",\n  "link": "https://meet..."\n}',
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
+                        method: 'PUT', path: '/monthly-event/:id', desc: 'Update monthly event',
+                        hasParams: true,
+                        body: '{\n  "title": "Updated Title",\n  "description": "Updated Desc"\n}',
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
+                        method: 'DELETE', path: '/monthly-event/:id', desc: 'Delete monthly event',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": null\n}'
                     }
                 ]
             },
             {
                 section: 'Departments', items: [
                     {
-                        method: 'GET', path: '/department', desc: 'Get all departments with pagination',
+                        method: 'GET', path: '/department', desc: 'Get all departments',
                         params: [
                             { name: 'name', ph: 'Filter by name...' },
                             { name: 'page', ph: '1' },
                             { name: 'limit', ph: '10' }
                         ],
-                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
                     },
                     {
                         method: 'POST', path: '/department', desc: 'Create department',
@@ -346,31 +415,93 @@
             {
                 section: 'Members', items: [
                     {
-                        method: 'GET', path: '/member', desc: 'Get all members with pagination',
+                        method: 'GET', path: '/member', desc: 'Get all members',
                         params: [
                             { name: 'name', ph: 'Search member...' },
                             { name: 'page', ph: '1' },
                             { name: 'limit', ph: '10' }
                         ],
-                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
+                    },
+                    {
+                        method: 'POST', path: '/member', desc: 'Create member',
+                        body: '{\n  "nrp": "123456",\n  "name": "John Doe",\n  "role": "Staff",\n  "period": "2023-2024",\n  "department_id": "uuid",\n  "photo_id": "uuid"\n}',
+                        resp: '{\n  "success": true,\n  "data": {}\n}'
+                    },
+                    {
+                        method: 'PUT', path: '/member/:id', desc: 'Update member',
+                        hasParams: true,
+                        body: '{\n  "name": "Jane Doe",\n  "role": "Head"\n}',
+                        resp: '{\n  "success": true,\n  "data": {}\n}'
+                    },
+                    {
+                        method: 'DELETE', path: '/member/:id', desc: 'Delete member',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": null\n}'
                     }
                 ]
             },
             {
                 section: 'News', items: [
                     {
-                        method: 'GET', path: '/news', desc: 'Get news articles with pagination',
+                        method: 'GET', path: '/news', desc: 'Get news articles',
                         params: [
                             { name: 'search', ph: 'Keyword...' },
+                            { name: 'page', ph: '1' },
+                            { name: 'limit', ph: '10' }
+                        ],
+                        resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
+                    },
+                    {
+                        method: 'POST', path: '/news', desc: 'Create news article',
+                        body: '{\n  "title": "Event",\n  "content": "# Markdown",\n  "thumbnail_id": "UUID",\n  "tagline": "Coming soon",\n  "hashtags": "#event #tech",\n  "published_at": "2024-02-01T10:00:00Z"\n}',
+                        resp: '{\n  "success": true,\n  "data": {}\n}'
+                    },
+                    {
+                        method: 'PUT', path: '/news/:id', desc: 'Update news article',
+                        hasParams: true,
+                        body: '{\n  "title": "Updated Event",\n  "content": "Updated content..."\n}',
+                        resp: '{\n  "success": true,\n  "data": {}\n}'
+                    },
+                    {
+                        method: 'DELETE', path: '/news/:id', desc: 'Delete news article',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": null\n}'
+                    }
+                ]
+            },
+            {
+                section: 'Gallery', items: [
+                    {
+                        method: 'GET', path: '/gallery', desc: 'Get gallery items',
+                        params: [
+                            { name: 'caption', ph: 'Search by caption...' },
                             { name: 'page', ph: '1' },
                             { name: 'limit', ph: '10' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
                     },
                     {
-                        method: 'POST', path: '/news', desc: 'Create news article',
-                        body: '{\n  "title": "Event",\n  "content": "# Markdown",\n  "thumbnail_id": "UUID"\n}',
+                        method: 'POST', path: '/gallery', desc: 'Upload gallery image',
+                        isFileUpload: true,
+                        fileFields: [
+                            { name: 'image', type: 'file', label: 'Image File (max 50MB)' },
+                            { name: 'caption', type: 'text', label: 'Caption', ph: 'Enter caption...' },
+                            { name: 'category', type: 'text', label: 'Category', ph: 'logo, event, etc.' },
+                            { name: 'department_id', type: 'text', label: 'Department ID (UUID, optional)', ph: 'UUID...' }
+                        ],
+                        resp: '{\n  "success": true,\n  "message": "success create gallery",\n  "data": { "id": "uuid", "image_url": "/uploads/filename.jpg" }\n}'
+                    },
+                    {
+                        method: 'PUT', path: '/gallery/:id', desc: 'Update gallery item',
+                        hasParams: true,
+                        body: '{\n  "caption": "Updated caption",\n  "category": "new-category"\n}',
                         resp: '{\n  "success": true,\n  "data": {}\n}'
+                    },
+                    {
+                        method: 'DELETE', path: '/gallery/:id', desc: 'Delete gallery item',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": null\n}'
                     }
                 ]
             }
@@ -418,6 +549,14 @@
                                 '<input type="text" id="' + id + '-p-' + p.name + '" placeholder="' + p.ph + '">' +
                                 '</div>';
                         });
+                    }
+
+                    // Add ID input if path contains :id
+                    if (r.path.includes('/:id')) {
+                        html += '<div class="input-group">' +
+                            '<label>ID (UUID)</label>' +
+                            '<input type="text" id="' + id + '-path-id" placeholder="Enter UUID...">' +
+                            '</div>';
                     }
 
                     if (r.isFileUpload && r.fileFields) {
@@ -540,6 +679,20 @@
             dataBox.textContent = '';
 
             let url = API + path;
+
+            // Handle ID path replacement
+            if (path.includes('/:id')) {
+                const idInput = document.getElementById(id + '-path-id');
+                if (idInput && idInput.value) {
+                    url = url.replace(':id', idInput.value);
+                } else if (method !== 'POST' && path.includes(':id')) {
+                    // warn if ID is missing for ID-based routes
+                    status.textContent = 'Error: ID is required';
+                    status.className = 'response-status error';
+                    return;
+                }
+            }
+
             if (hasParams) {
                 const params = [];
                 document.querySelectorAll('[id^="' + id + '-p-"]').forEach(function (inp) {

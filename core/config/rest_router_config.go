@@ -26,6 +26,7 @@ func NewRouter(server *gin.Engine, s3 storage.AwsS3) *gin.Engine {
 
 	server.MaxMultipartMemory = 30 * 1024 * 1024
 	server.Use(customRecovery())
+	server.Use(middleware.SecurityMiddleware())
 	server.Use(middleware.CORSMiddleware())
 
 	server.GET("/api/ping", func(c *gin.Context) {
