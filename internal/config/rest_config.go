@@ -69,3 +69,7 @@ func (ap *RestConfig) Start() {
 	}
 	log.Println("server start on port ", serve)
 }
+
+func (ap *RestConfig) GetServer() *gin.Engine {
+	return ap.server
+}

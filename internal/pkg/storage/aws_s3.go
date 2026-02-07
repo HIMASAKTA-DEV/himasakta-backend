@@ -9,11 +9,11 @@ import (
 	"strings"
 	"sync"
 
+	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
 )
 
 type (
@@ -37,6 +37,7 @@ type (
 		client     *s3.Client
 		bucket     string
 		region     string
+		endpoint   string
 		actions    []action
 		isRollback bool
 	}
@@ -49,25 +50,38 @@ var (
 func NewAwsS3() AwsS3 {
 	bucket := os.Getenv("S3_BUCKET")
 	region := os.Getenv("AWS_REGION")
+	endpoint := os.Getenv("S3_ENDPOINT")
 
-	cfg, err := config.LoadDefaultConfig(context.TODO(),
+	var (
+		cfg aws.Config
+		err error
+	)
+
+	options := []func(*config.LoadOptions) error{
 		config.WithRegion(region),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
 			os.Getenv("AWS_ACCESS_KEY"),
 			os.Getenv("AWS_SECRET_KEY"),
 			"",
 		)),
-	)
+	}
+
+	cfg, err = config.LoadDefaultConfig(context.TODO(), options...)
 	if err != nil {
 		panic(fmt.Sprintf("failed to load AWS configuration: %v", err))
 	}
 
-	client := s3.NewFromConfig(cfg)
+	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
+		if endpoint != "" {
+			o.BaseEndpoint = aws.String(endpoint)
+		}
+	})
 
 	return &awsS3{
 		client:     client,
 		bucket:     bucket,
 		region:     region,
+		endpoint:   endpoint,
 		actions:    nil,
 		isRollback: false,
 	}
@@ -171,6 +185,14 @@ func (a *awsS3) DeleteFile(objectKey string) error {
 
 func (a *awsS3) GetObjectKeyFromLink(link string) string {
 	pref := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/", a.bucket, a.region)
+	if a.endpoint != "" {
+		// If using Supabase, public links usually follow this pattern or similar
+		// We allow S3_PUBLIC_URL_PREFIX for flexibility
+		customPref := os.Getenv("S3_PUBLIC_URL_PREFIX")
+		if customPref != "" {
+			pref = customPref
+		}
+	}
 
 	if !strings.HasPrefix(link, pref) {
 		return ""
@@ -181,7 +203,14 @@ func (a *awsS3) GetObjectKeyFromLink(link string) string {
 }
 
 func (a *awsS3) GetPublicLink(objectKey string) string {
+	// Default AWS S3 format
 	publicURL := fmt.Sprintf("https://%s.s3.%s.amazonaws.com/%s", a.bucket, a.region, objectKey)
+
+	// If a custom public URL prefix is provided
+	if customPref := os.Getenv("S3_PUBLIC_URL_PREFIX"); customPref != "" {
+		return fmt.Sprintf("%s%s", customPref, objectKey)
+	}
+
 	return publicURL
 }
 
@@ -230,4 +259,3 @@ func (a *awsS3) Rollback() {
 
 	a.Commit()
 }
-
