@@ -1,4 +1,4 @@
-package handler
+package api
 
 import (
 	"net/http"
@@ -14,6 +14,7 @@ func init() {
 	RestApi = config.NewRest()
 }
 
+// Handler is the entrypoint for Vercel
 func Handler(w http.ResponseWriter, r *http.Request) {
 	RestApi.GetServer().ServeHTTP(w, r)
 }
