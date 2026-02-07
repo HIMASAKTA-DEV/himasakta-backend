@@ -313,6 +313,11 @@
                         resp: '{\n  "success": true,\n  "message": "success get cabinet infos",\n  "data": [ ... ],\n  "meta": { ... }\n}'
                     },
                     {
+                        method: 'GET', path: '/cabinet-info/:id', desc: 'Get cabinet info by ID',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
                         method: 'POST', path: '/cabinet-info', desc: 'Create cabinet info',
                         body: '{\n  "visi": "Menjadi...",\n  "misi": "Melakukan...",\n  "tagline": "Bersinergi",\n  "period": "2023-2024",\n  "logo_id": "uuid-optional",\n  "is_active": true\n}',
                         resp: '{\n  "success": true,\n  "data": { ... }\n}'
@@ -342,6 +347,11 @@
                             { name: 'limit', ph: '10' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}'
+                    },
+                    {
+                        method: 'GET', path: '/progenda/:id', desc: 'Get progenda by ID',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
                     },
                     {
                         method: 'POST', path: '/progenda', desc: 'Create progenda',
@@ -377,6 +387,11 @@
                         resp: '{\n  "success": true,\n  "data": [ ... ]\n}'
                     },
                     {
+                        method: 'GET', path: '/monthly-event/:id', desc: 'Get monthly event by ID',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
                         method: 'POST', path: '/monthly-event', desc: 'Create monthly event',
                         body: '{\n  "title": "Webinar Tech",\n  "description": "Belajar Go",\n  "month": "2024-02-01T00:00:00Z",\n  "link": "https://meet..."\n}',
                         resp: '{\n  "success": true,\n  "data": { ... }\n}'
@@ -406,6 +421,11 @@
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
                     },
                     {
+                        method: 'GET', path: '/department/:id', desc: 'Get department by ID',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
                         method: 'POST', path: '/department', desc: 'Create department',
                         body: '{\n  "name": "IT",\n  "description": "...",\n  "logo_id": "UUID"\n}',
                         resp: '{\n  "success": true,\n  "data": {}\n}'
@@ -422,6 +442,11 @@
                             { name: 'limit', ph: '10' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
+                    },
+                    {
+                        method: 'GET', path: '/member/:id', desc: 'Get member by ID',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
                     },
                     {
                         method: 'POST', path: '/member', desc: 'Create member',
@@ -453,6 +478,11 @@
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
                     },
                     {
+                        method: 'GET', path: '/news/:id', desc: 'Get news article by ID',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
                         method: 'POST', path: '/news', desc: 'Create news article',
                         body: '{\n  "title": "Event",\n  "content": "# Markdown",\n  "thumbnail_id": "UUID",\n  "tagline": "Coming soon",\n  "hashtags": "#event #tech",\n  "published_at": "2024-02-01T10:00:00Z"\n}',
                         resp: '{\n  "success": true,\n  "data": {}\n}'
@@ -480,6 +510,11 @@
                             { name: 'limit', ph: '10' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
+                    },
+                    {
+                        method: 'GET', path: '/gallery/:id', desc: 'Get gallery item by ID',
+                        hasParams: true,
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
                     },
                     {
                         method: 'POST', path: '/gallery', desc: 'Upload gallery image',

@@ -72,13 +72,13 @@ go run main.go --seeder
 - `POST /api/v1/uploads`: Upload file to S3. Returns `url` and `path`.
 
 ### CMS Entities (All support standard CRUD)
-- `/api/v1/gallery`: Centralized media assets. Query by `?caption=`.
-- `/api/v1/cabinet-info`: Cabinet details. Query by `?period=`.
-- `/api/v1/departments`: Departments. Query by `?name=`.
-- `/api/v1/members`: Members. Query by `?name=`.
-- `/api/v1/progenda`: Programs/Agenda. Query by `?name=`, `?search=`, `?department_id=`.
-- `/api/v1/monthly-events`: Events. Query by `?title=`.
-- `/api/v1/news`: News. Query by `?title=`, `?search=`, `?category=`.
+- `/api/v1/gallery`: Centralized media assets. Query by `?caption=`. Get by ID: `/api/v1/gallery/:id`.
+- `/api/v1/cabinet-info`: Cabinet details. Query by `?period=`. Get by ID: `/api/v1/cabinet-info/:id`.
+- `/api/v1/departments`: Departments. Query by `?name=`. Get by ID: `/api/v1/departments/:id`.
+- `/api/v1/members`: Members. Query by `?name=`. Get by ID: `/api/v1/members/:id`.
+- `/api/v1/progenda`: Programs/Agenda. Query by `?name=`, `?search=`, `?department_id=`. Get by ID: `/api/v1/progenda/:id`.
+- `/api/v1/monthly-events`: Events. Query by `?title=`. Get by ID: `/api/v1/monthly-events/:id`.
+- `/api/v1/news`: News. Query by `?title=`, `?search=`, `?category=`. Get by ID: `/api/v1/news/:id`.
 
 ## Data Structure (Core Entities)
 - All entities use **UUID** as Primary Key.
