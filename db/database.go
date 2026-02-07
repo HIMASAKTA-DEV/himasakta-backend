@@ -49,7 +49,7 @@ func New() *gorm.DB {
 	}), &gorm.Config{})
 	if err != nil {
 		mylog.Errorf("Failed connect to database: %v", err)
-		mylog.Panicf("Failed connect to database")
+		return nil
 	}
 
 	mylog.Infof("Success connect to database\n")

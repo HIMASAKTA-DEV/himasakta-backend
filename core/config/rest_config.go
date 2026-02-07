@@ -6,12 +6,12 @@ import (
 	"log"
 	"os"
 
-	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/controller"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/routes"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/service"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/middleware"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
 	"github.com/gin-gonic/gin"
 )
 
@@ -19,8 +19,11 @@ type RestConfig struct {
 	server *gin.Engine
 }
 
-func NewRest() RestConfig {
+func NewRest() (RestConfig, error) {
 	db := db.New()
+	if db == nil {
+		return RestConfig{}, fmt.Errorf("database connection failed")
+	}
 	app := gin.Default()
 	server := NewRouter(app)
 	middleware := middleware.New(db)
@@ -53,7 +56,7 @@ func NewRest() RestConfig {
 
 	return RestConfig{
 		server: server,
-	}
+	}, nil
 }
 
 func (ap *RestConfig) Start() {

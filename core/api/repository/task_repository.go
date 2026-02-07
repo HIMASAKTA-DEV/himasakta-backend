@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
@@ -31,6 +32,10 @@ func (r *taskRepository) Create(ctx context.Context, tx *gorm.DB, task entity.Ta
 		tx = r.db
 	}
 
+	if tx == nil {
+		return task, fmt.Errorf("database connection is nil")
+	}
+
 	for _, preload := range preloads {
 		tx = tx.Preload(preload)
 	}
@@ -45,6 +50,10 @@ func (r *taskRepository) Create(ctx context.Context, tx *gorm.DB, task entity.Ta
 func (r *taskRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, preloads ...string) ([]entity.Task, meta.Meta, error) {
 	if tx == nil {
 		tx = r.db
+	}
+
+	if tx == nil {
+		return nil, metaReq, fmt.Errorf("database connection is nil")
 	}
 
 	for _, preload := range preloads {
@@ -68,6 +77,10 @@ func (r *taskRepository) GetById(ctx context.Context, tx *gorm.DB, taskId string
 		tx = r.db
 	}
 
+	if tx == nil {
+		return entity.Task{}, fmt.Errorf("database connection is nil")
+	}
+
 	for _, preload := range preloads {
 		tx = tx.Preload(preload)
 	}
@@ -85,6 +98,10 @@ func (r *taskRepository) Update(ctx context.Context, tx *gorm.DB, task entity.Ta
 		tx = r.db
 	}
 
+	if tx == nil {
+		return entity.Task{}, fmt.Errorf("database connection is nil")
+	}
+
 	for _, preload := range preloads {
 		tx = tx.Preload(preload)
 	}
@@ -99,6 +116,10 @@ func (r *taskRepository) Update(ctx context.Context, tx *gorm.DB, task entity.Ta
 func (r *taskRepository) Delete(ctx context.Context, tx *gorm.DB, task entity.Task) error {
 	if tx == nil {
 		tx = r.db
+	}
+
+	if tx == nil {
+		return fmt.Errorf("database connection is nil")
 	}
 
 	if err := tx.WithContext(ctx).Delete(&task).Error; err != nil {
