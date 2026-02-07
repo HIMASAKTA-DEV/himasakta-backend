@@ -25,7 +25,7 @@ COPY --from=builder /app/main .
 
 COPY --from=builder /app/assets/image ./assets/image
 
-COPY --from=builder /app/internal/pkg/email/template ./internal/pkg/email/template
+COPY --from=builder /app/core/pkg/email/template ./core/pkg/email/template
 
 EXPOSE 8888
 

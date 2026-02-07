@@ -3,7 +3,7 @@ package handler
 import (
 	"net/http"
 
-	"github.com/Flexoo-Academy/Golang-Template/internal/config"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/config"
 )
 
 var (

@@ -5,9 +5,9 @@ import (
 
 	"os"
 
-	"github.com/Flexoo-Academy/Golang-Template/internal/entity"
-	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
-	"github.com/Flexoo-Academy/Golang-Template/internal/utils"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"gorm.io/gorm"
 )
 

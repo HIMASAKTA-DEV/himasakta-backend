@@ -7,10 +7,10 @@ import (
 	"os/exec"
 	"runtime"
 
-	"github.com/Flexoo-Academy/Golang-Template/db"
-	"github.com/Flexoo-Academy/Golang-Template/db/migrations"
-	seeders "github.com/Flexoo-Academy/Golang-Template/db/seeder"
-	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/db/migrations"
+	seeders "github.com/HIMASAKTA-DEV/himasakta-backend/db/seeder"
+	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"gorm.io/gorm"
 )
 

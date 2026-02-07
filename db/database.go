@@ -5,7 +5,7 @@ import (
 
 	"os"
 
-	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
+	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )

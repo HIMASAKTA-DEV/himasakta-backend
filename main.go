@@ -3,8 +3,8 @@ package main
 import (
 	"os"
 
-	"github.com/Flexoo-Academy/Golang-Template/cmd"
-	"github.com/Flexoo-Academy/Golang-Template/internal/config"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/cmd"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/config"
 	"github.com/joho/godotenv"
 )
 

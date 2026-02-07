@@ -3,8 +3,8 @@ package seeders
 import (
 	"fmt"
 
-	"github.com/Flexoo-Academy/Golang-Template/db/seeder/seeds"
-	mylog "github.com/Flexoo-Academy/Golang-Template/internal/pkg/logger"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/db/seeder/seeds"
+	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"gorm.io/gorm"
 )
 
