@@ -57,11 +57,22 @@ func NewAwsS3() AwsS3 {
 		err error
 	)
 
+	// Try custom env vars first, then fallback to standard AWS SDK env vars
+	accessKey := os.Getenv("AWS_ACCESS_KEY")
+	if accessKey == "" {
+		accessKey = os.Getenv("AWS_ACCESS_KEY_ID")
+	}
+
+	secretKey := os.Getenv("AWS_SECRET_KEY")
+	if secretKey == "" {
+		secretKey = os.Getenv("AWS_SECRET_ACCESS_KEY")
+	}
+
 	options := []func(*config.LoadOptions) error{
 		config.WithRegion(region),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
-			os.Getenv("AWS_ACCESS_KEY"),
-			os.Getenv("AWS_SECRET_KEY"),
+			accessKey,
+			secretKey,
 			"",
 		)),
 	}
