@@ -1,12 +1,14 @@
 package controller
 
 import (
+	"errors"
+
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
 	"github.com/gin-gonic/gin"
 )
 
 type NrpWhitelistController interface {
-	GetWhitelist(ctx *gin.Context)
+	CheckWhitelist(ctx *gin.Context)
 }
 
 type nrpWhitelistController struct{}
@@ -15,7 +17,18 @@ func NewNrpWhitelist() NrpWhitelistController {
 	return &nrpWhitelistController{}
 }
 
-func (c *nrpWhitelistController) GetWhitelist(ctx *gin.Context) {
+type CheckNrpRequest struct {
+	Nrp string `json:"nrp" binding:"required"`
+}
+
+func (c *nrpWhitelistController) CheckWhitelist(ctx *gin.Context) {
+	var req CheckNrpRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		res := response.NewFailed("invalid request body", err, nil)
+		ctx.JSON(400, res)
+		return
+	}
+
 	// Hardcoded whitelist for demo purposes
 	whitelist := []string{
 		"5025211014",
@@ -26,6 +39,15 @@ func (c *nrpWhitelistController) GetWhitelist(ctx *gin.Context) {
 		"5025201088",
 	}
 
-	res := response.NewSuccess("success get whitelist", whitelist)
-	ctx.JSON(200, res)
+	for _, n := range whitelist {
+		if n == req.Nrp {
+			res := response.NewSuccess("NRP is allowed", nil)
+			ctx.JSON(200, res)
+			return
+		}
+	}
+
+	// If not found
+	res := response.NewFailedWithCode(403, "NRP is not allowed", errors.New("nrp validation failed"))
+	ctx.JSON(403, res)
 }

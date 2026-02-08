@@ -8,6 +8,6 @@ import (
 func NrpWhitelist(route *gin.Engine, controller controller.NrpWhitelistController) {
 	routes := route.Group("/api/v1/nrp-whitelist")
 	{
-		routes.GET("", controller.GetWhitelist)
+		routes.POST("", controller.CheckWhitelist)
 	}
 }

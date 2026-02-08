@@ -295,8 +295,9 @@
             {
                 section: 'General', items: [
                     {
-                        method: 'GET', path: '/nrp-whitelist', desc: 'Get allowed NRPs (Demo)',
-                        resp: '{\n  "success": true,\n  "message": "success get whitelist",\n  "data": [\n    "5025211014",\n    "..."\n  ]\n}'
+                        method: 'POST', path: '/nrp-whitelist', desc: 'Check if NRP is allowed (Demo)',
+                        body: '{\n  "nrp": "5025211014"\n}',
+                        resp: '{\n  "success": true,\n  "message": "NRP is allowed",\n  "data": null\n}'
                     }
                 ]
             },
