@@ -70,11 +70,14 @@ func NewAwsS3() AwsS3 {
 
 	options := []func(*config.LoadOptions) error{
 		config.WithRegion(region),
-		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
+	}
+
+	if accessKey != "" && secretKey != "" {
+		options = append(options, config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
 			accessKey,
 			secretKey,
 			"",
-		)),
+		)))
 	}
 
 	cfg, err = config.LoadDefaultConfig(context.TODO(), options...)
@@ -99,7 +102,7 @@ func NewAwsS3() AwsS3 {
 	}
 }
 
-// Gunakan untuk mengupload file ke s3 dimana defaultnya mengizinkan semua jenis mimetypa
+// Gunakan untuk mengupload file ke s3 dimana defaultnya mengizinkan semua jenis mimetype
 func (a *awsS3) UploadFile(filename string, f *multipart.FileHeader, folderName string, mv ...string) (string, error) {
 	file, err := f.Open()
 	if err != nil {
@@ -143,7 +146,7 @@ func (a *awsS3) UploadFile(filename string, f *multipart.FileHeader, folderName 
 	return objectKey, nil
 }
 
-// Gunakan untuk mengupdate file ke s3 dimana defaultnya mengizinkan semua jenis mimetypa
+// Gunakan untuk mengupdate file ke s3 dimana defaultnya mengizinkan semua jenis mimetype
 func (a *awsS3) UpdateFile(objectKey string, f *multipart.FileHeader, mv ...string) (string, error) {
 	file, err := f.Open()
 	if err != nil {
