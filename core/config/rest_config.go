@@ -79,6 +79,9 @@ func NewRest() (RestConfig, error) {
 	routes.MonthlyEvent(server, monthlyEventController, m)
 	routes.News(server, newsController, m)
 
+	nrpWhitelistController := controller.NewNrpWhitelist()
+	routes.NrpWhitelist(server, nrpWhitelistController)
+
 	return RestConfig{
 		server: server,
 	}, nil

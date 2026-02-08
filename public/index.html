@@ -293,6 +293,15 @@
         const API = '/api/v1';
         const routes = [
             {
+                section: 'General', items: [
+                    {
+                        method: 'POST', path: '/nrp-whitelist', desc: 'Check if NRP is allowed (Demo)',
+                        body: '{\n  "nrp": "5025211014"\n}',
+                        resp: '{\n  "success": true,\n  "message": "NRP is allowed",\n  "data": null\n}'
+                    }
+                ]
+            },
+            {
                 section: 'Authentication', items: [
                     {
                         method: 'POST', path: '/auth/login', desc: 'Generate JWT token',
