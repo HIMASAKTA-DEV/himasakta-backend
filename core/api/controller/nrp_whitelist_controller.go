@@ -26,6 +26,6 @@ func (c *nrpWhitelistController) GetWhitelist(ctx *gin.Context) {
 		"5025201088",
 	}
 
-	res := response.BuildResponse("success get whitelist", whitelist)
+	res := response.NewSuccess("success get whitelist", whitelist)
 	ctx.JSON(200, res)
 }
