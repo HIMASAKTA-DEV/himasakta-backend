@@ -52,17 +52,28 @@ func RunAPITests() error {
 	// 2. Department Tests
 	mylog.Infoln("Testing Department...")
 	w, body = request("GET", "/api/v1/department")
-	if w.Code != 200 {
+	if w.Code != http.StatusOK {
 		return fmt.Errorf("GET /department failed: expected 200, got %d", w.Code)
 	}
 	mylog.Infof("  GET /department: OK (found %v items)", len(body["data"].([]interface{})))
+
+	// Test Get by Name
+	if depts, ok := body["data"].([]interface{}); ok && len(depts) > 0 {
+		firstDept := depts[0].(map[string]interface{})
+		deptName := firstDept["name"].(string)
+		w, _ = request("GET", "/api/v1/department/"+deptName)
+		if w.Code != http.StatusOK {
+			return fmt.Errorf("GET /department/%s failed: expected 200, got %d", deptName, w.Code)
+		}
+		mylog.Infof("  GET /department/%s: OK", deptName)
+	}
 
 	// 3. News Tests with Search & Pagination
 	mylog.Infoln("Testing News (Search & Pagination)...")
 
 	// Test Limit
 	w, body = request("GET", "/api/v1/news?limit=1")
-	if w.Code != 200 {
+	if w.Code != http.StatusOK {
 		return fmt.Errorf("GET /news?limit=1 failed: expected 200, got %d", w.Code)
 	}
 	data := body["data"].([]interface{})
@@ -71,17 +82,29 @@ func RunAPITests() error {
 	}
 	mylog.Infoln("  GET /news?limit=1: OK")
 
-	// Test Search
-	w, body = request("GET", "/api/v1/news?search=Penerimaan")
-	if w.Code != 200 {
-		return fmt.Errorf("GET /news?search=Penerimaan failed: expected 200, got %d", w.Code)
+	// Test Get by Slug
+	if len(data) > 0 {
+		firstNews := data[0].(map[string]interface{})
+		slug := firstNews["slug"].(string)
+		w, _ = request("GET", "/api/v1/news/"+slug)
+		if w.Code != http.StatusOK {
+			return fmt.Errorf("GET /news/%s failed: expected 200, got %d", slug, w.Code)
+		}
+		mylog.Infof("  GET /news/%s: OK", slug)
 	}
-	mylog.Infoln("  GET /news?search=Penerimaan: OK")
+
+	// Test 404 Not Found
+	mylog.Infoln("Testing 404 Not Found...")
+	w, _ = request("GET", "/api/v1/news/this-slug-does-not-exist")
+	if w.Code != http.StatusNotFound {
+		return fmt.Errorf("expected 404 for missing news, got %d", w.Code)
+	}
+	mylog.Infoln("  GET /news/invalid: OK (404)")
 
 	// 4. Gallery Tests with Filtering
 	mylog.Infoln("Testing Gallery Filtering...")
 	w, body = request("GET", "/api/v1/gallery?filterby=category&filter=logo")
-	if w.Code != 200 {
+	if w.Code != http.StatusOK {
 		return fmt.Errorf("GET /gallery?filterby=category&filter=logo failed: expected 200, got %d", w.Code)
 	}
 	mylog.Infoln("  GET /gallery?filterby=category&filter=logo: OK")

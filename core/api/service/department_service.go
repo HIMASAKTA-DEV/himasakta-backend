@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type DepartmentService interface {
@@ -43,11 +46,23 @@ func (s *departmentService) GetAll(ctx context.Context, metaReq meta.Meta, name 
 }
 
 func (s *departmentService) GetByIdContent(ctx context.Context, idOrName string) (entity.Department, error) {
-	uid, err := uuid.Parse(idOrName)
-	if err == nil {
-		return s.repo.GetById(ctx, nil, uid)
+	var d entity.Department
+	var err error
+
+	uid, parseErr := uuid.Parse(idOrName)
+	if parseErr == nil {
+		d, err = s.repo.GetById(ctx, nil, uid)
+	} else {
+		d, err = s.repo.GetByName(ctx, nil, idOrName)
 	}
-	return s.repo.GetByName(ctx, nil, idOrName)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return d, myerror.ErrNotFound
+		}
+		return d, err
+	}
+	return d, nil
 }
 
 func (s *departmentService) GetById(ctx context.Context, id string) (entity.Department, error) {
