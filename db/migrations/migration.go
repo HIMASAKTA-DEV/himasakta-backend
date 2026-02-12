@@ -25,6 +25,7 @@ func Migrate(db *gorm.DB) error {
 		&entity.Progenda{},
 		&entity.MonthlyEvent{},
 		&entity.News{},
+		&entity.NrpWhitelist{},
 	); err != nil {
 		return err
 	}
