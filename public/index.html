@@ -324,6 +324,10 @@
                         resp: '{\n  "success": true,\n  "message": "success get cabinet infos",\n  "data": [ ... ],\n  "meta": { ... }\n}'
                     },
                     {
+                        method: 'GET', path: '/current-cabinet', desc: 'Get current active cabinet',
+                        resp: '{\n  "success": true,\n  "data": { ... }\n}'
+                    },
+                    {
                         method: 'GET', path: '/cabinet-info/:id', desc: 'Get cabinet info by ID',
                         hasParams: true,
                         resp: '{\n  "success": true,\n  "data": { ... }\n}'
@@ -617,6 +621,22 @@
                             '</div>';
                     }
 
+                    // Add Name input if path contains :name
+                    if (r.path.includes('/:name')) {
+                        html += '<div class="input-group">' +
+                            '<label>Name</label>' +
+                            '<input type="text" id="' + id + '-path-name" placeholder="Enter name (e.g. IT)...">' +
+                            '</div>';
+                    }
+
+                    // Add Slug input if path contains :slug
+                    if (r.path.includes('/:slug')) {
+                        html += '<div class="input-group">' +
+                            '<label>Slug</label>' +
+                            '<input type="text" id="' + id + '-path-slug" placeholder="Enter title-slug...">' +
+                            '</div>';
+                    }
+
                     if (r.isFileUpload && r.fileFields) {
                         r.fileFields.forEach(function (f) {
                             if (f.type === 'file') {
@@ -738,14 +758,35 @@
 
             let url = API + path;
 
-            // Handle ID path replacement
+            // Handle path parameter replacements
             if (path.includes('/:id')) {
                 const idInput = document.getElementById(id + '-path-id');
                 if (idInput && idInput.value) {
                     url = url.replace(':id', idInput.value);
                 } else if (method !== 'POST' && path.includes(':id')) {
-                    // warn if ID is missing for ID-based routes
                     status.textContent = 'Error: ID is required';
+                    status.className = 'response-status error';
+                    return;
+                }
+            }
+
+            if (path.includes('/:name')) {
+                const nameInput = document.getElementById(id + '-path-name');
+                if (nameInput && nameInput.value) {
+                    url = url.replace(':name', nameInput.value);
+                } else {
+                    status.textContent = 'Error: Name is required';
+                    status.className = 'response-status error';
+                    return;
+                }
+            }
+
+            if (path.includes('/:slug')) {
+                const slugInput = document.getElementById(id + '-path-slug');
+                if (slugInput && slugInput.value) {
+                    url = url.replace(':slug', slugInput.value);
+                } else {
+                    status.textContent = 'Error: Slug is required';
                     status.className = 'response-status error';
                     return;
                 }
