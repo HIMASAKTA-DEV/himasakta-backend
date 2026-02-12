@@ -8,13 +8,14 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/google/uuid"
 )
 
 type NewsService interface {
 	Create(ctx context.Context, req dto.CreateNewsRequest) (entity.News, error)
 	GetAll(ctx context.Context, metaReq meta.Meta, search string, category string, title string) ([]entity.News, meta.Meta, error)
-	GetById(ctx context.Context, id string) (entity.News, error)
+	GetBySlug(ctx context.Context, slugOrId string) (entity.News, error)
 	Update(ctx context.Context, id string, req dto.UpdateNewsRequest) (entity.News, error)
 	Delete(ctx context.Context, id string) error
 	GetAutocompletion(ctx context.Context, query string) ([]string, error)
@@ -31,6 +32,7 @@ func NewNews(repo repository.NewsRepository) NewsService {
 func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (entity.News, error) {
 	return s.repo.Create(ctx, nil, entity.News{
 		Title:       req.Title,
+		Slug:        utils.ToSlug(req.Title),
 		Tagline:     req.Tagline,
 		Hashtags:    req.Hashtags,
 		Content:     req.Content,
@@ -51,6 +53,14 @@ func (s *newsService) GetAutocompletion(ctx context.Context, query string) ([]st
 	return s.repo.GetAutocompletion(ctx, query)
 }
 
+func (s *newsService) GetBySlug(ctx context.Context, slugOrId string) (entity.News, error) {
+	uid, err := uuid.Parse(slugOrId)
+	if err == nil {
+		return s.repo.GetById(ctx, nil, uid)
+	}
+	return s.repo.GetBySlug(ctx, nil, slugOrId)
+}
+
 func (s *newsService) GetById(ctx context.Context, id string) (entity.News, error) {
 	uid, _ := uuid.Parse(id)
 	return s.repo.GetById(ctx, nil, uid)
@@ -65,6 +75,7 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 
 	if req.Title != "" {
 		n.Title = req.Title
+		n.Slug = utils.ToSlug(req.Title)
 	}
 	n.Tagline = req.Tagline
 	n.Hashtags = req.Hashtags

@@ -317,7 +317,9 @@
                         params: [
                             { name: 'period', ph: '2023-2024' },
                             { name: 'page', ph: '1' },
-                            { name: 'limit', ph: '10' }
+                            { name: 'limit', ph: '10' },
+                            { name: 'filter_by', ph: 'field (e.g. period)' },
+                            { name: 'filter', ph: 'value' }
                         ],
                         resp: '{\n  "success": true,\n  "message": "success get cabinet infos",\n  "data": [ ... ],\n  "meta": { ... }\n}'
                     },
@@ -353,7 +355,9 @@
                             { name: 'department_id', ph: 'uuid' },
                             { name: 'name', ph: 'specific name' },
                             { name: 'page', ph: '1' },
-                            { name: 'limit', ph: '10' }
+                            { name: 'limit', ph: '10' },
+                            { name: 'filter_by', ph: 'field' },
+                            { name: 'filter', ph: 'value' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}'
                     },
@@ -387,7 +391,9 @@
                         params: [
                             { name: 'title', ph: 'Event Title' },
                             { name: 'page', ph: '1' },
-                            { name: 'limit', ph: '10' }
+                            { name: 'limit', ph: '10' },
+                            { name: 'filter_by', ph: 'field' },
+                            { name: 'filter', ph: 'value' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}'
                     },
@@ -425,12 +431,14 @@
                         params: [
                             { name: 'name', ph: 'Filter by name...' },
                             { name: 'page', ph: '1' },
-                            { name: 'limit', ph: '10' }
+                            { name: 'limit', ph: '10' },
+                            { name: 'filter_by', ph: 'field' },
+                            { name: 'filter', ph: 'value' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
                     },
                     {
-                        method: 'GET', path: '/department/:id', desc: 'Get department by ID',
+                        method: 'GET', path: '/department/:name', desc: 'Get department by Name or ID',
                         hasParams: true,
                         resp: '{\n  "success": true,\n  "data": { ... }\n}'
                     },
@@ -448,7 +456,9 @@
                         params: [
                             { name: 'name', ph: 'Search member...' },
                             { name: 'page', ph: '1' },
-                            { name: 'limit', ph: '10' }
+                            { name: 'limit', ph: '10' },
+                            { name: 'filter_by', ph: 'field' },
+                            { name: 'filter', ph: 'value' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
                     },
@@ -482,12 +492,14 @@
                         params: [
                             { name: 'search', ph: 'Keyword...' },
                             { name: 'page', ph: '1' },
-                            { name: 'limit', ph: '10' }
+                            { name: 'limit', ph: '10' },
+                            { name: 'filter_by', ph: 'field' },
+                            { name: 'filter', ph: 'value' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}'
                     },
                     {
-                        method: 'GET', path: '/news/:id', desc: 'Get news article by ID',
+                        method: 'GET', path: '/news/:slug', desc: 'Get news article by Slug or ID',
                         hasParams: true,
                         resp: '{\n  "success": true,\n  "data": { ... }\n}'
                     },
@@ -516,7 +528,9 @@
                         params: [
                             { name: 'caption', ph: 'Search by caption...' },
                             { name: 'page', ph: '1' },
-                            { name: 'limit', ph: '10' }
+                            { name: 'limit', ph: '10' },
+                            { name: 'filter_by', ph: 'field (category, etc)' },
+                            { name: 'filter', ph: 'value' }
                         ],
                         resp: '{\n  "success": true,\n  "data": [],\n  "meta": { "page": 1, "limit": 10, "total": 0 }\n}'
                     },

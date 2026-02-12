@@ -15,3 +15,7 @@ type Progenda struct {
 	DepartmentId *uuid.UUID  `gorm:"type:uuid" json:"department_id"`
 	Department   *Department `gorm:"foreignKey:DepartmentId" json:"department"`
 }
+
+func (Progenda) TableName() string {
+	return "progendas"
+}

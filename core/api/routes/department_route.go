@@ -10,7 +10,7 @@ func Department(app *gin.Engine, c controller.DepartmentController, m middleware
 	r := app.Group("/api/v1/department")
 	{
 		r.GET("", c.GetAll)
-		r.GET("/:id", c.GetById)
+		r.GET("/:name", c.GetById)
 
 		p := r.Group("")
 		p.Use(m.AuthMiddleware())

@@ -7,6 +7,8 @@ import (
 )
 
 func CabinetInfo(app *gin.Engine, c controller.CabinetInfoController, m middleware.Middleware) {
+	app.GET("/api/v1/current-cabinet", c.GetCurrentCabinet)
+
 	r := app.Group("/api/v1/cabinet-info")
 	{
 		r.GET("", c.GetAll)

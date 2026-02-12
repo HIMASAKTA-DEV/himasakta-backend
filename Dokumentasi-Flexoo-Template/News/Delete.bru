@@ -1,0 +1,15 @@
+meta {
+  name: Delete News
+  type: http
+  seq: 5
+}
+
+delete {
+  url: {{host}}/api/v1/news/:id
+  body: none
+  auth: inherit
+}
+
+params:path {
+  id: 
+}

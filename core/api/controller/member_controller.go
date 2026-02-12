@@ -35,7 +35,7 @@ func (c *memberController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create member", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("success create member", res).Send(ctx)
+	response.NewSuccessCreated("success create member", res).Send(ctx)
 }
 
 func (c *memberController) GetAll(ctx *gin.Context) {

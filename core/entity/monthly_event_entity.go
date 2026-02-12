@@ -16,3 +16,7 @@ type MonthlyEvent struct {
 	Month       time.Time  `gorm:"type:date;not null" json:"month"`
 	Link        string     `gorm:"type:varchar(255)" json:"link"`
 }
+
+func (MonthlyEvent) TableName() string {
+	return "monthly_events"
+}

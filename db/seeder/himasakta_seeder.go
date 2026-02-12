@@ -32,12 +32,14 @@ func HimasaktaSeeder(db *gorm.DB) error {
 
 	// 2. Seed Cabinet Info
 	cabinet := entity.CabinetInfo{
-		Id:      uuid.New(),
-		Visi:    "Menjadi himpunan yang progresif.",
-		Misi:    "Membangun sinergi antar mahasiswa.",
-		Tagline: "Sinergi dalam Aksi",
-		Period:  "2024",
-		LogoId:  &gallery1.Id,
+		Id:          uuid.New(),
+		Visi:        "Menjadi himpunan yang progresif.",
+		Misi:        "Membangun sinergi antar mahasiswa.",
+		Description: "Himpunan Mahasiswa Informatika yang bertujuan untuk mengembangkan kompetensi dan karakter mahasiswa.",
+		Tagline:     "Sinergi dalam Aksi",
+		PeriodStart: "2024-01-01",
+		PeriodEnd:   "2024-12-31",
+		LogoId:      &gallery1.Id,
 	}
 	if err := db.Create(&cabinet).Error; err != nil {
 		return err
@@ -49,6 +51,7 @@ func HimasaktaSeeder(db *gorm.DB) error {
 		Name:        "Kaderisasi",
 		Description: "Departemen yang berfokus pada pengembangan sumber daya mahasiswa.",
 		LogoId:      &gallery1.Id,
+		BankRefLink: "https://linktr.ee/himasakta",
 	}
 	if err := db.Create(&dept).Error; err != nil {
 		return err

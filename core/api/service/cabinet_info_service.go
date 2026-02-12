@@ -12,7 +12,8 @@ import (
 
 type CabinetInfoService interface {
 	Create(ctx context.Context, req dto.CreateCabinetInfoRequest) (entity.CabinetInfo, error)
-	GetAll(ctx context.Context, metaReq meta.Meta, period string) ([]entity.CabinetInfo, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta) ([]entity.CabinetInfo, meta.Meta, error)
+	GetCurrentCabinet(ctx context.Context) (entity.CabinetInfo, error)
 	GetById(ctx context.Context, id string) (entity.CabinetInfo, error)
 	Update(ctx context.Context, id string, req dto.UpdateCabinetInfoRequest) (entity.CabinetInfo, error)
 	Delete(ctx context.Context, id string) error
@@ -28,17 +29,23 @@ func NewCabinetInfo(repo repository.CabinetInfoRepository) CabinetInfoService {
 
 func (s *cabinetInfoService) Create(ctx context.Context, req dto.CreateCabinetInfoRequest) (entity.CabinetInfo, error) {
 	return s.repo.Create(ctx, nil, entity.CabinetInfo{
-		Visi:     req.Visi,
-		Misi:     req.Misi,
-		Tagline:  req.Tagline,
-		Period:   req.Period,
-		LogoId:   req.LogoId,
-		IsActive: req.IsActive,
+		Visi:        req.Visi,
+		Misi:        req.Misi,
+		Description: req.Description,
+		Tagline:     req.Tagline,
+		PeriodStart: req.PeriodStart,
+		PeriodEnd:   req.PeriodEnd,
+		LogoId:      req.LogoId,
+		IsActive:    req.IsActive,
 	})
 }
 
-func (s *cabinetInfoService) GetAll(ctx context.Context, metaReq meta.Meta, period string) ([]entity.CabinetInfo, meta.Meta, error) {
-	return s.repo.GetAll(ctx, nil, metaReq, period)
+func (s *cabinetInfoService) GetAll(ctx context.Context, metaReq meta.Meta) ([]entity.CabinetInfo, meta.Meta, error) {
+	return s.repo.GetAll(ctx, nil, metaReq)
+}
+
+func (s *cabinetInfoService) GetCurrentCabinet(ctx context.Context) (entity.CabinetInfo, error) {
+	return s.repo.GetCurrentCabinet(ctx, nil)
 }
 
 func (s *cabinetInfoService) GetById(ctx context.Context, id string) (entity.CabinetInfo, error) {
@@ -59,11 +66,17 @@ func (s *cabinetInfoService) Update(ctx context.Context, id string, req dto.Upda
 	if req.Misi != "" {
 		ci.Misi = req.Misi
 	}
+	if req.Description != "" {
+		ci.Description = req.Description
+	}
 	if req.Tagline != "" {
 		ci.Tagline = req.Tagline
 	}
-	if req.Period != "" {
-		ci.Period = req.Period
+	if req.PeriodStart != "" {
+		ci.PeriodStart = req.PeriodStart
+	}
+	if req.PeriodEnd != "" {
+		ci.PeriodEnd = req.PeriodEnd
 	}
 	ci.LogoId = req.LogoId
 	if req.IsActive != nil {

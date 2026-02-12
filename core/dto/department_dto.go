@@ -9,6 +9,7 @@ type CreateDepartmentRequest struct {
 	SocialMediaLink string     `json:"social_media_link"`
 	BankSoalLink    string     `json:"bank_soal_link"`
 	SilabusLink     string     `json:"silabus_link"`
+	BankRefLink     string     `json:"bank_ref_link"`
 }
 
 type UpdateDepartmentRequest struct {
@@ -18,4 +19,5 @@ type UpdateDepartmentRequest struct {
 	SocialMediaLink string     `json:"social_media_link"`
 	BankSoalLink    string     `json:"bank_soal_link"`
 	SilabusLink     string     `json:"silabus_link"`
+	BankRefLink     string     `json:"bank_ref_link"`
 }
