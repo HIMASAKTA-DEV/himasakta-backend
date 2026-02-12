@@ -60,6 +60,10 @@ func NewRest() (RestConfig, error) {
 	newsService := service.NewNews(newsRepo)
 	newsController := controller.NewNews(newsService)
 
+	nrpWhitelistRepo := repository.NewNrpWhitelist(db)
+	nrpWhitelistService := service.NewNrpWhitelist(nrpWhitelistRepo)
+	nrpWhitelistController := controller.NewNrpWhitelist(nrpWhitelistService)
+
 	jwtService := myjwt.NewJWT()
 	authService := service.NewAuth(jwtService)
 	authController := controller.NewAuth(authService)
@@ -78,9 +82,7 @@ func NewRest() (RestConfig, error) {
 	routes.Progenda(server, progendaController, m)
 	routes.MonthlyEvent(server, monthlyEventController, m)
 	routes.News(server, newsController, m)
-
-	nrpWhitelistController := controller.NewNrpWhitelist()
-	routes.NrpWhitelist(server, nrpWhitelistController)
+	routes.NrpWhitelist(server, nrpWhitelistController, m)
 
 	return RestConfig{
 		server: server,
