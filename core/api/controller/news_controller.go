@@ -62,7 +62,7 @@ func (c *newsController) Autocompletion(ctx *gin.Context) {
 }
 
 func (c *newsController) GetById(ctx *gin.Context) {
-	res, err := c.service.GetBySlug(ctx.Request.Context(), ctx.Param("id"))
+	res, err := c.service.GetBySlug(ctx.Request.Context(), ctx.Param("slug"))
 	if err != nil {
 		response.NewFailed("failed get news", err).Send(ctx)
 		return

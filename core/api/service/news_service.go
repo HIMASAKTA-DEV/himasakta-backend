@@ -2,14 +2,17 @@ package service
 
 import (
 	"context"
+	"errors"
 	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type NewsService interface {
@@ -54,11 +57,23 @@ func (s *newsService) GetAutocompletion(ctx context.Context, query string) ([]st
 }
 
 func (s *newsService) GetBySlug(ctx context.Context, slugOrId string) (entity.News, error) {
-	uid, err := uuid.Parse(slugOrId)
-	if err == nil {
-		return s.repo.GetById(ctx, nil, uid)
+	var n entity.News
+	var err error
+
+	uid, parseErr := uuid.Parse(slugOrId)
+	if parseErr == nil {
+		n, err = s.repo.GetById(ctx, nil, uid)
+	} else {
+		n, err = s.repo.GetBySlug(ctx, nil, slugOrId)
 	}
-	return s.repo.GetBySlug(ctx, nil, slugOrId)
+
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return n, myerror.ErrNotFound
+		}
+		return n, err
+	}
+	return n, nil
 }
 
 func (s *newsService) GetById(ctx context.Context, id string) (entity.News, error) {
