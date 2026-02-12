@@ -14,6 +14,7 @@ type NewsRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, n entity.News) (entity.News, error)
 	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string, categories []string, title string) ([]entity.News, meta.Meta, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entity.News, error)
+	GetBySlug(ctx context.Context, tx *gorm.DB, slug string) (entity.News, error)
 	Update(ctx context.Context, tx *gorm.DB, n entity.News) (entity.News, error)
 	Delete(ctx context.Context, tx *gorm.DB, n entity.News) error
 	GetAutocompletion(ctx context.Context, query string) ([]string, error)
@@ -51,18 +52,8 @@ func (r *newsRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.M
 	var news []entity.News
 	tx = tx.WithContext(ctx).Model(&entity.News{}).Preload("Thumbnail")
 
-	if title != "" {
-		tx = tx.Where("title = ?", title)
-	}
-
 	if search != "" {
 		tx = tx.Where("title ILIKE ?", "%"+search+"%")
-	}
-
-	if len(categories) > 0 {
-		for _, cat := range categories {
-			tx = tx.Where("hashtags ILIKE ?", "%"+cat+"%")
-		}
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.News{})).Find(&news).Error; err != nil {
@@ -88,6 +79,20 @@ func (r *newsRepository) GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID)
 	}
 	var n entity.News
 	if err := tx.WithContext(ctx).Preload("Thumbnail").Take(&n, "id = ?", id).Error; err != nil {
+		return entity.News{}, err
+	}
+	return n, nil
+}
+
+func (r *newsRepository) GetBySlug(ctx context.Context, tx *gorm.DB, slug string) (entity.News, error) {
+	if tx == nil {
+		tx = r.db
+	}
+	if tx == nil {
+		return entity.News{}, fmt.Errorf("database connection is nil")
+	}
+	var n entity.News
+	if err := tx.WithContext(ctx).Preload("Thumbnail").Take(&n, "slug = ?", slug).Error; err != nil {
 		return entity.News{}, err
 	}
 	return n, nil

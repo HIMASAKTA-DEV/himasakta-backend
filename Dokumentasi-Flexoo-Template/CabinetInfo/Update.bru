@@ -1,0 +1,27 @@
+meta {
+  name: Update CabinetInfo
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/api/v1/cabinet-info/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "visi": "Visi Updated",
+    "misi": "Misi Updated",
+    "description": "Deskripsi Kabinet Updated",
+    "tagline": "Tagline Updated",
+    "period_start": "2024-01-01",
+    "period_end": "2024-12-31",
+    "is_active": true
+  }
+}

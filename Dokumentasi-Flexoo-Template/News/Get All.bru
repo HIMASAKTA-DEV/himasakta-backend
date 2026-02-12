@@ -1,0 +1,19 @@
+meta {
+  name: Get All News
+  type: http
+  seq: 1
+}
+
+get {
+  url: {{base_url}}/api/v1/news?limit=10&page=1
+  body: none
+  auth: none
+}
+
+params:query {
+  take: 10
+  page: 1
+  ~search: 
+  ~category: 
+  ~title: 
+}

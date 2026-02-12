@@ -9,7 +9,7 @@ import (
 
 // use for pagination
 type Meta struct {
-	Take      int    `json:"take"`
+	Limit     int    `json:"limit"`
 	Page      int    `json:"page"`
 	TotalData int    `json:"total_data"`
 	TotalPage int    `json:"total_page"`
@@ -21,21 +21,21 @@ type Meta struct {
 
 // New creates and initializes a Meta object with default pagination settings.
 // Default values are:
-// - Take: 10 (number of items per page)
+// - Limit: 10 (number of items per page)
 // - Page: 0 (starting page)
 // - Sort: "asc" (ascending order)
 // - SortBy: "created_by" (column used for sorting)
 // Additional options can be applied to customize the Meta object.
 func New(ctx *gin.Context) Meta {
 	meta := Meta{
-		Take:   10000000,
+		Limit:  10,
 		Page:   0,
 		Sort:   "asc",
 		SortBy: "id",
 	}
 
 	page := ctx.Query("page")
-	take := ctx.Query("take")
+	limit := ctx.Query("limit")
 	sort := ctx.Query("sort")
 	sortby := ctx.Query("sort_by")
 	filter := ctx.Query("filter")
@@ -45,8 +45,8 @@ func New(ctx *gin.Context) Meta {
 		meta.Page = utils.ToInt(page)
 	}
 
-	if take != "" {
-		meta.Take = utils.DefaultTake(utils.ToInt(take))
+	if limit != "" {
+		meta.Limit = utils.DefaultLimit(utils.ToInt(limit))
 	}
 
 	if sort != "" {
@@ -70,7 +70,7 @@ func New(ctx *gin.Context) Meta {
 
 func NewWithDefault(ctx *gin.Context, dtake int, dpage int, dsort string, dsortBy string) Meta {
 	if dtake == 0 {
-		dtake = 10000000
+		dtake = 10
 	}
 
 	if dpage == 0 {
@@ -86,14 +86,14 @@ func NewWithDefault(ctx *gin.Context, dtake int, dpage int, dsort string, dsortB
 	}
 
 	meta := Meta{
-		Take:   dtake,
+		Limit:  dtake,
 		Page:   dpage,
 		Sort:   dsort,
 		SortBy: dsortBy,
 	}
 
 	page := ctx.Query("page")
-	take := ctx.Query("take")
+	limit := ctx.Query("limit")
 	sort := ctx.Query("sort")
 	sortby := ctx.Query("sort_by")
 	filter := ctx.Query("filter")
@@ -103,8 +103,8 @@ func NewWithDefault(ctx *gin.Context, dtake int, dpage int, dsort string, dsortB
 		meta.Page = utils.ToInt(page)
 	}
 
-	if take != "" {
-		meta.Take = utils.DefaultTake(utils.ToInt(take))
+	if limit != "" {
+		meta.Limit = utils.DefaultLimit(utils.ToInt(limit))
 	}
 
 	if sort != "" {
@@ -130,19 +130,19 @@ func NewWithDefault(ctx *gin.Context, dtake int, dpage int, dsort string, dsortB
 // It sets the TotalData and TotalPage fields in the Meta struct.
 func (m *Meta) Count(totaldata int) {
 	m.TotalData = totaldata
-	m.TotalPage = (totaldata + m.Take - 1) / m.Take
+	m.TotalPage = (totaldata + m.Limit - 1) / m.Limit
 }
 
 // GetSkipAndLimit calculates the offset (skip) and limit values for pagination.
 // If the page number is less than or equal to 0, skip is set to 0.
-// Otherwise, skip is calculated as (page - 1) * take, and the limit is set to the take value.
+// Otherwise, skip is calculated as (page - 1) * limit, and the limit is set to the limit value.
 func (m *Meta) GetSkipAndLimit() (int, int) {
 	switch {
 	case m.Page <= 0:
 		m.Page = 1
-		return 0, m.Take
+		return 0, m.Limit
 	default:
-		return ((m.Page - 1) * m.Take), m.Take
+		return ((m.Page - 1) * m.Limit), m.Limit
 	}
 }
 

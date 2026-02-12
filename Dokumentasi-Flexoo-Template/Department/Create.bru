@@ -1,0 +1,23 @@
+meta {
+  name: Create Department
+  type: http
+  seq: 1
+}
+
+post {
+  url: {{base_url}}/api/v1/department
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "name": "Kaderisasi",
+    "description": "Departemen Kaderisasi",
+    "logo_id": null,
+    "social_media_link": "https://instagram.com/himasakta",
+    "bank_soal_link": "https://linktr.ee/himasakta",
+    "silabus_link": "https://linktr.ee/himasakta",
+    "bank_ref_link": "https://linktr.ee/himasakta"
+  }
+}

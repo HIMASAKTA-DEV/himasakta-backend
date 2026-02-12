@@ -1,16 +1,20 @@
 package controller
 
 import (
+	"errors"
+
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/service"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type CabinetInfoController interface {
 	Create(ctx *gin.Context)
 	GetAll(ctx *gin.Context)
+	GetCurrentCabinet(ctx *gin.Context)
 	GetById(ctx *gin.Context)
 	Update(ctx *gin.Context)
 	Delete(ctx *gin.Context)
@@ -35,17 +39,32 @@ func (c *cabinetInfoController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create cabinet info", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("success create cabinet info", res).Send(ctx)
+	response.NewSuccessCreated("success create cabinet info", res).Send(ctx)
 }
 
 func (c *cabinetInfoController) GetAll(ctx *gin.Context) {
-	period := ctx.Query("period")
-	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), period)
+	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx))
 	if err != nil {
 		response.NewFailed("failed get cabinet infos", err).Send(ctx)
 		return
 	}
 	response.NewSuccess("success get cabinet infos", res, m).Send(ctx)
+}
+
+func (c *cabinetInfoController) GetCurrentCabinet(ctx *gin.Context) {
+	res, err := c.service.GetCurrentCabinet(ctx.Request.Context())
+	if err != nil {
+		// Log the error for debugging
+		// mylog.Errorf("GetCurrentCabinet error: %v (type: %T)", err, err)
+
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			response.NewFailedWithCode(404, "current cabinet info not found", err).Send(ctx)
+			return
+		}
+		response.NewFailed("failed get current cabinet info", err).Send(ctx)
+		return
+	}
+	response.NewSuccess("success get current cabinet info", res).Send(ctx)
 }
 
 func (c *cabinetInfoController) GetById(ctx *gin.Context) {

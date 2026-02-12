@@ -6,9 +6,9 @@ import (
 	"strconv"
 )
 
-// DefaultTake returns a default value for the take parameter if the provided value is less than or equal to 0.
-// The default take value is 10.
-func DefaultTake(i int) int {
+// DefaultLimit returns a default value for the limit parameter if the provided value is less than or equal to 0.
+// The default limit value is 10.
+func DefaultLimit(i int) int {
 	if i <= 0 {
 		return 10
 	}

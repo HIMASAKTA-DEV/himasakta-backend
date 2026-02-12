@@ -13,7 +13,7 @@ import (
 type DepartmentService interface {
 	Create(ctx context.Context, req dto.CreateDepartmentRequest) (entity.Department, error)
 	GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error)
-	GetById(ctx context.Context, id string) (entity.Department, error)
+	GetByIdContent(ctx context.Context, idOrName string) (entity.Department, error)
 	Update(ctx context.Context, id string, req dto.UpdateDepartmentRequest) (entity.Department, error)
 	Delete(ctx context.Context, id string) error
 }
@@ -34,11 +34,20 @@ func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartment
 		SocialMediaLink: req.SocialMediaLink,
 		BankSoalLink:    req.BankSoalLink,
 		SilabusLink:     req.SilabusLink,
+		BankRefLink:     req.BankRefLink,
 	})
 }
 
 func (s *departmentService) GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error) {
 	return s.repo.GetAll(ctx, nil, metaReq, name)
+}
+
+func (s *departmentService) GetByIdContent(ctx context.Context, idOrName string) (entity.Department, error) {
+	uid, err := uuid.Parse(idOrName)
+	if err == nil {
+		return s.repo.GetById(ctx, nil, uid)
+	}
+	return s.repo.GetByName(ctx, nil, idOrName)
 }
 
 func (s *departmentService) GetById(ctx context.Context, id string) (entity.Department, error) {
@@ -61,6 +70,7 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 	d.SocialMediaLink = req.SocialMediaLink
 	d.BankSoalLink = req.BankSoalLink
 	d.SilabusLink = req.SilabusLink
+	d.BankRefLink = req.BankRefLink
 
 	return s.repo.Update(ctx, nil, d)
 }

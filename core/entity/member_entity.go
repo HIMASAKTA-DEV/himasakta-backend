@@ -14,3 +14,7 @@ type Member struct {
 	Photo        *Gallery    `gorm:"foreignKey:PhotoId" json:"photo"`
 	Period       string      `gorm:"type:varchar(10);not null" json:"period"`
 }
+
+func (Member) TableName() string {
+	return "members"
+}
