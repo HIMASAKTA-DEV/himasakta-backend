@@ -29,14 +29,15 @@ func NewCabinetInfo(repo repository.CabinetInfoRepository) CabinetInfoService {
 
 func (s *cabinetInfoService) Create(ctx context.Context, req dto.CreateCabinetInfoRequest) (entity.CabinetInfo, error) {
 	return s.repo.Create(ctx, nil, entity.CabinetInfo{
-		Visi:        req.Visi,
-		Misi:        req.Misi,
-		Description: req.Description,
-		Tagline:     req.Tagline,
-		PeriodStart: req.PeriodStart,
-		PeriodEnd:   req.PeriodEnd,
-		LogoId:      req.LogoId,
-		IsActive:    req.IsActive,
+		Visi:         req.Visi,
+		Misi:         req.Misi,
+		Description:  req.Description,
+		Tagline:      req.Tagline,
+		PeriodStart:  req.PeriodStart,
+		PeriodEnd:    req.PeriodEnd,
+		LogoId:       req.LogoId,
+		IsActive:     req.IsActive,
+		OrganigramId: req.OrganigramId,
 	})
 }
 

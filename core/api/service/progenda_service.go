@@ -41,12 +41,16 @@ func (s *progendaService) Create(ctx context.Context, req dto.CreateProgendaRequ
 
 	//create progenda
 	progenda, err := s.progendaRepo.Create(ctx, tx, entity.Progenda{
-		Name:         req.Name,
-		ThumbnailId:  req.ThumbnailId,
-		Goal:         req.Goal,
-		Description:  req.Description,
-		WebsiteLink:  req.WebsiteLink,
-		DepartmentId: req.DepartmentId,
+		Name:          req.Name,
+		ThumbnailId:   req.ThumbnailId,
+		Goal:          req.Goal,
+		Description:   req.Description,
+		WebsiteLink:   req.WebsiteLink,
+		InstagramLink: req.InstagramLink,
+		TwitterLink:   req.TwitterLink,
+		LinkedinLink:  req.LinkedinLink,
+		YoutubeLink:   req.YoutubeLink,
+		DepartmentId:  req.DepartmentId,
 	})
 	if err != nil {
 		tx.Rollback()
@@ -109,16 +113,33 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	}
 
 	//update Progenda
-	p.Name = req.Name
-	p.ThumbnailId = req.ThumbnailId
-	p.Goal = req.Goal
-	p.Description = req.Description
-	p.WebsiteLink = req.WebsiteLink
-	p.InstagramLink = req.InstagramLink
-	p.TwitterLink = req.TwitterLink
-	p.LinkedinLink = req.LinkedinLink
-	p.YoutubeLink = req.YoutubeLink
-	p.DepartmentId = req.DepartmentId
+	if req.Name != "" {
+		p.Name = req.Name
+	}
+	if req.ThumbnailId != nil {
+		p.ThumbnailId = req.ThumbnailId
+	}
+	if req.Goal != "" {
+		p.Goal = req.Goal
+	}
+	if req.Description != "" {
+		p.Description = req.Description
+	}
+	if req.WebsiteLink != "" {
+		p.WebsiteLink = req.WebsiteLink
+	}
+	if req.InstagramLink != "" {
+		p.InstagramLink = req.InstagramLink
+	}
+	if req.LinkedinLink != "" {
+		p.LinkedinLink = req.LinkedinLink
+	}
+	if req.YoutubeLink != "" {
+		p.YoutubeLink = req.YoutubeLink
+	}
+	if req.DepartmentId != nil {
+		p.DepartmentId = req.DepartmentId
+	}
 
 	progenda, err := s.progendaRepo.Update(ctx, tx, p)
 	if err != nil {

@@ -42,6 +42,10 @@ func (r *timelineRepository) BulkCreate(ctx context.Context, tx *gorm.DB, tls []
 	if tx != nil {
 		db = tx
 	}
+
+	if len(tls) == 0 {
+		return nil
+	}
 	if err := db.WithContext(ctx).Create(&tls).Error; err != nil {
 		return err
 	}
@@ -80,6 +84,9 @@ func (r *timelineRepository) BulkUpdate(ctx context.Context, tx *gorm.DB, tl []e
 		db = tx
 	}
 
+	if len(tl) == 0 {
+		return tl, nil
+	}
 	if err := db.WithContext(ctx).Save(tl).Error; err != nil {
 		return []entity.Timeline{}, err
 	}
@@ -104,6 +111,9 @@ func (r *timelineRepository) BulkDelete(ctx context.Context, tx *gorm.DB, tl []e
 		db = tx
 	}
 
+	if len(tl) == 0 {
+		return nil
+	}
 	if err := db.WithContext(ctx).Delete(&tl).Error; err != nil {
 		return err
 	}

@@ -15,6 +15,6 @@ type Timeline struct {
 	Link       string     `gorm:"type:varchar(100)" json:"link"`
 }
 
-func (Timeline) TablesName() string {
+func (Timeline) TableName() string {
 	return "timelines"
 }
