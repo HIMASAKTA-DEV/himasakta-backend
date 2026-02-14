@@ -45,12 +45,19 @@ func (c *galleryController) Create(ctx *gin.Context) {
 	caption := ctx.PostForm("caption")
 	category := ctx.PostForm("category")
 	deptIdStr := ctx.PostForm("department_id")
+	progIdStr := ctx.PostForm("progenda_id")
 
-	var deptId *uuid.UUID
+	var deptId, progId *uuid.UUID
 	if deptIdStr != "" {
 		id, err := uuid.Parse(deptIdStr)
 		if err == nil {
 			deptId = &id
+		}
+	}
+	if progIdStr != "" {
+		id, err := uuid.Parse(progIdStr)
+		if err != nil {
+			progId = &id
 		}
 	}
 
@@ -70,6 +77,7 @@ func (c *galleryController) Create(ctx *gin.Context) {
 		Caption:      caption,
 		Category:     category,
 		DepartmentId: deptId,
+		ProgendaId:   progId,
 	}
 
 	result, err := c.galleryService.Create(ctx.Request.Context(), req)
