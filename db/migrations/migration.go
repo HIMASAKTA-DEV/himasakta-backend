@@ -10,6 +10,7 @@ import (
 
 func Migrate(db *gorm.DB) error {
 	fmt.Println(mylog.ColorizeInfo("\n=========== Start Migrate ==========="))
+
 	mylog.Infof("Migrating Tables...")
 
 	if err := db.Exec(`CREATE EXTENSION IF NOT EXISTS "uuid-ossp"`).Error; err != nil {
@@ -26,6 +27,7 @@ func Migrate(db *gorm.DB) error {
 		&entity.MonthlyEvent{},
 		&entity.News{},
 		&entity.NrpWhitelist{},
+		&entity.Timeline{},
 	); err != nil {
 		return err
 	}

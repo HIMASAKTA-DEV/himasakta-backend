@@ -8,3 +8,7 @@ type NrpWhitelist struct {
 	Nrp  string    `gorm:"type:varchar(255);not null;unique"`
 	Name string    `gorm:"type:varchar(255);not null"`
 }
+
+func (NrpWhitelist) TableName() string {
+	return "nrpWhitelists"
+}

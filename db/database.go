@@ -19,12 +19,18 @@ func New() *gorm.DB {
 	} else if pgHost := os.Getenv("POSTGRES_HOST"); pgHost != "" {
 		// Individual POSTGRES_* variables from Vercel/Supabase
 		DBDSN = fmt.Sprintf(
-			"host=%s user=%s password=%s dbname=%s port=%s sslmode=require",
+			"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 			pgHost,
 			os.Getenv("POSTGRES_USER"),
 			os.Getenv("POSTGRES_PASSWORD"),
 			os.Getenv("POSTGRES_DATABASE"),
 			os.Getenv("POSTGRES_PORT"),
+			func() string {
+				if mode := os.Getenv("POSTGRES_SSLMODE"); mode != "" {
+					return mode
+				}
+				return "disable"
+			}(),
 		)
 	} else {
 		// Fallback to original DB_* variables
