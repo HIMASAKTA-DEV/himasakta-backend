@@ -15,12 +15,12 @@ type CreateCabinetInfoRequest struct {
 }
 
 type UpdateCabinetInfoRequest struct {
-	Visi         string     `json:"visi" binding:"required"`
-	Misi         string     `json:"misi" binding:"required"`
+	Visi         string     `json:"visi"`
+	Misi         string     `json:"misi"`
 	Description  string     `json:"description"`
 	Tagline      string     `json:"tagline"`
-	PeriodStart  string     `json:"period_start" binding:"required"`
-	PeriodEnd    string     `json:"period_end" binding:"required"`
+	PeriodStart  string     `json:"period_start"`
+	PeriodEnd    string     `json:"period_end"`
 	LogoId       *uuid.UUID `json:"logo_id"`
 	OrganigramId *uuid.UUID `json:"organigram_id"`
 	IsActive     *bool      `json:"is_active"`
