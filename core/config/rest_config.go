@@ -52,6 +52,10 @@ func NewRest() (RestConfig, error) {
 	progendaService := service.NewProgenda(progendaRepo)
 	progendaController := controller.NewProgenda(progendaService)
 
+	progendaTimelineRepo := repository.NewProgendaTimeline(db)
+	progendaTimelineService := service.NewProgendaTimeline(progendaTimelineRepo, progendaRepo)
+	progendaTimelineController := controller.NewProgendaTimeline(progendaTimelineService)
+
 	monthlyEventRepo := repository.NewMonthlyEvent(db)
 	monthlyEventService := service.NewMonthlyEvent(monthlyEventRepo)
 	monthlyEventController := controller.NewMonthlyEvent(monthlyEventService)
@@ -79,7 +83,7 @@ func NewRest() (RestConfig, error) {
 	routes.Department(server, deptController, m)
 	routes.CabinetInfo(server, cabinetController, m)
 	routes.Member(server, memberController, m)
-	routes.Progenda(server, progendaController, m)
+	routes.Progenda(server, progendaController, progendaTimelineController, m)
 	routes.MonthlyEvent(server, monthlyEventController, m)
 	routes.News(server, newsController, m)
 	routes.NrpWhitelist(server, nrpWhitelistController, m)

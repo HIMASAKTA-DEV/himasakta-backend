@@ -40,7 +40,7 @@ func New() *gorm.DB {
 		)
 	}
 
-	fmt.Println(mylog.ColorizeInfo("\n=========== Setup Database ==========="))
+	mylog.Infoln("\n=========== Setup Database ===========")
 	mylog.Infof("Connecting to database... (DSN Length: %d)", len(DBDSN))
 
 	db, err := gorm.Open(postgres.New(postgres.Config{

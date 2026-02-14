@@ -101,9 +101,9 @@ go run main.go --test
 
 ### Progenda (Program Kerja & Agenda)
 - `GET /api/v1/progenda`: List progenda. Support `?search=`, `?department_id=`, `?name=`, `?page=`, `?limit=`.
-- `GET /api/v1/progenda/:id`: Get progenda details.
-- `POST /api/v1/progenda`: Create progenda (Requires Auth).
-- `PUT /api/v1/progenda/:id`: Update progenda (Requires Auth).
+- `GET /api/v1/progenda/:id`: Get progenda details (Includes nested `timelines`).
+- `POST /api/v1/progenda`: Create progenda (Requires Auth). Supports nested `timelines` array and social link fields.
+- `PUT /api/v1/progenda/:id`: Update progenda (Requires Auth). Supports partial updates of timelines and social links.
 - `DELETE /api/v1/progenda/:id`: Delete progenda (Requires Auth).
 
 ### Monthly Events
@@ -116,6 +116,7 @@ go run main.go --test
 
 ### News Articles
 - `GET /api/v1/news`: List news. Support `?search=`, `?page=`, `?limit=`.
+- `GET /api/v1/news/autocompletion`: Get title autocompletion. Support `?search=`.
 - `GET /api/v1/news/:slug`: Get news article by slug (e.g., `/judul-berita`).
 - `POST /api/v1/news`: Create news article (Requires Auth - generates slug).
 - `PUT /api/v1/news/:id`: Update news article (Requires Auth - uses UUID).
@@ -127,6 +128,13 @@ go run main.go --test
 - `POST /api/v1/gallery`: Upload image and create gallery entry (Requires Auth).
 - `PUT /api/v1/gallery/:id`: Update gallery metadata (Requires Auth).
 - `DELETE /api/v1/gallery/:id`: Delete gallery entry (Requires Auth).
+
+### NRP Whitelist
+- `GET /api/v1/nrp-whitelist`: List all whitelisted NRPs.
+- `POST /api/v1/nrp-whitelist`: Check if NRP is whitelisted (Public). Body: `{ "nrp": "..." }`.
+- `POST /api/v1/nrp-whitelist/add`: Add NRP to whitelist (Requires Auth). Body: `{ "nrp": "...", "name": "..." }`.
+- `PUT /api/v1/nrp-whitelist/:id`: Update whitelisted entry (Requires Auth).
+- `DELETE /api/v1/nrp-whitelist/:nrp`: Remove NRP from whitelist (Requires Auth).
 
 > [!TIP]
 > All list endpoints (`GET`) support generic filtering via `?filter_by=field&filter=value`.
@@ -186,10 +194,10 @@ const { data } = await res.json();
 // id progenda didapat dari di nomor 6 step 2, misal res[0].id
 const res = await fetch(`${API_URL}/api/v1/progenda/${progendaId}`);
 const { data } = await res.json();
+// data berisi: name, goal, description, ..., instagram_link, timelines: [{ event_name, date }]
 ```
 10. Cara verifikasi NRP:
 ```javascript
-// untuk create, delete nrp sedang dikerjakan
 const res = await fetch(`${API_URL}/api/v1/nrp-whitelist`, {
     method: 'POST',
     headers: {
@@ -201,7 +209,28 @@ const res = await fetch(`${API_URL}/api/v1/nrp-whitelist`, {
 });
 const { data } = await res.json();
 ```
-11. Cara login admin dan mendapatkan JWT:
+11. Cara mengelola NRP (Admin):
+```javascript
+// Tambah NRP
+await fetch(`${API_URL}/api/v1/nrp-whitelist/add`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` },
+    body: JSON.stringify({ nrp: '5025...', name: 'Budi' })
+});
+
+// Hapus NRP
+await fetch(`${API_URL}/api/v1/nrp-whitelist/5025...`, {
+    method: 'DELETE',
+    headers: { 'Authorization': `Bearer ${token}` }
+});
+```
+12. Cara dapat autocompletion berita:
+```javascript
+// Query search misal 'Pene'
+const res = await fetch(`${API_URL}/api/v1/news/autocompletion?search=Pene`);
+const { data } = await res.json(); // Array of strings (titles)
+```
+13. Cara login admin dan mendapatkan JWT:
 ```javascript
 // usn sama pw nya admin semua
 const res = await fetch(`${API_URL}/api/v1/auth/login`, {

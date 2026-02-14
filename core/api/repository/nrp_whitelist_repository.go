@@ -34,7 +34,8 @@ func (r *nrpWhitelistRepository) Create(ctx context.Context, tx *gorm.DB, ci ent
 	if tx == nil {
 		return ci, fmt.Errorf("database connection is nil")
 	}
-	if err := tx.WithContext(ctx).Create(&ci).Error; err == nil {
+
+	if err := tx.WithContext(ctx).Create(&ci).Error; err != nil {
 		return ci, err
 	}
 

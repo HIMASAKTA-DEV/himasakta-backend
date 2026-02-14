@@ -27,14 +27,26 @@ func NewProgenda(repo repository.ProgendaRepository) ProgendaService {
 }
 
 func (s *progendaService) Create(ctx context.Context, req dto.CreateProgendaRequest) (entity.Progenda, error) {
+	var timelines []entity.ProgendaTimeline
+	for _, t := range req.Timelines {
+		timelines = append(timelines, entity.ProgendaTimeline{
+			EventName: t.EventName,
+			Date:      t.Date,
+		})
+	}
+
 	return s.repo.Create(ctx, nil, entity.Progenda{
-		Name:         req.Name,
-		ThumbnailId:  req.ThumbnailId,
-		Goal:         req.Goal,
-		Description:  req.Description,
-		Timeline:     req.Timeline,
-		WebsiteLink:  req.WebsiteLink,
-		DepartmentId: req.DepartmentId,
+		Name:          req.Name,
+		ThumbnailId:   req.ThumbnailId,
+		Goal:          req.Goal,
+		Description:   req.Description,
+		InstagramLink: req.InstagramLink,
+		TwitterLink:   req.TwitterLink,
+		YoutubeLink:   req.YoutubeLink,
+		LinkedinLink:  req.LinkedinLink,
+		WebsiteLink:   req.WebsiteLink,
+		DepartmentId:  req.DepartmentId,
+		Timelines:     timelines,
 	})
 }
 
@@ -67,9 +79,23 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	p.ThumbnailId = req.ThumbnailId
 	p.Goal = req.Goal
 	p.Description = req.Description
-	p.Timeline = req.Timeline
+	p.InstagramLink = req.InstagramLink
+	p.TwitterLink = req.TwitterLink
+	p.YoutubeLink = req.YoutubeLink
+	p.LinkedinLink = req.LinkedinLink
 	p.WebsiteLink = req.WebsiteLink
 	p.DepartmentId = req.DepartmentId
+
+	if req.Timelines != nil {
+		var timelines []entity.ProgendaTimeline
+		for _, t := range req.Timelines {
+			timelines = append(timelines, entity.ProgendaTimeline{
+				EventName: t.EventName,
+				Date:      t.Date,
+			})
+		}
+		p.Timelines = timelines
+	}
 
 	return s.repo.Update(ctx, nil, p)
 }

@@ -42,10 +42,6 @@ func WithFilters(db *gorm.DB, m *meta.Meta, opts ...Option) *gorm.DB {
 		opt(&metaService)
 	}
 
-	// for i, v := range metaService.Filter {
-	// 	fmt.Println(i + " " + v)
-	// }
-
 	return metaService.buildFilter(db, m)
 }
 

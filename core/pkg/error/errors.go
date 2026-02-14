@@ -3,9 +3,10 @@ package myerror
 import "net/http"
 
 var (
-	ErrGeneral     = New("something went wrong", http.StatusInternalServerError)
-	ErrBodyRequest = New("failed get body request", http.StatusBadRequest)
-	ErrNotFound    = New("record not found", http.StatusNotFound)
+	ErrGeneral      = New("something went wrong", http.StatusInternalServerError)
+	ErrBodyRequest  = New("failed get body request", http.StatusBadRequest)
+	ErrNotFound     = New("record not found", http.StatusNotFound)
+	ErrAlreadyExist = New("record already exist", http.StatusBadRequest)
 )
 
 type Error struct {

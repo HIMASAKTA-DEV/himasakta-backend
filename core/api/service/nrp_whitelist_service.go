@@ -2,12 +2,15 @@ package service
 
 import (
 	"context"
+	"errors"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type NrpWhitelistService interface {
@@ -26,6 +29,12 @@ func NewNrpWhitelist(repo repository.NrpWhitelistRepository) NrpWhitelistService
 	return &nrpWhitelistService{repo}
 }
 func (s *nrpWhitelistService) Create(ctx context.Context, req dto.CreateNrpWhitelistRequest) (entity.NrpWhitelist, error) {
+	// Check if already exist
+	existing, err := s.repo.GetByNrp(ctx, nil, entity.NrpWhitelist{Nrp: req.Nrp})
+	if err == nil && existing.Nrp != "" {
+		return entity.NrpWhitelist{}, myerror.ErrAlreadyExist
+	}
+
 	return s.repo.Create(ctx, nil, entity.NrpWhitelist{
 		Nrp:  req.Nrp,
 		Name: req.Name,
@@ -33,9 +42,16 @@ func (s *nrpWhitelistService) Create(ctx context.Context, req dto.CreateNrpWhite
 }
 
 func (s *nrpWhitelistService) Check(ctx context.Context, req dto.CheckNrpWhitelistRequest) (entity.NrpWhitelist, error) {
-	return s.repo.GetByNrp(ctx, nil, entity.NrpWhitelist{
+	res, err := s.repo.GetByNrp(ctx, nil, entity.NrpWhitelist{
 		Nrp: req.Nrp,
 	})
+	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return res, myerror.ErrNotFound
+		}
+		return res, err
+	}
+	return res, nil
 }
 
 func (s *nrpWhitelistService) GetAll(ctx context.Context, metaReq meta.Meta) ([]entity.NrpWhitelist, meta.Meta, error) {
@@ -46,6 +62,9 @@ func (s *nrpWhitelistService) Update(ctx context.Context, id string, req dto.Upd
 	uid, _ := uuid.Parse(id)
 	ci, err := s.repo.GetById(ctx, nil, uid)
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return ci, myerror.ErrNotFound
+		}
 		return ci, err
 	}
 	if req.Nrp != "" {
@@ -59,11 +78,13 @@ func (s *nrpWhitelistService) Update(ctx context.Context, id string, req dto.Upd
 }
 
 func (s *nrpWhitelistService) Delete(ctx context.Context, nrp string) error {
-	//uid, _ := uuid.Parse(id)
 	ci, err := s.repo.GetByNrp(ctx, nil, entity.NrpWhitelist{
 		Nrp: nrp,
 	})
 	if err != nil {
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return myerror.ErrNotFound
+		}
 		return err
 	}
 	return s.repo.Delete(ctx, nil, ci)

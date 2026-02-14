@@ -47,7 +47,9 @@ func (r *progendaRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq me
 		return nil, metaReq, fmt.Errorf("database connection is nil")
 	}
 	var progendas []entity.Progenda
-	tx = tx.WithContext(ctx).Model(&entity.Progenda{}).Preload("Department").Preload("Thumbnail")
+	tx = tx.WithContext(ctx).Model(&entity.Progenda{}).Preload("Department").Preload("Thumbnail").Preload("Timelines", func(db *gorm.DB) *gorm.DB {
+		return db.Order("date ASC")
+	})
 
 	if name != "" {
 		tx = tx.Where("name = ?", name)
@@ -71,7 +73,9 @@ func (r *progendaRepository) GetById(ctx context.Context, tx *gorm.DB, id uuid.U
 		return entity.Progenda{}, fmt.Errorf("database connection is nil")
 	}
 	var p entity.Progenda
-	if err := tx.WithContext(ctx).Preload("Department").Preload("Thumbnail").Take(&p, "id = ?", id).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Department").Preload("Thumbnail").Preload("Timelines", func(db *gorm.DB) *gorm.DB {
+		return db.Order("date ASC")
+	}).Take(&p, "id = ?", id).Error; err != nil {
 		return entity.Progenda{}, err
 	}
 	return p, nil
