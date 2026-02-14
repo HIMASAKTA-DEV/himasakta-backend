@@ -52,10 +52,6 @@ func (r *galleryRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq met
 	var galleries []entity.Gallery
 	tx = tx.WithContext(ctx).Model(&entity.Gallery{})
 
-	if caption != "" {
-		tx = tx.Where("caption = ?", caption)
-	}
-
 	if err := WithFilters(tx, &metaReq, AddModels(entity.Gallery{})).Find(&galleries).Error; err != nil {
 		return nil, metaReq, err
 	}

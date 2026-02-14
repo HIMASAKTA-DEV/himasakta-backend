@@ -36,7 +36,7 @@ func (c *newsController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create news", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("success create news", res).Send(ctx)
+	response.NewSuccessCreated("success create news", res).Send(ctx)
 }
 
 func (c *newsController) GetAll(ctx *gin.Context) {
@@ -62,7 +62,7 @@ func (c *newsController) Autocompletion(ctx *gin.Context) {
 }
 
 func (c *newsController) GetById(ctx *gin.Context) {
-	res, err := c.service.GetById(ctx.Request.Context(), ctx.Param("id"))
+	res, err := c.service.GetBySlug(ctx.Request.Context(), ctx.Param("slug"))
 	if err != nil {
 		response.NewFailed("failed get news", err).Send(ctx)
 		return

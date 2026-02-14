@@ -35,7 +35,7 @@ func (c *progendaController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create progenda", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("success create progenda", res).Send(ctx)
+	response.NewSuccessCreated("success create progenda", res).Send(ctx)
 }
 
 func (c *progendaController) GetAll(ctx *gin.Context) {

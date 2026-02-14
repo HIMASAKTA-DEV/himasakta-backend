@@ -1,0 +1,27 @@
+meta {
+  name: Update Department
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/api/v1/department/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "name": "Kaderisasi Updated",
+    "description": "Departemen Kaderisasi Updated",
+    "logo_id": null,
+    "social_media_link": "https://instagram.com/himasakta",
+    "bank_soal_link": "https://linktr.ee/himasakta",
+    "silabus_link": "https://linktr.ee/himasakta",
+    "bank_ref_link": "KAD-2024-UPD"
+  }
+}

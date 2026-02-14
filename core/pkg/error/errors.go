@@ -5,6 +5,7 @@ import "net/http"
 var (
 	ErrGeneral     = New("something went wrong", http.StatusInternalServerError)
 	ErrBodyRequest = New("failed get body request", http.StatusBadRequest)
+	ErrNotFound    = New("record not found", http.StatusNotFound)
 )
 
 type Error struct {

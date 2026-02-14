@@ -80,7 +80,7 @@ func (c *galleryController) Create(ctx *gin.Context) {
 		return
 	}
 
-	response.NewSuccess("success create gallery", result).Send(ctx)
+	response.NewSuccessCreated("success create gallery", result).Send(ctx)
 }
 
 func (c *galleryController) GetAll(ctx *gin.Context) {

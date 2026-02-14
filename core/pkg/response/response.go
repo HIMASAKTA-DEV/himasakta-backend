@@ -31,6 +31,21 @@ func NewSuccess(msg string, data any, meta ...any) Response {
 	return res
 }
 
+func NewSuccessCreated(msg string, data any, meta ...any) Response {
+	res := Response{
+		StatusCode: http.StatusCreated,
+		Success:    true,
+		Message:    msg,
+		Data:       data,
+	}
+
+	if len(meta) > 0 {
+		res.Meta = meta[0]
+	}
+
+	return res
+}
+
 // response default status code internal server error (500)
 func NewFailed(msg string, err error, data ...any) Response {
 	res := Response{

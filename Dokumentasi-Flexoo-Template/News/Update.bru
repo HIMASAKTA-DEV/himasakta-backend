@@ -1,0 +1,26 @@
+meta {
+  name: Update News
+  type: http
+  seq: 4
+}
+
+put {
+  url: {{host}}/api/v1/news/:id
+  body: json
+  auth: inherit
+}
+
+params:path {
+  id: 
+}
+
+body:json {
+  {
+    "title": "Judul Berita Updated",
+    "tagline": "Tagline Berita Updated",
+    "hashtags": "TAG1,TAG2,UPDATED",
+    "content": "Konten Berita Updated",
+    "thumbnail_id": null,
+    "published_at": "2024-02-12T13:35:00Z"
+  }
+}

@@ -1,0 +1,22 @@
+meta {
+  name: Create News
+  type: http
+  seq: 2
+}
+
+post {
+  url: {{host}}/api/v1/news
+  body: json
+  auth: inherit
+}
+
+body:json {
+  {
+    "title": "Judul Berita",
+    "tagline": "Tagline Berita",
+    "hashtags": "TAG1,TAG2",
+    "content": "Konten Berita",
+    "thumbnail_id": null,
+    "published_at": "2024-02-12T13:35:00Z"
+  }
+}

@@ -35,7 +35,7 @@ func (c *departmentController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create department", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("success create department", res).Send(ctx)
+	response.NewSuccessCreated("success create department", res).Send(ctx)
 }
 
 func (c *departmentController) GetAll(ctx *gin.Context) {
@@ -49,7 +49,7 @@ func (c *departmentController) GetAll(ctx *gin.Context) {
 }
 
 func (c *departmentController) GetById(ctx *gin.Context) {
-	res, err := c.service.GetById(ctx.Request.Context(), ctx.Param("id"))
+	res, err := c.service.GetByIdContent(ctx.Request.Context(), ctx.Param("name"))
 	if err != nil {
 		response.NewFailed("failed get department", err).Send(ctx)
 		return

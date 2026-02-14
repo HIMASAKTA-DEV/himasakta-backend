@@ -27,6 +27,7 @@ func getParams(db *gorm.DB) error {
 	migrate := false
 	seeder := false
 	watch := false
+	test := false
 
 	for _, arg := range os.Args[1:] {
 		if arg == "--migrate" {
@@ -37,6 +38,9 @@ func getParams(db *gorm.DB) error {
 		}
 		if arg == "--watch" {
 			watch = true
+		}
+		if arg == "--test" {
+			test = true
 		}
 	}
 	if migrate {
@@ -64,7 +68,15 @@ func getParams(db *gorm.DB) error {
 		os.Exit(0)
 	}
 
-	if seeder || watch || migrate {
+	if test {
+		if err := RunAPITests(); err != nil {
+			mylog.Errorf("API tests failed: %v", err)
+			os.Exit(1)
+		}
+		os.Exit(0)
+	}
+
+	if seeder || watch || migrate || test {
 		os.Exit(0)
 	}
 

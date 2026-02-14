@@ -10,3 +10,7 @@ type Gallery struct {
 	Category     string     `gorm:"type:varchar(100)" json:"category"`
 	DepartmentId *uuid.UUID `gorm:"type:uuid" json:"department_id"`
 }
+
+func (Gallery) TableName() string {
+	return "galleries"
+}
