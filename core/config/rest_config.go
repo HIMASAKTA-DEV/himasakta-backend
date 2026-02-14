@@ -49,7 +49,8 @@ func NewRest() (RestConfig, error) {
 	memberController := controller.NewMember(memberService)
 
 	progendaRepo := repository.NewProgenda(db)
-	progendaService := service.NewProgenda(progendaRepo)
+	timelineRepo := repository.NewTimeline(db)
+	progendaService := service.NewProgenda(db, progendaRepo, timelineRepo)
 	progendaController := controller.NewProgenda(progendaService)
 
 	monthlyEventRepo := repository.NewMonthlyEvent(db)

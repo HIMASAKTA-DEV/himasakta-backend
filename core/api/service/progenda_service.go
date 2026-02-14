@@ -8,6 +8,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
+	"gorm.io/gorm"
 )
 
 type ProgendaService interface {
@@ -19,23 +20,62 @@ type ProgendaService interface {
 }
 
 type progendaService struct {
-	repo repository.ProgendaRepository
+	db           *gorm.DB
+	progendaRepo repository.ProgendaRepository
+	timelineRepo repository.TimelineRepository
 }
 
-func NewProgenda(repo repository.ProgendaRepository) ProgendaService {
-	return &progendaService{repo}
+func NewProgenda(db *gorm.DB, progendaRepo repository.ProgendaRepository, timelineRepo repository.TimelineRepository) ProgendaService {
+	return &progendaService{
+		db:           db,
+		progendaRepo: progendaRepo,
+		timelineRepo: timelineRepo,
+	}
 }
 
 func (s *progendaService) Create(ctx context.Context, req dto.CreateProgendaRequest) (entity.Progenda, error) {
-	return s.repo.Create(ctx, nil, entity.Progenda{
+	tx := s.db.Begin()
+	if tx.Error != nil {
+		return entity.Progenda{}, tx.Error
+	}
+
+	//create progenda
+	progenda, err := s.progendaRepo.Create(ctx, tx, entity.Progenda{
 		Name:         req.Name,
 		ThumbnailId:  req.ThumbnailId,
 		Goal:         req.Goal,
 		Description:  req.Description,
-		Timeline:     req.Timeline,
 		WebsiteLink:  req.WebsiteLink,
 		DepartmentId: req.DepartmentId,
 	})
+	if err != nil {
+		tx.Rollback()
+		return entity.Progenda{}, err
+	}
+
+	//create timelines
+	var timelines []entity.Timeline
+
+	for _, tl := range req.Timelines {
+		timelines = append(timelines, entity.Timeline{
+			ProgendaId: progenda.Id,
+			Date:       tl.Date,
+			Info:       tl.Info,
+		})
+	}
+
+	if err := s.timelineRepo.BulkCreate(ctx, tx, timelines); err != nil {
+		tx.Rollback()
+		return entity.Progenda{}, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return entity.Progenda{}, err
+	}
+
+	progenda.Timelines = timelines
+	return progenda, nil
+
 }
 
 func (s *progendaService) GetAll(ctx context.Context, metaReq meta.Meta, search string, departmentId string, name string) ([]entity.Progenda, meta.Meta, error) {
@@ -46,39 +86,110 @@ func (s *progendaService) GetAll(ctx context.Context, metaReq meta.Meta, search 
 			deptId = &id
 		}
 	}
-	return s.repo.GetAll(ctx, nil, metaReq, search, deptId, name)
+	return s.progendaRepo.GetAll(ctx, nil, metaReq, search, deptId, name)
 }
 
 func (s *progendaService) GetById(ctx context.Context, id string) (entity.Progenda, error) {
 	uid, _ := uuid.Parse(id)
-	return s.repo.GetById(ctx, nil, uid)
+	return s.progendaRepo.GetById(ctx, nil, uid)
 }
 
 func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateProgendaRequest) (entity.Progenda, error) {
 	uid, _ := uuid.Parse(id)
-	p, err := s.repo.GetById(ctx, nil, uid)
+
+	tx := s.db.Begin()
+	if tx.Error != nil {
+		return entity.Progenda{}, tx.Error
+	}
+
+	p, err := s.progendaRepo.GetById(ctx, tx, uid)
 	if err != nil {
 		return p, err
 	}
 
-	if req.Name != "" {
-		p.Name = req.Name
-	}
+	//update Progenda
+	p.Name = req.Name
 	p.ThumbnailId = req.ThumbnailId
 	p.Goal = req.Goal
 	p.Description = req.Description
-	p.Timeline = req.Timeline
 	p.WebsiteLink = req.WebsiteLink
+	p.InstagramLink = req.InstagramLink
+	p.TwitterLink = req.TwitterLink
+	p.LinkedinLink = req.LinkedinLink
+	p.YoutubeLink = req.YoutubeLink
 	p.DepartmentId = req.DepartmentId
 
-	return s.repo.Update(ctx, nil, p)
+	progenda, err := s.progendaRepo.Update(ctx, tx, p)
+	if err != nil {
+		tx.Rollback()
+		return entity.Progenda{}, err
+
+	}
+
+	//update timelines
+	var timelines []entity.Timeline
+
+	for _, tl := range req.Timelines {
+		timelines = append(timelines, entity.Timeline{
+			Id:         tl.Id,
+			ProgendaId: uid,
+			Date:       tl.Date,
+			Info:       tl.Info,
+		})
+	}
+
+	_, err = s.timelineRepo.BulkUpdate(ctx, tx, timelines)
+	if err != nil {
+		tx.Rollback()
+		return entity.Progenda{}, err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return entity.Progenda{}, err
+	}
+
+	progenda.Timelines = timelines
+	return progenda, nil
 }
 
 func (s *progendaService) Delete(ctx context.Context, id string) error {
 	uid, _ := uuid.Parse(id)
-	p, err := s.repo.GetById(ctx, nil, uid)
+
+	tx := s.db.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	p, err := s.progendaRepo.GetById(ctx, nil, uid)
 	if err != nil {
 		return err
 	}
-	return s.repo.Delete(ctx, nil, p)
+
+	//delete timelines
+	var timelines []entity.Timeline
+
+	for _, tl := range p.Timelines {
+		timelines = append(timelines, entity.Timeline{
+			Id:         tl.Id,
+			ProgendaId: p.Id,
+			Date:       tl.Date,
+			Info:       tl.Info,
+		})
+	}
+	if err := s.timelineRepo.BulkDelete(ctx, tx, timelines); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	//delete progenda
+	if err := s.progendaRepo.Delete(ctx, nil, p); err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	if err := tx.Commit().Error; err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -62,15 +62,15 @@ func (c *progendaController) GetById(ctx *gin.Context) {
 func (c *progendaController) Update(ctx *gin.Context) {
 	var req dto.UpdateProgendaRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.NewFailed("invalid request body", err).Send(ctx)
+		response.NewFailed("invalid request body", err)
 		return
 	}
 	res, err := c.service.Update(ctx.Request.Context(), ctx.Param("id"), req)
 	if err != nil {
-		response.NewFailed("failed update progenda", err).Send(ctx)
+		response.NewFailed("failed update progenda", err)
 		return
 	}
-	response.NewSuccess("success update progenda", res).Send(ctx)
+	response.NewSuccess("success update progenda", res)
 }
 
 func (c *progendaController) Delete(ctx *gin.Context) {
