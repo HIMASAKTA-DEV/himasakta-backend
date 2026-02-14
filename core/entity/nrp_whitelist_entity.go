@@ -10,5 +10,5 @@ type NrpWhitelist struct {
 }
 
 func (NrpWhitelist) TableName() string {
-	return "nrpWhitelists"
+	return "nrp_whitelists"
 }

@@ -67,10 +67,10 @@ func (c *progendaController) Update(ctx *gin.Context) {
 	}
 	res, err := c.service.Update(ctx.Request.Context(), ctx.Param("id"), req)
 	if err != nil {
-		response.NewFailed("failed update progenda", err)
+		response.NewFailed("failed update progenda", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("success update progenda", res)
+	response.NewSuccess("success update progenda", res).Send(ctx)
 }
 
 func (c *progendaController) Delete(ctx *gin.Context) {

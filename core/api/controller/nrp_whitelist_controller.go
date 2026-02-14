@@ -34,9 +34,10 @@ func (c *nrpWhitelistController) CheckWhitelist(ctx *gin.Context) {
 	res, err := c.service.Check(ctx.Request.Context(), req)
 	if err != nil {
 		// If not found
-		response.NewFailedWithCode(403, "NRP is not allowed", err)
+		response.NewFailedWithCode(403, "NRP is not allowed", err).Send(ctx)
+		return
 	}
-	response.NewSuccess("NRP is allowed", res)
+	response.NewSuccess("NRP is allowed", res).Send(ctx)
 
 }
 
