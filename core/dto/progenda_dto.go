@@ -10,6 +10,7 @@ type CreateTimelineRequest struct {
 	ProgendaId uuid.UUID `json:"progenda_id" binding:"required"`
 	Date       time.Time `json:"date" binding:"required"`
 	Info       string    `json:"info"`
+	Link       string    `json:"link"`
 }
 type CreateProgendaRequest struct {
 	Name          string     `json:"name" binding:"required"`
@@ -30,6 +31,7 @@ type UpdateTimelineRequest struct {
 	Id   uuid.UUID `json:"timeline_id"`
 	Date time.Time `json:"date" binding:"required"`
 	Info string    `json:"info"`
+	Link string    `json:"link"`
 }
 type UpdateProgendaRequest struct {
 	Name          string     `json:"name"`

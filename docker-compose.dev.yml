@@ -10,6 +10,11 @@ services:
       - .:/app
     ports:
       - "8811:8811"
+    environment:
+      - APP_HOST=0.0.0.0
+      - APP_PORT=8811
+      - POSTGRES_HOST=db-dev
+      - POSTGRES_PORT=5432
     env_file:
       - .env
     depends_on:

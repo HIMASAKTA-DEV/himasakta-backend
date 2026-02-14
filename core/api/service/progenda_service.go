@@ -58,9 +58,10 @@ func (s *progendaService) Create(ctx context.Context, req dto.CreateProgendaRequ
 
 	for _, tl := range req.Timelines {
 		timelines = append(timelines, entity.Timeline{
-			ProgendaId: progenda.Id,
+			ProgendaId: &progenda.Id,
 			Date:       tl.Date,
 			Info:       tl.Info,
+			Link:       tl.Link,
 		})
 	}
 
@@ -132,9 +133,10 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	for _, tl := range req.Timelines {
 		timelines = append(timelines, entity.Timeline{
 			Id:         tl.Id,
-			ProgendaId: uid,
+			ProgendaId: &uid,
 			Date:       tl.Date,
 			Info:       tl.Info,
+			Link:       tl.Link,
 		})
 	}
 
@@ -171,7 +173,7 @@ func (s *progendaService) Delete(ctx context.Context, id string) error {
 	for _, tl := range p.Timelines {
 		timelines = append(timelines, entity.Timeline{
 			Id:         tl.Id,
-			ProgendaId: p.Id,
+			ProgendaId: &p.Id,
 			Date:       tl.Date,
 			Info:       tl.Info,
 		})

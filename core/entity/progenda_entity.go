@@ -18,7 +18,7 @@ type Progenda struct {
 	DepartmentId  *uuid.UUID  `gorm:"type:uuid" json:"department_id"`
 	Department    *Department `gorm:"foreignKey:DepartmentId" json:"department"`
 
-	Timelines []Timeline `gorm:"foreignKey:ProgendaId" json:"timelines"`
+	Timelines []Timeline `gorm:"foreignKey:ProgendaId;constraint:OnDelete:CASCADE" json:"timelines"`
 	Feeds     []Gallery  `gorm:"foreignKey:ProgendaId" json:"feeds"`
 }
 

@@ -9,6 +9,8 @@ type Gallery struct {
 	Caption      string     `gorm:"type:varchar(255)" json:"caption"`
 	Category     string     `gorm:"type:varchar(100)" json:"category"`
 	DepartmentId *uuid.UUID `gorm:"type:uuid" json:"department_id"`
+
+	ProgendaId *uuid.UUID `gorm:"type:uuid" json:"progenda_id"`
 }
 
 func (Gallery) TableName() string {

@@ -1,33 +1,25 @@
-# ========= Builder =========
-FROM golang:1.25-alpine AS builder
+FROM golang:1.25-alpine
 
 WORKDIR /app
 
-# Copy dan download dependencies
+# Install air for hot reloading
+RUN go install github.com/air-verse/air@latest
+
+# Copy go mod and sum files
 COPY go.mod go.sum ./
+
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
-# Copy seluruh source code
+# Copy the source from the current directory to the Working Directory inside the container
 COPY . .
 
+# Create necessary directories
 RUN mkdir -p /app/assets/image
 RUN mkdir -p /app/assets/uploads
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o main .
+# Expose port 8811 to the outside world
+EXPOSE 8811
 
-# ========= Production =========
-FROM gcr.io/distroless/base-debian12
-
-WORKDIR /app
-
-# Copy hasil build dari builder
-COPY --from=builder /app/main .
-
-COPY --from=builder /app/assets/image ./assets/image
-
-COPY --from=builder /app/core/pkg/email/template ./core/pkg/email/template
-
-EXPOSE 8887
-
-# Jalankan binary
-CMD ["./main"]
+# Command to run the executable
+CMD ["air", "-c", ".air.linux.toml"]

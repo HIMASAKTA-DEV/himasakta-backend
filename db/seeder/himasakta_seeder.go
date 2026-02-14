@@ -71,6 +71,12 @@ func HimasaktaSeeder(db *gorm.DB) error {
 		return err
 	}
 
+	// Time Line
+	timeline := entity.Timeline{
+		Date: time.Date(1016, 12, 11, 0, 0, 0, 0, time.UTC),
+		Info: "Oprec",
+		Link: "https://...",
+	}
 	// 5. Seed Progenda
 	progenda := entity.Progenda{
 		Id:           uuid.New(),
@@ -78,7 +84,7 @@ func HimasaktaSeeder(db *gorm.DB) error {
 		ThumbnailId:  &gallery2.Id,
 		Goal:         "Melatih jiwa kepemimpinan.",
 		Description:  "Latihan Dasar Kepemimpinan Mahasiswa.",
-		Timeline:     "Maret 2024",
+		Timelines:    []entity.Timeline{timeline},
 		DepartmentId: &dept.Id,
 	}
 	if err := db.Create(&progenda).Error; err != nil {

@@ -5,7 +5,8 @@ tmp/
 public/uploads/
 logs/
 tests/
-
+Dokumentasi-Flexoo-Template
 .idea
 .vercel
 *.exe
+.env*.local
