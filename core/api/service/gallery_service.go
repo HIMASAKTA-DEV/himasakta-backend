@@ -32,6 +32,7 @@ func (s *galleryService) Create(ctx context.Context, req dto.CreateGalleryReques
 		Caption:      req.Caption,
 		Category:     req.Category,
 		DepartmentId: req.DepartmentId,
+		ProgendaId:   req.ProgendaId,
 	})
 }
 
@@ -61,9 +62,18 @@ func (s *galleryService) Update(ctx context.Context, id string, req dto.UpdateGa
 	if req.ImageUrl != "" {
 		gallery.ImageUrl = req.ImageUrl
 	}
-	gallery.Caption = req.Caption
-	gallery.Category = req.Category
-	gallery.DepartmentId = req.DepartmentId
+	if req.Caption != "" {
+		gallery.Caption = req.Caption
+	}
+	if req.Category != "" {
+		gallery.Category = req.Category
+	}
+	if req.DepartmentId != nil {
+		gallery.DepartmentId = req.DepartmentId
+	}
+	if req.ProgendaId != nil {
+		gallery.ProgendaId = req.ProgendaId
+	}
 
 	return s.galleryRepo.Update(ctx, nil, gallery)
 }
