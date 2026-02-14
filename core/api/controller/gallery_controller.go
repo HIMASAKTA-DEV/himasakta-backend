@@ -56,7 +56,7 @@ func (c *galleryController) Create(ctx *gin.Context) {
 	}
 	if progIdStr != "" {
 		id, err := uuid.Parse(progIdStr)
-		if err != nil {
+		if err == nil {
 			progId = &id
 		}
 	}
