@@ -13,6 +13,7 @@ import (
 type MemberService interface {
 	Create(ctx context.Context, req dto.CreateMemberRequest) (entity.Member, error)
 	GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Member, meta.Meta, error)
+	GetGroupedByRank(ctx context.Context, metaReq meta.Meta) ([]dto.GroupedMemberResponse, error)
 	GetById(ctx context.Context, id string) (entity.Member, error)
 	Update(ctx context.Context, id string, req dto.UpdateMemberRequest) (entity.Member, error)
 	Delete(ctx context.Context, id string) error
@@ -30,10 +31,10 @@ func (s *memberService) Create(ctx context.Context, req dto.CreateMemberRequest)
 	return s.repo.Create(ctx, nil, entity.Member{
 		Nrp:          req.Nrp,
 		Name:         req.Name,
-		Role:         req.Role,
+		RoleId:       req.RoleId,
+		Index:        req.Index,
 		DepartmentId: req.DepartmentId,
 		PhotoId:      req.PhotoId,
-		Period:       req.Period,
 	})
 }
 
@@ -59,16 +60,54 @@ func (s *memberService) Update(ctx context.Context, id string, req dto.UpdateMem
 	if req.Name != "" {
 		m.Name = req.Name
 	}
-	if req.Role != "" {
-		m.Role = req.Role
+	if req.RoleId != nil {
+		m.RoleId = req.RoleId
+	}
+	if req.Index != 0 {
+		m.Index = req.Index
 	}
 	m.DepartmentId = req.DepartmentId
 	m.PhotoId = req.PhotoId
-	if req.Period != "" {
-		m.Period = req.Period
-	}
 
 	return s.repo.Update(ctx, nil, m)
+}
+
+func (s *memberService) GetGroupedByRank(ctx context.Context, metaReq meta.Meta) ([]dto.GroupedMemberResponse, error) {
+	members, _, err := s.repo.GetAll(ctx, nil, metaReq, "")
+	if err != nil {
+		return nil, err
+	}
+
+	var response []dto.GroupedMemberResponse
+	if len(members) == 0 {
+		return response, nil
+	}
+
+	// Grouping logic assuming members are sorted by Role.Index
+	var currentGroup *dto.GroupedMemberResponse
+
+	for _, m := range members {
+		rankName := ""
+		if m.Role != nil {
+			rankName = m.Role.Rank
+		}
+
+		if currentGroup == nil || currentGroup.Rank != rankName {
+			if currentGroup != nil {
+				response = append(response, *currentGroup)
+			}
+			currentGroup = &dto.GroupedMemberResponse{
+				Rank:    rankName,
+				Members: []entity.Member{},
+			}
+		}
+		currentGroup.Members = append(currentGroup.Members, m)
+	}
+	if currentGroup != nil {
+		response = append(response, *currentGroup)
+	}
+
+	return response, nil
 }
 
 func (s *memberService) Delete(ctx context.Context, id string) error {

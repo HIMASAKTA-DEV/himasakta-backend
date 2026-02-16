@@ -47,7 +47,13 @@ func (r *memberRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta
 		return nil, metaReq, fmt.Errorf("database connection is nil")
 	}
 	var members []entity.Member
-	tx = tx.WithContext(ctx).Model(&entity.Member{}).Preload("Department").Preload("Photo")
+	tx = tx.WithContext(ctx).Model(&entity.Member{}).
+		Preload("Department").
+		Preload("Photo").
+		Preload("Role").
+		Joins("JOIN roles ON roles.id = members.role_id").
+		Order("roles.index ASC").
+		Order("members.index ASC")
 
 	if name != "" {
 		tx = tx.Where("name = ?", name)
