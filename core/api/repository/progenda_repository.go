@@ -57,6 +57,10 @@ func (r *progendaRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq me
 		tx = tx.Where("name ILIKE ?", "%"+search+"%")
 	}
 
+	if metaReq.SortBy == "" {
+		tx = tx.Order("created_at DESC")
+	}
+
 	if err := WithFilters(tx, &metaReq, AddModels(entity.Progenda{})).Find(&progendas).Error; err != nil {
 		return nil, metaReq, err
 	}

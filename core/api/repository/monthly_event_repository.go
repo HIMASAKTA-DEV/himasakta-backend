@@ -55,6 +55,10 @@ func (r *monthlyEventRepository) GetAll(ctx context.Context, tx *gorm.DB, metaRe
 		tx = tx.Where("title = ?", title)
 	}
 
+	if metaReq.SortBy == "" {
+		tx = tx.Order("created_at DESC")
+	}
+
 	if err := WithFilters(tx, &metaReq, AddModels(entity.MonthlyEvent{})).Find(&events).Error; err != nil {
 		return nil, metaReq, err
 	}

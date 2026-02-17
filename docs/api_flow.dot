@@ -45,9 +45,9 @@ digraph himasakta_api {
         monthly_ctrl [label="{MonthlyEvent|GET POST PUT DELETE\n/monthly-event\n/monthly-event/this-month}", fillcolor="#dcfce7", color="#22c55e"];
         progenda_ctrl [label="{Progenda|GET POST PUT DELETE\n/progenda}", fillcolor="#dcfce7", color="#22c55e"];
         gallery_ctrl [label="{Gallery|GET POST PUT DELETE\n/gallery\n(multipart upload)}", fillcolor="#dcfce7", color="#22c55e"];
-        member_ctrl [label="{Member|GET POST PUT DELETE\n/member}", fillcolor="#dcfce7", color="#22c55e"];
+        member_ctrl [label="{Member|GET POST PUT DELETE\n/member\n?groupby=rank}", fillcolor="#dcfce7", color="#22c55e"];
+        role_ctrl [label="{Role|GET POST PUT DELETE\n/role}", fillcolor="#dcfce7", color="#22c55e"];
         nrp_ctrl [label="{NrpWhitelist|POST DELETE\n/nrp-whitelist}", fillcolor="#dcfce7", color="#22c55e"];
-        upload_ctrl [label="{Uploads|POST /uploads}", fillcolor="#dcfce7", color="#22c55e"];
     }
 
     // ── Services ──
@@ -65,6 +65,7 @@ digraph himasakta_api {
         progenda_svc [label="ProgendaService", fillcolor="#fce7f3", color="#ec4899"];
         gallery_svc [label="GalleryService", fillcolor="#fce7f3", color="#ec4899"];
         member_svc [label="MemberService", fillcolor="#fce7f3", color="#ec4899"];
+        role_svc [label="RoleService", fillcolor="#fce7f3", color="#ec4899"];
         nrp_svc [label="NrpWhitelistService", fillcolor="#fce7f3", color="#ec4899"];
     }
 
@@ -83,6 +84,7 @@ digraph himasakta_api {
         timeline_repo [label="TimelineRepo", fillcolor="#fed7aa", color="#f97316"];
         gallery_repo [label="GalleryRepo", fillcolor="#fed7aa", color="#f97316"];
         member_repo [label="MemberRepo", fillcolor="#fed7aa", color="#f97316"];
+        role_repo [label="RoleRepo", fillcolor="#fed7aa", color="#f97316"];
         nrp_repo [label="NrpWhitelistRepo", fillcolor="#fed7aa", color="#f97316"];
     }
 
@@ -106,6 +108,7 @@ digraph himasakta_api {
 
         e_gallery [label="Gallery\n(Media)", fillcolor="#fff7ed", color="#ea580c"];
         e_cabinet [label="CabinetInfo", fillcolor="#fff7ed", color="#ea580c"];
+        e_role [label="Role", fillcolor="#fff7ed", color="#ea580c"];
         e_dept [label="Department", fillcolor="#fff7ed", color="#ea580c"];
         e_news [label="News", fillcolor="#fff7ed", color="#ea580c"];
         e_monthly [label="MonthlyEvent", fillcolor="#fff7ed", color="#ea580c"];
@@ -128,8 +131,8 @@ digraph himasakta_api {
     auth_mw -> progenda_ctrl;
     auth_mw -> gallery_ctrl;
     auth_mw -> member_ctrl;
+    auth_mw -> role_ctrl;
     auth_mw -> nrp_ctrl;
-    auth_mw -> upload_ctrl;
 
     // ── Controller → Service ──
     auth_ctrl -> auth_svc;
@@ -140,6 +143,7 @@ digraph himasakta_api {
     progenda_ctrl -> progenda_svc;
     gallery_ctrl -> gallery_svc;
     member_ctrl -> member_svc;
+    role_ctrl -> role_svc;
     nrp_ctrl -> nrp_svc;
 
     // ── Service → Repo ──
@@ -151,6 +155,7 @@ digraph himasakta_api {
     progenda_svc -> timeline_repo;
     gallery_svc -> gallery_repo;
     member_svc -> member_repo;
+    role_svc -> role_repo;
     nrp_svc -> nrp_repo;
 
     // ── Repo → DB ──
@@ -162,11 +167,11 @@ digraph himasakta_api {
     timeline_repo -> postgres;
     gallery_repo -> postgres;
     member_repo -> postgres;
+    role_repo -> postgres;
     nrp_repo -> postgres;
 
     // ── S3 connections ──
     gallery_ctrl -> s3 [label="upload"];
-    upload_ctrl -> s3 [label="upload"];
 
     // ── Entity FK relationships ──
     e_news -> e_gallery [label="thumbnail_id", style=dashed, color="#ea580c"];
@@ -176,6 +181,8 @@ digraph himasakta_api {
     e_cabinet -> e_gallery [label="logo_id\norganigram_id", style=dashed, color="#ea580c"];
     e_member -> e_gallery [label="photo_id", style=dashed, color="#ea580c"];
     e_member -> e_dept [label="department_id", style=dashed, color="#ea580c"];
+    e_member -> e_role [label="role_id", style=dashed, color="#ea580c"];
+    e_member -> e_cabinet [label="cabinet_id", style=dashed, color="#ea580c"];
     e_progenda -> e_dept [label="department_id", style=dashed, color="#ea580c"];
     e_timeline -> e_progenda [label="progenda_id", style=dashed, color="#ea580c"];
     e_gallery -> e_dept [label="department_id", style=dashed, color="#ea580c"];

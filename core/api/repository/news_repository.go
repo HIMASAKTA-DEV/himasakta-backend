@@ -56,6 +56,10 @@ func (r *newsRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.M
 		tx = tx.Where("title ILIKE ?", "%"+search+"%")
 	}
 
+	if metaReq.SortBy == "" {
+		tx = tx.Order("created_at DESC")
+	}
+
 	if err := WithFilters(tx, &metaReq, AddModels(entity.News{})).Find(&news).Error; err != nil {
 		return nil, metaReq, err
 	}

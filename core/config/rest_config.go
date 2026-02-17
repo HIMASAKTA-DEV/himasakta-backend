@@ -14,6 +14,7 @@ import (
 	myjwt "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/jwt"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/storage"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
+	"github.com/gin-contrib/gzip"
 	"github.com/gin-gonic/gin"
 )
 
@@ -26,7 +27,14 @@ func NewRest() (RestConfig, error) {
 	if db == nil {
 		return RestConfig{}, fmt.Errorf("database connection failed")
 	}
+
+	if mode := os.Getenv("APP_MODE"); mode == "production" || mode == "release" {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	app := gin.Default()
+	app.Use(gzip.Gzip(gzip.DefaultCompression))
+	
 	s3 := storage.NewAwsS3()
 	server := NewRouter(app, s3)
 	_ = middleware.New(db)
@@ -61,9 +69,14 @@ func NewRest() (RestConfig, error) {
 	newsService := service.NewNews(newsRepo)
 	newsController := controller.NewNews(newsService)
 
+	// ... existing injections ...
 	nrpWhitelistRepo := repository.NewNrpWhitelist(db)
 	nrpWhitelistService := service.NewNrpWhitelist(nrpWhitelistRepo)
 	nrpWhitelistController := controller.NewNrpWhitelist(nrpWhitelistService)
+
+	roleRepo := repository.NewRole(db)
+	roleService := service.NewRole(roleRepo)
+	roleController := controller.NewRole(roleService)
 
 	jwtService := myjwt.NewJWT()
 	authService := service.NewAuth(jwtService)
@@ -84,6 +97,7 @@ func NewRest() (RestConfig, error) {
 	routes.MonthlyEvent(server, monthlyEventController, m)
 	routes.News(server, newsController, m)
 	routes.NrpWhitelist(server, nrpWhitelistController, m)
+	routes.Role(server, roleController, m)
 
 	return RestConfig{
 		server: server,

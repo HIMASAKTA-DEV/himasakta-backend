@@ -39,6 +39,16 @@ func (c *memberController) Create(ctx *gin.Context) {
 }
 
 func (c *memberController) GetAll(ctx *gin.Context) {
+	if ctx.Query("groupby") == "rank" {
+		res, err := c.service.GetAllGrouped(ctx.Request.Context())
+		if err != nil {
+			response.NewFailed("failed get members grouped", err).Send(ctx)
+			return
+		}
+		response.NewSuccess("success get members grouped", res).Send(ctx)
+		return
+	}
+
 	name := ctx.Query("name")
 	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), name)
 	if err != nil {
