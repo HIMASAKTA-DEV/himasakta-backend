@@ -48,7 +48,7 @@ func (r *cabinetInfoRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq
 		return nil, metaReq, fmt.Errorf("database connection is nil")
 	}
 	var infos []entity.CabinetInfo
-	tx = tx.WithContext(ctx).Model(&entity.CabinetInfo{}).Preload("Logo")
+	tx = tx.WithContext(ctx).Model(&entity.CabinetInfo{}).Preload("Logo").Preload("Organigram")
 
 	if metaReq.SortBy == "" {
 		metaReq.SortBy = "period_start"
@@ -69,7 +69,7 @@ func (r *cabinetInfoRepository) GetCurrentCabinet(ctx context.Context, tx *gorm.
 		return entity.CabinetInfo{}, fmt.Errorf("database connection is nil")
 	}
 	var ci entity.CabinetInfo
-	if err := tx.WithContext(ctx).Model(&entity.CabinetInfo{}).Preload("Logo").Where("is_active = ?", true).Order("period_start desc").First(&ci).Error; err != nil {
+	if err := tx.WithContext(ctx).Model(&entity.CabinetInfo{}).Preload("Logo").Preload("Organigram").Where("is_active = ?", true).Order("period_start desc").First(&ci).Error; err != nil {
 		return entity.CabinetInfo{}, err
 	}
 	return ci, nil
@@ -83,7 +83,7 @@ func (r *cabinetInfoRepository) GetById(ctx context.Context, tx *gorm.DB, id uui
 		return entity.CabinetInfo{}, fmt.Errorf("database connection is nil")
 	}
 	var ci entity.CabinetInfo
-	if err := tx.WithContext(ctx).Preload("Logo").Take(&ci, "id = ?", id).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Logo").Preload("Organigram").Take(&ci, "id = ?", id).Error; err != nil {
 		return entity.CabinetInfo{}, err
 	}
 	return ci, nil

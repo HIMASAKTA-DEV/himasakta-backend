@@ -88,7 +88,7 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 		d.Logo = nil
 	}
 	if req.SocialMediaLink != "" {
-			d.SocialMediaLink = req.SocialMediaLink
+		d.SocialMediaLink = req.SocialMediaLink
 	}
 	if req.BankSoalLink != "" {
 		d.BankSoalLink = req.BankSoalLink
