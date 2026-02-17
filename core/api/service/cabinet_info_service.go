@@ -79,7 +79,14 @@ func (s *cabinetInfoService) Update(ctx context.Context, id string, req dto.Upda
 	if req.PeriodEnd != "" {
 		ci.PeriodEnd = req.PeriodEnd
 	}
-	ci.LogoId = req.LogoId
+	if req.LogoId != nil {
+		ci.LogoId = req.LogoId
+		ci.Logo = nil
+	}
+	if req.OrganigramId != nil {
+		ci.OrganigramId = req.OrganigramId
+		ci.Organigram = nil
+	}
 	if req.IsActive != nil {
 		ci.IsActive = *req.IsActive
 	}

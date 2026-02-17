@@ -1,0 +1,184 @@
+digraph himasakta_api {
+    rankdir=LR;
+    bgcolor="#f8fafc";
+    fontname="Inter";
+    node [fontname="Inter", fontsize=11, style="filled,rounded", shape=record];
+    edge [fontname="Inter", fontsize=9, color="#64748b"];
+
+    // ── Clients ──
+    subgraph cluster_clients {
+        label="Clients";
+        style="dashed";
+        color="#94a3b8";
+        fontcolor="#475569";
+        
+        frontend [label="Frontend\n(Next.js)", fillcolor="#dbeafe", color="#3b82f6"];
+        admin [label="Admin Panel", fillcolor="#dbeafe", color="#3b82f6"];
+    }
+
+    // ── Middleware ──
+    subgraph cluster_middleware {
+        label="Middleware";
+        style="dashed";
+        color="#94a3b8";
+        fontcolor="#475569";
+
+        cors [label="CORS", fillcolor="#fef3c7", color="#f59e0b", shape=ellipse];
+        auth_mw [label="JWT Auth\nMiddleware", fillcolor="#fef3c7", color="#f59e0b", shape=ellipse];
+        security [label="Security\nHeaders", fillcolor="#fef3c7", color="#f59e0b", shape=ellipse];
+    }
+
+    // ── Router (Gin) ──
+    router [label="Gin Router\n/api/v1", fillcolor="#e0e7ff", color="#6366f1", shape=hexagon];
+
+    // ── Controllers ──
+    subgraph cluster_controllers {
+        label="Controllers";
+        style="dashed";
+        color="#94a3b8";
+        fontcolor="#475569";
+
+        auth_ctrl [label="{Auth|POST /auth/login}", fillcolor="#dcfce7", color="#22c55e"];
+        cabinet_ctrl [label="{CabinetInfo|GET POST PUT DELETE\n/cabinet-info\n/current-cabinet}", fillcolor="#dcfce7", color="#22c55e"];
+        dept_ctrl [label="{Department|GET POST PUT DELETE\n/department}", fillcolor="#dcfce7", color="#22c55e"];
+        news_ctrl [label="{News|GET POST PUT DELETE\n/news\n/news/autocompletion}", fillcolor="#dcfce7", color="#22c55e"];
+        monthly_ctrl [label="{MonthlyEvent|GET POST PUT DELETE\n/monthly-event\n/monthly-event/this-month}", fillcolor="#dcfce7", color="#22c55e"];
+        progenda_ctrl [label="{Progenda|GET POST PUT DELETE\n/progenda}", fillcolor="#dcfce7", color="#22c55e"];
+        gallery_ctrl [label="{Gallery|GET POST PUT DELETE\n/gallery\n(multipart upload)}", fillcolor="#dcfce7", color="#22c55e"];
+        member_ctrl [label="{Member|GET POST PUT DELETE\n/member}", fillcolor="#dcfce7", color="#22c55e"];
+        nrp_ctrl [label="{NrpWhitelist|POST DELETE\n/nrp-whitelist}", fillcolor="#dcfce7", color="#22c55e"];
+        upload_ctrl [label="{Uploads|POST /uploads}", fillcolor="#dcfce7", color="#22c55e"];
+    }
+
+    // ── Services ──
+    subgraph cluster_services {
+        label="Services";
+        style="dashed";
+        color="#94a3b8";
+        fontcolor="#475569";
+
+        auth_svc [label="AuthService", fillcolor="#fce7f3", color="#ec4899"];
+        cabinet_svc [label="CabinetInfoService", fillcolor="#fce7f3", color="#ec4899"];
+        dept_svc [label="DepartmentService", fillcolor="#fce7f3", color="#ec4899"];
+        news_svc [label="NewsService", fillcolor="#fce7f3", color="#ec4899"];
+        monthly_svc [label="MonthlyEventService", fillcolor="#fce7f3", color="#ec4899"];
+        progenda_svc [label="ProgendaService", fillcolor="#fce7f3", color="#ec4899"];
+        gallery_svc [label="GalleryService", fillcolor="#fce7f3", color="#ec4899"];
+        member_svc [label="MemberService", fillcolor="#fce7f3", color="#ec4899"];
+        nrp_svc [label="NrpWhitelistService", fillcolor="#fce7f3", color="#ec4899"];
+    }
+
+    // ── Repositories ──
+    subgraph cluster_repos {
+        label="Repositories (GORM)";
+        style="dashed";
+        color="#94a3b8";
+        fontcolor="#475569";
+
+        cabinet_repo [label="CabinetInfoRepo", fillcolor="#fed7aa", color="#f97316"];
+        dept_repo [label="DepartmentRepo", fillcolor="#fed7aa", color="#f97316"];
+        news_repo [label="NewsRepo", fillcolor="#fed7aa", color="#f97316"];
+        monthly_repo [label="MonthlyEventRepo", fillcolor="#fed7aa", color="#f97316"];
+        progenda_repo [label="ProgendaRepo", fillcolor="#fed7aa", color="#f97316"];
+        timeline_repo [label="TimelineRepo", fillcolor="#fed7aa", color="#f97316"];
+        gallery_repo [label="GalleryRepo", fillcolor="#fed7aa", color="#f97316"];
+        member_repo [label="MemberRepo", fillcolor="#fed7aa", color="#f97316"];
+        nrp_repo [label="NrpWhitelistRepo", fillcolor="#fed7aa", color="#f97316"];
+    }
+
+    // ── External ──
+    subgraph cluster_external {
+        label="External Services";
+        style="dashed";
+        color="#94a3b8";
+        fontcolor="#475569";
+
+        postgres [label="PostgreSQL\n(Supabase)", fillcolor="#e2e8f0", color="#475569", shape=cylinder];
+        s3 [label="Supabase S3\nStorage", fillcolor="#e2e8f0", color="#475569", shape=cylinder];
+    }
+
+    // ── Entity Relationships ──
+    subgraph cluster_entities {
+        label="Entity FK Relationships";
+        style="dashed";
+        color="#94a3b8";
+        fontcolor="#475569";
+
+        e_gallery [label="Gallery\n(Media)", fillcolor="#fff7ed", color="#ea580c"];
+        e_cabinet [label="CabinetInfo", fillcolor="#fff7ed", color="#ea580c"];
+        e_dept [label="Department", fillcolor="#fff7ed", color="#ea580c"];
+        e_news [label="News", fillcolor="#fff7ed", color="#ea580c"];
+        e_monthly [label="MonthlyEvent", fillcolor="#fff7ed", color="#ea580c"];
+        e_progenda [label="Progenda", fillcolor="#fff7ed", color="#ea580c"];
+        e_member [label="Member", fillcolor="#fff7ed", color="#ea580c"];
+        e_timeline [label="Timeline", fillcolor="#fff7ed", color="#ea580c"];
+    }
+
+    // ── Client → Router ──
+    frontend -> router;
+    admin -> router;
+
+    // ── Router → Middleware → Controllers ──
+    router -> cors -> security -> auth_mw;
+    auth_mw -> auth_ctrl [label="public"];
+    auth_mw -> cabinet_ctrl;
+    auth_mw -> dept_ctrl;
+    auth_mw -> news_ctrl;
+    auth_mw -> monthly_ctrl;
+    auth_mw -> progenda_ctrl;
+    auth_mw -> gallery_ctrl;
+    auth_mw -> member_ctrl;
+    auth_mw -> nrp_ctrl;
+    auth_mw -> upload_ctrl;
+
+    // ── Controller → Service ──
+    auth_ctrl -> auth_svc;
+    cabinet_ctrl -> cabinet_svc;
+    dept_ctrl -> dept_svc;
+    news_ctrl -> news_svc;
+    monthly_ctrl -> monthly_svc;
+    progenda_ctrl -> progenda_svc;
+    gallery_ctrl -> gallery_svc;
+    member_ctrl -> member_svc;
+    nrp_ctrl -> nrp_svc;
+
+    // ── Service → Repo ──
+    cabinet_svc -> cabinet_repo;
+    dept_svc -> dept_repo;
+    news_svc -> news_repo;
+    monthly_svc -> monthly_repo;
+    progenda_svc -> progenda_repo;
+    progenda_svc -> timeline_repo;
+    gallery_svc -> gallery_repo;
+    member_svc -> member_repo;
+    nrp_svc -> nrp_repo;
+
+    // ── Repo → DB ──
+    cabinet_repo -> postgres;
+    dept_repo -> postgres;
+    news_repo -> postgres;
+    monthly_repo -> postgres;
+    progenda_repo -> postgres;
+    timeline_repo -> postgres;
+    gallery_repo -> postgres;
+    member_repo -> postgres;
+    nrp_repo -> postgres;
+
+    // ── S3 connections ──
+    gallery_ctrl -> s3 [label="upload"];
+    upload_ctrl -> s3 [label="upload"];
+
+    // ── Entity FK relationships ──
+    e_news -> e_gallery [label="thumbnail_id", style=dashed, color="#ea580c"];
+    e_monthly -> e_gallery [label="thumbnail_id", style=dashed, color="#ea580c"];
+    e_progenda -> e_gallery [label="thumbnail_id", style=dashed, color="#ea580c"];
+    e_dept -> e_gallery [label="logo_id", style=dashed, color="#ea580c"];
+    e_cabinet -> e_gallery [label="logo_id\norganigram_id", style=dashed, color="#ea580c"];
+    e_member -> e_gallery [label="photo_id", style=dashed, color="#ea580c"];
+    e_member -> e_dept [label="department_id", style=dashed, color="#ea580c"];
+    e_progenda -> e_dept [label="department_id", style=dashed, color="#ea580c"];
+    e_timeline -> e_progenda [label="progenda_id", style=dashed, color="#ea580c"];
+    e_gallery -> e_dept [label="department_id", style=dashed, color="#ea580c"];
+    e_gallery -> e_progenda [label="progenda_id", style=dashed, color="#ea580c"];
+    e_gallery -> e_cabinet [label="cabinet_id", style=dashed, color="#ea580c"];
+}

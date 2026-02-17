@@ -33,6 +33,7 @@ func (s *galleryService) Create(ctx context.Context, req dto.CreateGalleryReques
 		Category:     req.Category,
 		DepartmentId: req.DepartmentId,
 		ProgendaId:   req.ProgendaId,
+		CabinetId:    req.CabinetId,
 	})
 }
 
@@ -73,6 +74,9 @@ func (s *galleryService) Update(ctx context.Context, id string, req dto.UpdateGa
 	}
 	if req.ProgendaId != nil {
 		gallery.ProgendaId = req.ProgendaId
+	}
+	if req.CabinetId != nil {
+		gallery.CabinetId = req.CabinetId
 	}
 
 	return s.galleryRepo.Update(ctx, nil, gallery)

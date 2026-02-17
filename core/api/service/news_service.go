@@ -97,7 +97,10 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 	if req.Content != "" {
 		n.Content = req.Content
 	}
-	n.ThumbnailId = req.ThumbnailId
+	if req.ThumbnailId != nil {
+		n.ThumbnailId = req.ThumbnailId
+		n.Thumbnail = nil
+	}
 	if req.PublishedAt != nil {
 		n.PublishedAt = *req.PublishedAt
 	}

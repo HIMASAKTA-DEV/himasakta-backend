@@ -1,0 +1,1331 @@
+openapi: 3.0.3
+info:
+  title: HIMASAKTA Backend API
+  version: "1.0"
+  description: |
+    Backend API for HIMASAKTA (Himpunan Mahasiswa Teknik Aktuaria) ITS Web Platform.
+    Built with Go, Gin, GORM, and PostgreSQL.
+
+servers:
+  - url: /api/v1
+    description: API v1
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    Meta:
+      type: object
+      properties:
+        limit:
+          type: integer
+        page:
+          type: integer
+        total_data:
+          type: integer
+        total_page:
+          type: integer
+        sort:
+          type: string
+        sort_by:
+          type: string
+
+    Timestamp:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        DeletedAt:
+          type: string
+          format: date-time
+          nullable: true
+
+    Media:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            image_url:
+              type: string
+            caption:
+              type: string
+            category:
+              type: string
+            department_id:
+              type: string
+              format: uuid
+              nullable: true
+            progenda_id:
+              type: string
+              format: uuid
+              nullable: true
+            cabinet_id:
+              type: string
+              format: uuid
+              nullable: true
+
+    News:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            title:
+              type: string
+            slug:
+              type: string
+            tagline:
+              type: string
+            hashtags:
+              type: string
+            content:
+              type: string
+            thumbnail_id:
+              type: string
+              format: uuid
+              nullable: true
+            thumbnail:
+              $ref: '#/components/schemas/Media'
+            published_at:
+              type: string
+              format: date-time
+
+    Department:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            name:
+              type: string
+            description:
+              type: string
+            logo_id:
+              type: string
+              format: uuid
+              nullable: true
+            logo:
+              $ref: '#/components/schemas/Media'
+            social_media_link:
+              type: string
+            bank_soal_link:
+              type: string
+            silabus_link:
+              type: string
+            bank_ref_link:
+              type: string
+
+    CabinetInfo:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            visi:
+              type: string
+            misi:
+              type: string
+            description:
+              type: string
+            tagline:
+              type: string
+            period_start:
+              type: string
+              format: date
+            period_end:
+              type: string
+              format: date
+            logo_id:
+              type: string
+              format: uuid
+              nullable: true
+            logo:
+              $ref: '#/components/schemas/Media'
+            organigram_id:
+              type: string
+              format: uuid
+              nullable: true
+            organigram:
+              $ref: '#/components/schemas/Media'
+            is_active:
+              type: boolean
+
+    Member:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            nrp:
+              type: string
+            name:
+              type: string
+            role:
+              type: string
+            department_id:
+              type: string
+              format: uuid
+              nullable: true
+            department:
+              $ref: '#/components/schemas/Department'
+            photo_id:
+              type: string
+              format: uuid
+              nullable: true
+            photo:
+              $ref: '#/components/schemas/Media'
+            period:
+              type: string
+
+    Timeline:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        progenda_id:
+          type: string
+          format: uuid
+        date:
+          type: string
+          format: date-time
+        info:
+          type: string
+        link:
+          type: string
+
+    Progenda:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            name:
+              type: string
+            thumbnail_id:
+              type: string
+              format: uuid
+              nullable: true
+            thumbnail:
+              $ref: '#/components/schemas/Media'
+            goal:
+              type: string
+            description:
+              type: string
+            website_link:
+              type: string
+            instagram_link:
+              type: string
+            twitter_link:
+              type: string
+            linkedin_link:
+              type: string
+            youtube_link:
+              type: string
+            department_id:
+              type: string
+              format: uuid
+              nullable: true
+            department:
+              $ref: '#/components/schemas/Department'
+            timelines:
+              type: array
+              items:
+                $ref: '#/components/schemas/Timeline'
+            feeds:
+              type: array
+              items:
+                $ref: '#/components/schemas/Media'
+
+    MonthlyEvent:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            title:
+              type: string
+            thumbnail_id:
+              type: string
+              format: uuid
+              nullable: true
+            thumbnail:
+              $ref: '#/components/schemas/Media'
+            description:
+              type: string
+            month:
+              type: string
+              format: date-time
+            link:
+              type: string
+
+    NrpWhitelist:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            nrp:
+              type: string
+
+  parameters:
+    Page:
+      name: page
+      in: query
+      schema:
+        type: integer
+        default: 1
+    Limit:
+      name: limit
+      in: query
+      schema:
+        type: integer
+        default: 10
+    Sort:
+      name: sort
+      in: query
+      schema:
+        type: string
+        enum: [asc, desc]
+    SortBy:
+      name: sort_by
+      in: query
+      schema:
+        type: string
+
+  responses:
+    Success:
+      description: Success
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              success:
+                type: boolean
+              message:
+                type: string
+              data: {}
+              meta:
+                $ref: '#/components/schemas/Meta'
+
+paths:
+  # ── Authentication ──
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Admin login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        '200':
+          description: Login success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      token:
+                        type: string
+
+  # ── Cabinet Info ──
+  /cabinet-info:
+    get:
+      tags: [Cabinet Info]
+      summary: List all cabinet infos
+      parameters:
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [Cabinet Info]
+      security: [{BearerAuth: []}]
+      summary: Create cabinet info
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [visi, misi, period_start, period_end]
+              properties:
+                visi:
+                  type: string
+                misi:
+                  type: string
+                description:
+                  type: string
+                tagline:
+                  type: string
+                period_start:
+                  type: string
+                  format: date
+                period_end:
+                  type: string
+                  format: date
+                logo_id:
+                  type: string
+                  format: uuid
+                organigram_id:
+                  type: string
+                  format: uuid
+                is_active:
+                  type: boolean
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /cabinet-info/{id}:
+    get:
+      tags: [Cabinet Info]
+      summary: Get cabinet info by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    put:
+      tags: [Cabinet Info]
+      security: [{BearerAuth: []}]
+      summary: Update cabinet info
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                visi:
+                  type: string
+                misi:
+                  type: string
+                description:
+                  type: string
+                tagline:
+                  type: string
+                period_start:
+                  type: string
+                period_end:
+                  type: string
+                logo_id:
+                  type: string
+                  format: uuid
+                organigram_id:
+                  type: string
+                  format: uuid
+                is_active:
+                  type: boolean
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [Cabinet Info]
+      security: [{BearerAuth: []}]
+      summary: Delete cabinet info
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  /current-cabinet:
+    get:
+      tags: [Cabinet Info]
+      summary: Get current active cabinet
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── Department ──
+  /department:
+    get:
+      tags: [Department]
+      summary: List all departments
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [Department]
+      security: [{BearerAuth: []}]
+      summary: Create department
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                logo_id:
+                  type: string
+                  format: uuid
+                social_media_link:
+                  type: string
+                bank_soal_link:
+                  type: string
+                silabus_link:
+                  type: string
+                bank_ref_link:
+                  type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /department/{name}:
+    get:
+      tags: [Department]
+      summary: Get department by name or ID
+      parameters:
+        - name: name
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  /department/{id}:
+    put:
+      tags: [Department]
+      security: [{BearerAuth: []}]
+      summary: Update department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                logo_id:
+                  type: string
+                  format: uuid
+                social_media_link:
+                  type: string
+                bank_soal_link:
+                  type: string
+                silabus_link:
+                  type: string
+                bank_ref_link:
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [Department]
+      security: [{BearerAuth: []}]
+      summary: Delete department
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── News ──
+  /news:
+    get:
+      tags: [News]
+      summary: List all news
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: category
+          in: query
+          schema:
+            type: string
+        - name: title
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [News]
+      security: [{BearerAuth: []}]
+      summary: Create news article
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, content]
+              properties:
+                title:
+                  type: string
+                tagline:
+                  type: string
+                hashtags:
+                  type: string
+                content:
+                  type: string
+                thumbnail_id:
+                  type: string
+                  format: uuid
+                published_at:
+                  type: string
+                  format: date-time
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /news/autocompletion:
+    get:
+      tags: [News]
+      summary: Get title autocompletion suggestions
+      parameters:
+        - name: search
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Array of title strings
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: array
+                    items:
+                      type: string
+
+  /news/{slug}:
+    get:
+      tags: [News]
+      summary: Get news by slug or ID
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  /news/{id}:
+    put:
+      tags: [News]
+      security: [{BearerAuth: []}]
+      summary: Update news article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                tagline:
+                  type: string
+                hashtags:
+                  type: string
+                content:
+                  type: string
+                thumbnail_id:
+                  type: string
+                  format: uuid
+                published_at:
+                  type: string
+                  format: date-time
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [News]
+      security: [{BearerAuth: []}]
+      summary: Delete news article
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── Monthly Event ──
+  /monthly-event:
+    get:
+      tags: [Monthly Event]
+      summary: List all monthly events
+      parameters:
+        - name: title
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [Monthly Event]
+      security: [{BearerAuth: []}]
+      summary: Create monthly event
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, month]
+              properties:
+                title:
+                  type: string
+                thumbnail_id:
+                  type: string
+                  format: uuid
+                description:
+                  type: string
+                month:
+                  type: string
+                  format: date-time
+                link:
+                  type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /monthly-event/this-month:
+    get:
+      tags: [Monthly Event]
+      summary: Get events for current month
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  /monthly-event/{id}:
+    get:
+      tags: [Monthly Event]
+      summary: Get monthly event by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    put:
+      tags: [Monthly Event]
+      security: [{BearerAuth: []}]
+      summary: Update monthly event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                thumbnail_id:
+                  type: string
+                  format: uuid
+                description:
+                  type: string
+                month:
+                  type: string
+                  format: date-time
+                link:
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [Monthly Event]
+      security: [{BearerAuth: []}]
+      summary: Delete monthly event
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── Progenda ──
+  /progenda:
+    get:
+      tags: [Progenda]
+      summary: List all progendas
+      parameters:
+        - name: search
+          in: query
+          schema:
+            type: string
+        - name: department_id
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: name
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [Progenda]
+      security: [{BearerAuth: []}]
+      summary: Create progenda
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name]
+              properties:
+                name:
+                  type: string
+                thumbnail_id:
+                  type: string
+                  format: uuid
+                goal:
+                  type: string
+                description:
+                  type: string
+                website_link:
+                  type: string
+                instagram_link:
+                  type: string
+                twitter_link:
+                  type: string
+                linkedin_link:
+                  type: string
+                youtube_link:
+                  type: string
+                department_id:
+                  type: string
+                  format: uuid
+                timelines:
+                  type: array
+                  items:
+                    type: object
+                    required: [date]
+                    properties:
+                      progenda_id:
+                        type: string
+                        format: uuid
+                      date:
+                        type: string
+                        format: date-time
+                      info:
+                        type: string
+                      link:
+                        type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /progenda/{id}:
+    get:
+      tags: [Progenda]
+      summary: Get progenda by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    put:
+      tags: [Progenda]
+      security: [{BearerAuth: []}]
+      summary: Update progenda
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                thumbnail_id:
+                  type: string
+                  format: uuid
+                goal:
+                  type: string
+                description:
+                  type: string
+                website_link:
+                  type: string
+                instagram_link:
+                  type: string
+                twitter_link:
+                  type: string
+                linkedin_link:
+                  type: string
+                youtube_link:
+                  type: string
+                department_id:
+                  type: string
+                  format: uuid
+                timelines:
+                  type: array
+                  items:
+                    type: object
+                    required: [date]
+                    properties:
+                      timeline_id:
+                        type: string
+                        format: uuid
+                      date:
+                        type: string
+                        format: date-time
+                      info:
+                        type: string
+                      link:
+                        type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [Progenda]
+      security: [{BearerAuth: []}]
+      summary: Delete progenda
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── Gallery ──
+  /gallery:
+    get:
+      tags: [Gallery]
+      summary: List all gallery items
+      parameters:
+        - name: caption
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [Gallery]
+      security: [{BearerAuth: []}]
+      summary: Upload gallery image
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [image]
+              properties:
+                image:
+                  type: string
+                  format: binary
+                caption:
+                  type: string
+                category:
+                  type: string
+                department_id:
+                  type: string
+                  format: uuid
+                progenda_id:
+                  type: string
+                  format: uuid
+                cabinet_id:
+                  type: string
+                  format: uuid
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /gallery/{id}:
+    get:
+      tags: [Gallery]
+      summary: Get gallery item by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    put:
+      tags: [Gallery]
+      security: [{BearerAuth: []}]
+      summary: Update gallery item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                image_url:
+                  type: string
+                caption:
+                  type: string
+                category:
+                  type: string
+                department_id:
+                  type: string
+                  format: uuid
+                progenda_id:
+                  type: string
+                  format: uuid
+                cabinet_id:
+                  type: string
+                  format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [Gallery]
+      security: [{BearerAuth: []}]
+      summary: Delete gallery item
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── Member ──
+  /member:
+    get:
+      tags: [Member]
+      summary: List all members
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [Member]
+      security: [{BearerAuth: []}]
+      summary: Create member
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nrp, name, role, period]
+              properties:
+                nrp:
+                  type: string
+                name:
+                  type: string
+                role:
+                  type: string
+                department_id:
+                  type: string
+                  format: uuid
+                photo_id:
+                  type: string
+                  format: uuid
+                period:
+                  type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /member/{id}:
+    get:
+      tags: [Member]
+      summary: Get member by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    put:
+      tags: [Member]
+      security: [{BearerAuth: []}]
+      summary: Update member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nrp:
+                  type: string
+                name:
+                  type: string
+                role:
+                  type: string
+                department_id:
+                  type: string
+                  format: uuid
+                photo_id:
+                  type: string
+                  format: uuid
+                period:
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [Member]
+      security: [{BearerAuth: []}]
+      summary: Delete member
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── NRP Whitelist ──
+  /nrp-whitelist:
+    post:
+      tags: [NRP Whitelist]
+      summary: Check if NRP is allowed
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nrp]
+              properties:
+                nrp:
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  /nrp-whitelist/add:
+    post:
+      tags: [NRP Whitelist]
+      security: [{BearerAuth: []}]
+      summary: Add NRP to whitelist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [nrp]
+              properties:
+                nrp:
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  /nrp-whitelist/{id}:
+    delete:
+      tags: [NRP Whitelist]
+      security: [{BearerAuth: []}]
+      summary: Delete NRP from whitelist
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+
+  # ── Uploads ──
+  /uploads:
+    post:
+      tags: [Uploads]
+      summary: Upload file to S3
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [file]
+              properties:
+                file:
+                  type: string
+                  format: binary
+      responses:
+        '200':
+          description: Upload success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: boolean
+                  message:
+                    type: string
+                  data:
+                    type: object
+                    properties:
+                      url:
+                        type: string
+                      path:
+                        type: string

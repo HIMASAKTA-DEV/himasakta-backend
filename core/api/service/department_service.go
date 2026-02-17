@@ -81,7 +81,10 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 		d.Name = req.Name
 	}
 	d.Description = req.Description
-	d.LogoId = req.LogoId
+	if req.LogoId != nil {
+		d.LogoId = req.LogoId
+		d.Logo = nil
+	}
 	d.SocialMediaLink = req.SocialMediaLink
 	d.BankSoalLink = req.BankSoalLink
 	d.SilabusLink = req.SilabusLink
