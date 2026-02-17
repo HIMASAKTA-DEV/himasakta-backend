@@ -62,8 +62,14 @@ func (s *memberService) Update(ctx context.Context, id string, req dto.UpdateMem
 	if req.Role != "" {
 		m.Role = req.Role
 	}
-	m.DepartmentId = req.DepartmentId
-	m.PhotoId = req.PhotoId
+	if req.DepartmentId != nil {
+		m.DepartmentId = req.DepartmentId
+		m.Department = nil
+	}
+	if req.PhotoId != nil {
+		m.PhotoId = req.PhotoId
+		m.Photo = nil
+	}
 	if req.Period != "" {
 		m.Period = req.Period
 	}

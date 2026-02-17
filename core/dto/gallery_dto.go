@@ -8,6 +8,7 @@ type CreateGalleryRequest struct {
 	Category     string     `json:"category"`
 	DepartmentId *uuid.UUID `json:"department_id"`
 	ProgendaId   *uuid.UUID `json:"progenda_id"`
+	CabinetId    *uuid.UUID `json:"cabinet_id"`
 }
 
 type UpdateGalleryRequest struct {
@@ -16,4 +17,5 @@ type UpdateGalleryRequest struct {
 	Category     string     `json:"category"`
 	DepartmentId *uuid.UUID `json:"department_id"`
 	ProgendaId   *uuid.UUID `json:"progenda_id"`
+	CabinetId    *uuid.UUID `json:"cabinet_id"`
 }

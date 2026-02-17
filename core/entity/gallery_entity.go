@@ -11,6 +11,7 @@ type Gallery struct {
 	DepartmentId *uuid.UUID `gorm:"type:uuid" json:"department_id"`
 
 	ProgendaId *uuid.UUID `gorm:"type:uuid" json:"progenda_id"`
+	CabinetId  *uuid.UUID `gorm:"type:uuid" json:"cabinet_id"`
 }
 
 func (Gallery) TableName() string {

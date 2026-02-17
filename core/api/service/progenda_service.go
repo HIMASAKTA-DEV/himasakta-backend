@@ -118,6 +118,7 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	}
 	if req.ThumbnailId != nil {
 		p.ThumbnailId = req.ThumbnailId
+		p.Thumbnail = nil
 	}
 	if req.Goal != "" {
 		p.Goal = req.Goal
@@ -139,6 +140,7 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	}
 	if req.DepartmentId != nil {
 		p.DepartmentId = req.DepartmentId
+		p.Department = nil
 	}
 
 	progenda, err := s.progendaRepo.Update(ctx, tx, p)
