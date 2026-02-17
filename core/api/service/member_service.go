@@ -35,6 +35,7 @@ func (s *memberService) Create(ctx context.Context, req dto.CreateMemberRequest)
 		Index:        req.Index,
 		DepartmentId: req.DepartmentId,
 		PhotoId:      req.PhotoId,
+		CabinetId:    req.CabinetId,
 	})
 }
 
@@ -65,6 +66,9 @@ func (s *memberService) Update(ctx context.Context, id string, req dto.UpdateMem
 	}
 	if req.Index != 0 {
 		m.Index = req.Index
+	}
+	if req.CabinetId != nil {
+		m.CabinetId = req.CabinetId
 	}
 	m.DepartmentId = req.DepartmentId
 	m.PhotoId = req.PhotoId

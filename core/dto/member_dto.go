@@ -9,6 +9,7 @@ type CreateMemberRequest struct {
 	Index        int        `json:"index" binding:"required"`
 	DepartmentId *uuid.UUID `json:"department_id"`
 	PhotoId      *uuid.UUID `json:"photo_id"`
+	CabinetId    *uuid.UUID `json:"cabinet_id" binding:"required"`
 }
 
 type UpdateMemberRequest struct {
@@ -18,4 +19,5 @@ type UpdateMemberRequest struct {
 	Index        int        `json:"index"`
 	DepartmentId *uuid.UUID `json:"department_id"`
 	PhotoId      *uuid.UUID `json:"photo_id"`
+	CabinetId    *uuid.UUID `json:"cabinet_id"`
 }

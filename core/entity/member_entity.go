@@ -6,7 +6,7 @@ type Member struct {
 	Timestamp
 	Id           uuid.UUID    `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
 	Nrp          string       `gorm:"type:varchar(20);not null" json:"nrp"`
-	Name         string       `gorm:"type:varchar(255);not null;unique" json:"name"`
+	Name         string       `gorm:"type:varchar(255);not null" json:"name"`
 	RoleId       *uuid.UUID   `gorm:"type:uuid" json:"role_id"`
 	Role         *Role        `gorm:"foreignKey:RoleId" json:"role"`
 	Index        int          `gorm:"type:int;not null" json:"index"`

@@ -71,6 +71,10 @@ func NewRest() (RestConfig, error) {
 
 	indexController := controller.NewIndex()
 
+	roleRepo := repository.NewRole(db)
+	roleService := service.NewRole(roleRepo)
+	roleController := controller.NewRole(roleService)
+
 	m := middleware.New(db)
 
 	// Register all routes
@@ -84,6 +88,7 @@ func NewRest() (RestConfig, error) {
 	routes.MonthlyEvent(server, monthlyEventController, m)
 	routes.News(server, newsController, m)
 	routes.NrpWhitelist(server, nrpWhitelistController, m)
+	routes.Role(server, roleController, m)
 
 	return RestConfig{
 		server: server,
