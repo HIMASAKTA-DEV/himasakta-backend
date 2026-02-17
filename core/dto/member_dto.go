@@ -1,6 +1,9 @@
 package dto
 
-import "github.com/google/uuid"
+import (
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	"github.com/google/uuid"
+)
 
 type CreateMemberRequest struct {
 	Nrp          string     `json:"nrp" binding:"required"`
@@ -20,4 +23,9 @@ type UpdateMemberRequest struct {
 	PhotoId      *uuid.UUID `json:"photo_id"`
 	CabinetId    *uuid.UUID `json:"cabinet_id"`
 	Index        int        `json:"index"`
+}
+
+type MemberGroupResponse struct {
+	Role    entity.Role     `json:"role"`
+	Members []entity.Member `json:"members"`
 }

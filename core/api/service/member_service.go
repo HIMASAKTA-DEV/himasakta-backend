@@ -112,7 +112,9 @@ func (s *memberService) Update(ctx context.Context, id string, req dto.UpdateMem
 	if req.CabinetId != nil {
 		m.CabinetId = req.CabinetId
 	}
-	m.Index = req.Index
+	if req.Index != 0 {
+		m.Index = req.Index
+	}
 
 	return s.repo.Update(ctx, nil, m)
 }

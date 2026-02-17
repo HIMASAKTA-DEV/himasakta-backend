@@ -64,11 +64,15 @@ func (s *monthlyEventService) Update(ctx context.Context, id string, req dto.Upd
 		e.ThumbnailId = req.ThumbnailId
 		e.Thumbnail = nil
 	}
-	e.Description = req.Description
+	if req.Description != "" {
+		e.Description = req.Description
+	}
 	if req.Month != nil {
 		e.Month = *req.Month
 	}
-	e.Link = req.Link
+	if req.Link != "" {
+		e.Link = req.Link
+	}
 
 	return s.repo.Update(ctx, nil, e)
 }

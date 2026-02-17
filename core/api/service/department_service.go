@@ -80,15 +80,25 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 	if req.Name != "" {
 		d.Name = req.Name
 	}
-	d.Description = req.Description
+	if req.Description != "" {
+		d.Description = req.Description
+	}
 	if req.LogoId != nil {
 		d.LogoId = req.LogoId
 		d.Logo = nil
 	}
-	d.SocialMediaLink = req.SocialMediaLink
-	d.BankSoalLink = req.BankSoalLink
-	d.SilabusLink = req.SilabusLink
-	d.BankRefLink = req.BankRefLink
+	if req.SocialMediaLink != "" {
+			d.SocialMediaLink = req.SocialMediaLink
+	}
+	if req.BankSoalLink != "" {
+		d.BankSoalLink = req.BankSoalLink
+	}
+	if req.SilabusLink != "" {
+		d.SilabusLink = req.SilabusLink
+	}
+	if req.BankRefLink != "" {
+		d.BankRefLink = req.BankRefLink
+	}
 
 	return s.repo.Update(ctx, nil, d)
 }
