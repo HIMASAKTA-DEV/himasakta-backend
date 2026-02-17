@@ -5,15 +5,12 @@ import (
 	"net/http"
 	"os"
 	"runtime/debug"
-	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/middleware"
 	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/storage"
-	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
-	"github.com/oklog/ulid/v2"
 )
 
 func NewRouter(server *gin.Engine, s3 storage.AwsS3) *gin.Engine {
