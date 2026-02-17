@@ -1,186 +1,268 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HIMASAKTA API Docs</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIMASAKTA Interactive API Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
+    rel="stylesheet" />
   <style>
-    :root {
-      --primary: #2563eb;
-      --bg: #f8fafc;
-      --surface: #ffffff;
-      --text: #1e293b;
-      --border: #e2e8f0;
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
     }
 
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-      background-color: var(--bg);
-      color: var(--text);
-      margin: 0;
-      padding: 20px;
-      line-height: 1.5;
+      font-family: "Inter", sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
     }
 
     .container {
       max-width: 1200px;
       margin: 0 auto;
+      padding: 40px 20px;
     }
 
     header {
-      margin-bottom: 40px;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 20px;
+      text-align: center;
+      margin-bottom: 50px;
     }
 
     h1 {
-      margin: 0;
-      font-size: 2rem;
-      color: var(--primary);
+      color: #2563eb;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
     }
 
-    .grid {
-      display: grid;
-      grid-template-columns: 300px 1fr;
-      gap: 20px;
-      align-items: start;
-    }
-
-    .nav {
-      background: var(--surface);
-      padding: 20px;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-      position: sticky;
-      top: 20px;
-    }
-
-    .nav button {
-      display: block;
-      width: 100%;
-      text-align: left;
-      padding: 10px;
-      background: none;
-      border: none;
-      cursor: pointer;
-      border-radius: 4px;
-      color: var(--text);
-      font-weight: 500;
-    }
-
-    .nav button:hover {
-      background-color: #f1f5f9;
-    }
-
-    .nav button.active {
-      background-color: #eff6ff;
-      color: var(--primary);
-    }
-
-    .content {
-      background: var(--surface);
+    .auth-box {
+      background: white;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
       padding: 30px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
+
+    .auth-box h2 {
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+    }
+
+    .auth-inputs {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
+
+    input,
+    textarea {
+      padding: 10px 15px;
+      border: 1px solid #e2e8f0;
       border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      font-family: inherit;
+    }
+
+    input {
+      flex: 1;
+      min-width: 150px;
+    }
+
+    button {
+      padding: 10px 24px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    button:hover {
+      background: #1d4ed8;
+    }
+
+    #token-display {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: "Fira Code", monospace;
+      font-size: 0.875rem;
+      word-break: break-all;
+      display: none;
+    }
+
+    .success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #166534;
+    }
+
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #991b1b;
     }
 
     .endpoint {
-      margin-bottom: 30px;
-      border: 1px solid var(--border);
-      border-radius: 8px;
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: 20px;
       overflow: hidden;
     }
 
     .endpoint-header {
-      padding: 15px;
-      background: #f8fafc;
-      border-bottom: 1px solid var(--border);
+      padding: 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
-      font-weight: 600;
-      font-family: monospace;
-      font-size: 0.9em;
+      gap: 15px;
+      background: #fdfdfd;
+      cursor: pointer;
+      border-bottom: 1px solid #e2e8f0;
     }
 
     .method {
-      padding: 4px 8px;
-      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
       color: white;
-      font-size: 0.8em;
+      min-width: 60px;
+      text-align: center;
     }
 
-    .GET {
-      background-color: #3b82f6;
+    .method.GET {
+      background: #10b981;
     }
 
-    .POST {
-      background-color: #22c55e;
+    .method.POST {
+      background: #3b82f6;
     }
 
-    .PUT {
-      background-color: #f59e0b;
+    .method.PUT {
+      background: #f59e0b;
     }
 
-    .DELETE {
-      background-color: #ef4444;
+    .method.DELETE {
+      background: #ef4444;
+    }
+
+    .path {
+      font-family: "Fira Code", monospace;
+      font-weight: 500;
+      flex: 1;
+    }
+
+    .desc {
+      color: #64748b;
+      font-size: 0.875rem;
     }
 
     .endpoint-body {
-      padding: 20px;
+      padding: 25px;
+      display: none;
     }
 
-    pre {
+    .endpoint-body.active {
+      display: block;
+    }
+
+    .fold {
+      margin-bottom: 20px;
+    }
+
+    .fold-title {
+      color: #2563eb;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 0.875rem;
+      user-select: none;
+    }
+
+    .fold-title:hover {
+      text-decoration: underline;
+    }
+
+    .fold-content {
+      display: none;
       background: #1e293b;
-      color: #e2e8f0;
+      color: #f8fafc;
       padding: 15px;
-      border-radius: 6px;
+      border-radius: 8px;
+      font-family: "Fira Code", monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
       overflow-x: auto;
-      font-size: 0.85em;
     }
 
-    .form-group {
+    .fold-content.active {
+      display: block;
+    }
+
+    .try-section {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
+
+    .input-group {
       margin-bottom: 15px;
     }
 
-    label {
+    .input-group label {
       display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
       margin-bottom: 5px;
-      font-weight: 500;
-      font-size: 0.9em;
+      text-transform: uppercase;
     }
 
-    input,
-    textarea,
-    select {
+    textarea {
       width: 100%;
-      padding: 8px;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      font-family: inherit;
+      min-height: 120px;
+      font-family: "Fira Code", monospace;
     }
 
-    button.action-btn {
-      background-color: var(--primary);
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 4px;
-      cursor: pointer;
-      font-weight: 500;
+    .btn-execute {
+      width: 100%;
+      background: #1e293b;
+      margin-top: 10px;
     }
 
-    button.action-btn:hover {
-      opacity: 0.9;
+    .response-area {
+      margin-top: 20px;
+      display: none;
     }
 
-    .auth-section {
-      background: #eff6ff;
+    .response-area.active {
+      display: block;
+    }
+
+    .response-status {
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 0.875rem;
+    }
+
+    .response-body {
+      background: #f1f5f9;
       padding: 15px;
       border-radius: 8px;
-      margin-bottom: 20px;
-      border: 1px solid #dbeafe;
+      font-family: "Fira Code", monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      border: 1px solid #e2e8f0;
+      overflow-x: auto;
     }
   </style>
 </head>
@@ -188,268 +270,777 @@
 <body>
   <div class="container">
     <header>
-      <h1>HIMASAKTA API Playground</h1>
-      <p>Interactive documentation for testing API endpoints.</p>
-      <div class="auth-section">
-        <h3>Authentication</h3>
-        <div class="form-group">
-          <label>Token (JWT)</label>
-          <input type="text" id="authToken" placeholder="Enter Bearer token here..."
-            onchange="localStorage.setItem('token', this.value)">
-        </div>
-        <p style="font-size: 0.8em; color: #64748b;">Get token via POST /api/v1/auth/login first.</p>
-      </div>
+      <h1>🚀 HIMASAKTA API v1</h1>
+      <p>Interactive Documentation for Developers</p>
     </header>
 
-    <div class="grid">
-      <nav class="nav" id="nav"></nav>
-      <main class="content" id="main"></main>
+    <div class="auth-box">
+      <h2>🔑 Authentication</h2>
+      <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 15px">Login to get JWT token for testing protected
+        endpoints.</p>
+      <div class="auth-inputs">
+        <input type="text" id="username" placeholder="Username" value="" />
+        <input type="password" id="password" placeholder="Password" value="" />
+        <button onclick="handleLogin()">Login & Authorize</button>
+      </div>
+      <div id="token-display"></div>
     </div>
+
+    <div id="endpoints"></div>
   </div>
 
   <script>
-    const API_URL = '/api/v1';
-
+    const API = "/api/v1";
     const routes = [
       {
-        name: "Authentication",
-        endpoints: [
-          { method: "POST", path: "/auth/login", desc: "Superadmin Login", body: { username: "admin", password: "admin" } }
+        section: "Authentication",
+        items: [
+          {
+            method: "POST",
+            path: "/auth/login",
+            desc: "Generate JWT token",
+            body: '{\n  "username": "admin",\n  "password": "admin"\n}',
+            resp: '{\n  "success": true,\n  "message": "login success",\n  "data": { "token": "JWT_HERE" }\n}',
+          },
+        ],
+      },
+      {
+        section: "Cabinet Info",
+        items: [
+          {
+            method: "GET",
+            path: "/cabinet-info",
+            desc: "List all cabinet infos (paginated)",
+            params: [
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "id" },
+            ],
+            resp: '{\n  "success": true,\n  "message": "success get cabinet infos",\n  "data": [ ... ],\n  "meta": { "page": 1, "limit": 10, "total_data": 0, "total_page": 0, "sort": "asc", "sort_by": "id" }\n}',
+          },
+          {
+            method: "GET",
+            path: "/current-cabinet",
+            desc: "Get current active cabinet",
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/cabinet-info/:id",
+            desc: "Get cabinet info by ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/cabinet-info",
+            desc: "Create cabinet info",
+            body: '{\n  "visi": "Menjadi organisasi...",\n  "misi": "Melakukan...",\n  "description": "Kabinet ...",\n  "tagline": "Bersinergi",\n  "period_start": "2024-01-01",\n  "period_end": "2024-12-31",\n  "logo_id": null,\n  "organigram_id": null,\n  "is_active": true\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/cabinet-info/:id",
+            desc: "Update cabinet info",
+            hasParams: true,
+            body: '{\n  "visi": "Updated visi",\n  "misi": "Updated misi",\n  "description": "Updated desc",\n  "tagline": "New tagline",\n  "period_start": "2025-01-01",\n  "period_end": "2025-12-31",\n  "logo_id": "uuid-of-gallery",\n  "organigram_id": "uuid-of-gallery",\n  "is_active": false\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/cabinet-info/:id",
+            desc: "Delete cabinet info",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
+      },
+      {
+        section: "Departments",
+        items: [
+          {
+            method: "GET",
+            path: "/department",
+            desc: "List all departments (paginated)",
+            params: [
+              { name: "name", ph: "Filter by name..." },
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "id" },
+            ],
+            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/department/:name",
+            desc: "Get department by Name or ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/department",
+            desc: "Create department",
+            body: '{\n  "name": "Kaderisasi",\n  "description": "Departemen kaderisasi",\n  "logo_id": null,\n  "social_media_link": "",\n  "bank_soal_link": "",\n  "silabus_link": "",\n  "bank_ref_link": ""\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/department/:id",
+            desc: "Update department",
+            hasParams: true,
+            body: '{\n  "name": "Updated Name",\n  "description": "Updated desc",\n  "logo_id": "uuid-of-gallery",\n  "social_media_link": "https://...",\n  "bank_soal_link": "https://...",\n  "silabus_link": "https://...",\n  "bank_ref_link": "https://..."\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/department/:id",
+            desc: "Delete department",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
+      },
+      {
+        section: "News",
+        items: [
+          {
+            method: "GET",
+            path: "/news",
+            desc: "List all news articles (paginated)",
+            params: [
+              { name: "search", ph: "Keyword..." },
+              { name: "category", ph: "comma,separated" },
+              { name: "title", ph: "Exact title" },
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "id" },
+            ],
+            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/news/autocompletion",
+            desc: "Get title autocompletion (returns string[])",
+            params: [{ name: "search", ph: "keyword" }],
+            resp: '{\n  "success": true,\n  "message": "success get autocompletion",\n  "data": ["Title One", "Title Two"]\n}',
+          },
+          {
+            method: "GET",
+            path: "/news/:slug",
+            desc: "Get news by slug or ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/news",
+            desc: "Create news article",
+            body: '{\n  "title": "Penerimaan Anggota Baru",\n  "tagline": "Ayo bergabung!",\n  "hashtags": "OPREC,HIMASAKTA",\n  "content": "# Selamat Datang\\nKami membuka pendaftaran.",\n  "thumbnail_id": null,\n  "published_at": "2026-02-01T10:00:00Z"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/news/:id",
+            desc: "Update news article",
+            hasParams: true,
+            body: '{\n  "title": "Updated Title",\n  "tagline": "Updated tagline",\n  "hashtags": "UPDATED",\n  "content": "Updated content...",\n  "thumbnail_id": "uuid-of-gallery",\n  "published_at": "2026-02-15T10:00:00Z"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/news/:id",
+            desc: "Delete news article",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
+      },
+      {
+        section: "Monthly Event",
+        items: [
+          {
+            method: "GET",
+            path: "/monthly-event",
+            desc: "List all monthly events (paginated)",
+            params: [
+              { name: "title", ph: "Event Title" },
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "id" },
+            ],
+            resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/monthly-event/this-month",
+            desc: "Get events for current month (no pagination)",
+            resp: '{\n  "success": true,\n  "data": [ ... ]\n}',
+          },
+          {
+            method: "GET",
+            path: "/monthly-event/:id",
+            desc: "Get monthly event by ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/monthly-event",
+            desc: "Create monthly event",
+            body: '{\n  "title": "HIMASAKTA Cup",\n  "thumbnail_id": null,\n  "description": "Kompetisi tahunan",\n  "month": "2026-02-01T00:00:00Z",\n  "link": "https://youtube.com"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/monthly-event/:id",
+            desc: "Update monthly event",
+            hasParams: true,
+            body: '{\n  "title": "Updated Title",\n  "thumbnail_id": "uuid-of-gallery",\n  "description": "Updated desc",\n  "month": "2026-03-01T00:00:00Z",\n  "link": "https://..."\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/monthly-event/:id",
+            desc: "Delete monthly event",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
+      },
+      {
+        section: "Progenda",
+        items: [
+          {
+            method: "GET",
+            path: "/progenda",
+            desc: "List all progendas (paginated)",
+            params: [
+              { name: "search", ph: "keyword" },
+              { name: "department_id", ph: "uuid" },
+              { name: "name", ph: "specific name" },
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "id" },
+            ],
+            resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/progenda/:id",
+            desc: "Get progenda by ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/progenda",
+            desc: "Create progenda",
+            body: '{\n  "name": "Program Kerja A",\n  "thumbnail_id": null,\n  "goal": "Tujuan...",\n  "description": "Deskripsi...",\n  "website_link": "https://...",\n  "instagram_link": "",\n  "twitter_link": "",\n  "linkedin_link": "",\n  "youtube_link": "",\n  "department_id": "uuid-of-department",\n  "timelines": [\n    {\n      "date": "2026-01-19T00:00:00Z",\n      "info": "Fase 1",\n      "link": "https://..."\n    }\n  ]\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/progenda/:id",
+            desc: "Update progenda",
+            hasParams: true,
+            body: '{\n  "name": "Updated Name",\n  "thumbnail_id": "uuid-of-gallery",\n  "goal": "Updated goal",\n  "description": "Updated desc",\n  "website_link": "https://...",\n  "instagram_link": "https://...",\n  "twitter_link": "",\n  "linkedin_link": "",\n  "youtube_link": "",\n  "department_id": "uuid-of-department",\n  "timelines": [\n    {\n      "timeline_id": "existing-timeline-uuid",\n      "date": "2026-02-01T00:00:00Z",\n      "info": "Updated phase",\n      "link": "https://..."\n    }\n  ]\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/progenda/:id",
+            desc: "Delete progenda",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
+      },
+      {
+        section: "Roles",
+        items: [
+          {
+            method: "GET",
+            path: "/role",
+            desc: "List all roles",
+            params: [
+              { name: "name", ph: "Filter by name..." },
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "level" },
+            ],
+            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/role/:id",
+            desc: "Get role by ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/role",
+            desc: "Create role",
+            body: '{\n  "name": "Kahima",\n  "level": 1,\n  "description": "Ketua Himpunan"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/role/:id",
+            desc: "Update role",
+            hasParams: true,
+            body: '{\n  "name": "Kahima Updated",\n  "level": 1,\n  "description": "Updated desc"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/role/:id",
+            desc: "Delete role",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
         ]
       },
       {
-        name: "Role", // NEW Section
-        endpoints: [
-          { method: "GET", path: "/role", desc: "List Roles", query: ["page", "limit", "name"] },
-          { method: "POST", path: "/role", desc: "Create Role", body: { name: "Kahima", level: 1, description: "Ketua Himpunan" } },
-          { method: "GET", path: "/role/:id", desc: "Get Role by ID", params: ["id"] },
-          { method: "PUT", path: "/role/:id", desc: "Update Role", params: ["id"], body: { name: "Kahima Updated", level: 1 } },
-          { method: "DELETE", path: "/role/:id", desc: "Delete Role", params: ["id"] }
-        ]
+        section: "Members",
+        items: [
+          {
+            method: "GET",
+            path: "/member",
+            desc: "List all members (paginated)",
+            params: [
+              { name: "name", ph: "Search member..." },
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "id" },
+            ],
+            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/member/:id",
+            desc: "Get member by ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/member",
+            desc: "Create member",
+            body: '{\n  "nrp": "123456",\n  "name": "John Doe",\n  "role": "Staff",\n  "period": "2023-2024",\n  "department_id": "uuid-of-department",\n  "photo_id": "uuid-of-gallery"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/member/:id",
+            desc: "Update member",
+            hasParams: true,
+            body: '{\n  "nrp": "654321",\n  "name": "Jane Doe",\n  "role": "Head",\n  "period": "2024-2025",\n  "department_id": "uuid-of-department",\n  "photo_id": "uuid-of-gallery"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/member/:id",
+            desc: "Delete member",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
       },
       {
-        name: "Member",
-        endpoints: [
-          { method: "GET", path: "/member", desc: "List Members", query: ["page", "limit", "name", "groupby"] }, // Added groupby
-          { method: "POST", path: "/member", desc: "Create Member", body: { nrp: "500...", name: "John", role_id: "uuid...", cabinet_id: "uuid...", index: 1, department_id: "uuid..." } }, // Updated body
-          { method: "GET", path: "/member/:id", desc: "Get Member by ID", params: ["id"] },
-          { method: "PUT", path: "/member/:id", desc: "Update Member", params: ["id"], body: { name: "John Doe", index: 2 } },
-          { method: "DELETE", path: "/member/:id", desc: "Delete Member", params: ["id"] }
-        ]
+        section: "Gallery",
+        items: [
+          {
+            method: "GET",
+            path: "/gallery",
+            desc: "List all gallery items (paginated)",
+            params: [
+              { name: "caption", ph: "Search by caption..." },
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" },
+              { name: "sort", ph: "asc" },
+              { name: "sort_by", ph: "id" },
+            ],
+            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+          },
+          {
+            method: "GET",
+            path: "/gallery/:id",
+            desc: "Get gallery item by ID",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "POST",
+            path: "/gallery",
+            desc: "Upload gallery image (multipart/form-data)",
+            isFileUpload: true,
+            fileFields: [
+              { name: "image", type: "file", label: "Image File (max 50MB)" },
+              { name: "caption", type: "text", label: "Caption", ph: "Enter caption..." },
+              { name: "category", type: "text", label: "Category", ph: "logo, thumbnail, feeds, etc." },
+              { name: "department_id", type: "text", label: "Department ID (UUID, optional)", ph: "UUID..." },
+              { name: "progenda_id", type: "text", label: "Progenda ID (UUID, optional)", ph: "UUID..." },
+              { name: "cabinet_id", type: "text", label: "Cabinet ID (UUID, optional)", ph: "UUID..." },
+            ],
+            resp: '{\n  "success": true,\n  "message": "success create gallery",\n  "data": { "id": "uuid", "image_url": "https://...", "caption": "...", "category": "..." }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/gallery/:id",
+            desc: "Update gallery item",
+            hasParams: true,
+            body: '{\n  "caption": "Updated caption",\n  "category": "new-category",\n  "department_id": "uuid-or-null",\n  "progenda_id": "uuid-or-null",\n  "cabinet_id": "uuid-or-null"\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/gallery/:id",
+            desc: "Delete gallery item",
+            hasParams: true,
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
       },
       {
-        name: "Cabinet Info",
-        endpoints: [
-          { method: "GET", path: "/cabinet-info", desc: "List Cabinets", query: ["page", "limit"] },
-          { method: "GET", path: "/current-cabinet", desc: "Get Current Active Cabinet" },
-          { method: "POST", path: "/cabinet-info", desc: "Create Cabinet", body: { visi: "...", misi: "...", period_start: "2024-01-01", period_end: "2024-12-31", tagline: "..." } },
-          { method: "GET", path: "/cabinet-info/:id", desc: "Get Cabinet by ID", params: ["id"] },
-          { method: "PUT", path: "/cabinet-info/:id", desc: "Update Cabinet", params: ["id"], body: { visi: "Updated Visi" } },
-          { method: "DELETE", path: "/cabinet-info/:id", desc: "Delete Cabinet", params: ["id"] }
-        ]
+        section: "NRP Whitelist",
+        items: [
+          {
+            method: "POST",
+            path: "/nrp-whitelist/add",
+            desc: "Add NRP to whitelist (admin)",
+            body: '{\n  "nrp": "5025251104"\n}',
+            resp: '{\n  "success": true,\n  "message": "success add nrp whitelist",\n  "data": null\n}',
+          },
+          {
+            method: "POST",
+            path: "/nrp-whitelist",
+            desc: "Check if NRP is allowed",
+            body: '{\n  "nrp": "5025211014"\n}',
+            resp: '{\n  "success": true,\n  "message": "NRP is allowed",\n  "data": null\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/nrp-whitelist/:id",
+            hasParams: true,
+            desc: "Delete NRP from whitelist (admin)",
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
       },
-      {
-        name: "Department",
-        endpoints: [
-          { method: "GET", path: "/department", desc: "List Departments", query: ["page", "limit", "name"] },
-          { method: "POST", path: "/department", desc: "Create Department", body: { name: "Kominfo", description: "Design & IT" } },
-          { method: "GET", path: "/department/:name", desc: "Get Department by Name/ID", params: ["name"] },
-          { method: "PUT", path: "/department/:id", desc: "Update Department", params: ["id"], body: { description: "Updated Desc" } },
-          { method: "DELETE", path: "/department/:id", desc: "Delete Department", params: ["id"] }
-        ]
-      },
-      {
-        name: "News",
-        endpoints: [
-          { method: "GET", path: "/news", desc: "List News", query: ["page", "limit", "search", "category"] },
-          { method: "GET", path: "/news/autocompletion", desc: "Title Autocomplete", query: ["search"] },
-          { method: "POST", path: "/news", desc: "Create News", body: { title: "New Event", content: "Details...", published_at: new Date().toISOString() } },
-          { method: "GET", path: "/news/:slug", desc: "Get News by Slug", params: ["slug"] },
-          { method: "PUT", path: "/news/:id", desc: "Update News", params: ["id"], body: { title: "Updated Title" } },
-          { method: "DELETE", path: "/news/:id", desc: "Delete News", params: ["id"] }
-        ]
-      },
-      {
-        name: "Monthly Event",
-        endpoints: [
-          { method: "GET", path: "/monthly-event", desc: "List Events", query: ["page", "limit", "title"] },
-          { method: "GET", path: "/monthly-event/this-month", desc: "Get Events This Month" },
-          { method: "POST", path: "/monthly-event", desc: "Create Event", body: { title: "Gathering", month: new Date().toISOString(), description: "..." } },
-          { method: "GET", path: "/monthly-event/:id", desc: "Get Event by ID", params: ["id"] },
-          { method: "PUT", path: "/monthly-event/:id", desc: "Update Event", params: ["id"], body: { title: "Updated Event" } },
-          { method: "DELETE", path: "/monthly-event/:id", desc: "Delete Event", params: ["id"] }
-        ]
-      },
-      {
-        name: "Progenda",
-        endpoints: [
-          { method: "GET", path: "/progenda", desc: "List Progenda", query: ["page", "limit", "search", "department_id"] },
-          { method: "POST", path: "/progenda", desc: "Create Progenda", body: { name: "New Proker", goal: "...", description: "...", department_id: "uuid..." } },
-          { method: "GET", path: "/progenda/:id", desc: "Get Progenda by ID", params: ["id"] },
-          { method: "PUT", path: "/progenda/:id", desc: "Update Progenda", params: ["id"], body: { name: "Updated Proker" } },
-          { method: "DELETE", path: "/progenda/:id", desc: "Delete Progenda", params: ["id"] }
-        ]
-      },
-      {
-        name: "Gallery",
-        endpoints: [
-          { method: "GET", path: "/gallery", desc: "List Gallery", query: ["page", "limit", "caption"] },
-          { method: "POST", path: "/gallery", desc: "Upload Image", isUpload: true },
-          { method: "GET", path: "/gallery/:id", desc: "Get Gallery by ID", params: ["id"] },
-          { method: "PUT", path: "/gallery/:id", desc: "Update Gallery", params: ["id"], body: { caption: "Updated Caption" } },
-          { method: "DELETE", path: "/gallery/:id", desc: "Delete Gallery", params: ["id"] }
-        ]
-      },
-      {
-        name: "NRP Whitelist",
-        endpoints: [
-          { method: "POST", path: "/nrp-whitelist", desc: "Check NRP", body: { nrp: "500..." } },
-          { method: "POST", path: "/nrp-whitelist/add", desc: "Add NRP (Admin)", body: { nrp: "500..." } },
-          { method: "DELETE", path: "/nrp-whitelist/:id", desc: "Delete NRP", params: ["id"] }
-        ]
-      }
     ];
 
-    // Init
-    document.getElementById('authToken').value = localStorage.getItem('token') || '';
-    renderNav();
-    renderSection(0);
+    function render() {
+      const box = document.getElementById("endpoints");
+      routes.forEach(function (sec) {
+        const title = document.createElement("h2");
+        title.style.marginTop = "40px";
+        title.style.marginBottom = "20px";
+        title.textContent = sec.section;
+        box.appendChild(title);
 
-    function renderNav() {
-      const nav = document.getElementById('nav');
-      nav.innerHTML = routes.map((section, idx) =>
-        `<button onclick="renderSection(${idx})" class="${idx === 0 ? 'active' : ''}">${section.name}</button>`
-      ).join('');
+        sec.items.forEach(function (r, idx) {
+          const id = sec.section.toLowerCase().replace(/\s+/g, "-") + "-" + idx;
+          const card = document.createElement("div");
+          card.className = "endpoint";
+
+          const header = document.createElement("div");
+          header.className = "endpoint-header";
+          header.onclick = function () {
+            toggleBody(id);
+          };
+          header.innerHTML = '<span class="method ' + r.method + '">' + r.method + "</span>" + '<span class="path">' + r.path + "</span>" + '<span class="desc">' + r.desc + "</span>";
+
+          const body = document.createElement("div");
+          body.className = "endpoint-body";
+          body.id = id;
+
+          let html =
+            '<div class="fold">' +
+            '<div class="fold-title" onclick="toggleFold(\'' +
+            id +
+            "-req')\">" + "▶ Example Request (JavaScript)</div>" +
+            '<div class="fold-content" id="' +
+            id +
+            '-req">' +
+            genFetch(r) +
+            "</div>" +
+            "</div>" +
+            '<div class="fold">' +
+            '<div class="fold-title" onclick="toggleFold(\'' +
+            id +
+            "-resp')\">" + "▶ Example Response</div>" +
+            '<div class="fold-content" id="' +
+            id +
+            '-resp">' +
+            (r.resp || "{}") +
+            "</div>" +
+            "</div>" +
+            '<div class="try-section"><h4>Try It Out</h4>';
+
+          if (r.params) {
+            r.params.forEach(function (p) {
+              html += '<div class="input-group">' + "<label>" + p.name + "</label>" + '<input type="text" id="' + id + "-p-" + p.name + '" placeholder="' + p.ph + '">' + "</div>";
+            });
+          }
+
+          if (r.path.includes("/:id")) {
+            html += '<div class="input-group">' + "<label>ID (UUID)</label>" + '<input type="text" id="' + id + '-path-id" placeholder="Enter UUID...">' + "</div>";
+          }
+
+          if (r.path.includes("/:name")) {
+            html += '<div class="input-group">' + "<label>Name</label>" + '<input type="text" id="' + id + '-path-name" placeholder="Enter name (e.g. Kaderisasi)...">' + "</div>";
+          }
+
+          if (r.path.includes("/:slug")) {
+            html += '<div class="input-group">' + "<label>Slug</label>" + '<input type="text" id="' + id + '-path-slug" placeholder="Enter title-slug...">' + "</div>";
+          }
+
+          if (r.isFileUpload && r.fileFields) {
+            r.fileFields.forEach(function (f) {
+              if (f.type === "file") {
+                html += '<div class="input-group">' + "<label>" + f.label + "</label>" + '<input type="file" id="' + id + "-file-" + f.name + '" accept="image/*">' + "</div>";
+              } else {
+                html += '<div class="input-group">' + "<label>" + f.label + "</label>" + '<input type="text" id="' + id + "-field-" + f.name + '" placeholder="' + (f.ph || "") + '">' + "</div>";
+              }
+            });
+          } else if (r.method !== "GET" && r.body) {
+            html += '<div class="input-group">' + "<label>Request Body (JSON)</label>" + '<textarea id="' + id + '-body">' + r.body + "</textarea>" + "</div>";
+          }
+
+          html +=
+            '<button class="btn-execute" onclick="exec(\'' +
+            id +
+            "', '" +
+            r.method +
+            "', '" +
+            r.path +
+            "', " +
+            (r.params ? "true" : "false") +
+            ", " +
+            (r.body || r.isFileUpload ? "true" : "false") +
+            ", " +
+            (r.isFileUpload ? "true" : "false") +
+            ')">' +
+            "Execute</button>" +
+            '<div class="response-area" id="' +
+            id +
+            '-res">' +
+            '<div class="response-status" id="' +
+            id +
+            '-status"></div>' +
+            '<pre class="response-body" id="' +
+            id +
+            '-data"></pre>' +
+            "</div></div>";
+
+          body.innerHTML = html;
+          card.appendChild(header);
+          card.appendChild(body);
+          box.appendChild(card);
+        });
+      });
     }
 
-    function renderSection(idx) {
-      document.querySelectorAll('.nav button').forEach((b, i) => b.classList.toggle('active', i === idx));
-      const section = routes[idx];
-      const main = document.getElementById('main');
+    function genFetch(r) {
+      let c = 'const token = localStorage.getItem("docs_token");\n\n';
 
-      main.innerHTML = `<h2>${section.name}</h2>` + section.endpoints.map((ep, i) => {
-        const id = `ep-${idx}-${i}`;
-        return `
-                <div class="endpoint">
-                    <div class="endpoint-header">
-                        <span class="method ${ep.method}">${ep.method}</span>
-                        <span>${ep.path}</span>
-                        <span style="margin-left:auto; color:#64748b">${ep.desc}</span>
-                    </div>
-                    <div class="endpoint-body">
-                        ${renderInputs(ep, id)}
-                        <button class="action-btn" onclick="execute('${id}')">Execute</button>
-                        <div id="res-${id}" style="margin-top:15px; display:none;">
-                            <label>Response:</label>
-                            <pre></pre>
-                        </div>
-                    </div>
-                </div>`;
-      }).join('');
-    }
-
-    function renderInputs(ep, id) {
-      let html = '';
-
-      if (ep.params) {
-        ep.params.forEach(p => {
-          html += `<div class="form-group"><label>URL Param: ${p}</label><input type="text" id="param-${id}-${p}" placeholder="${p}"></div>`;
-        });
-      }
-
-      if (ep.query) {
-        html += `<div class="form-group"><label>Query Params</label><div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">`;
-        ep.query.forEach(q => {
-          html += `<input type="text" id="query-${id}-${q}" placeholder="${q}">`;
-        });
-        html += `</div></div>`;
-      }
-
-      if (ep.isUpload) {
-        html += `
-                <div class="form-group"><label>Image File</label><input type="file" id="file-${id}"></div>
-                <div class="form-group"><label>Caption</label><input type="text" id="data-${id}-caption"></div>
-                <div class="form-group"><label>Category</label><input type="text" id="data-${id}-category"></div>
-                <div class="form-group"><label>Department ID</label><input type="text" id="data-${id}-department_id"></div>
-                <div class="form-group"><label>Progenda ID</label><input type="text" id="data-${id}-progenda_id"></div>
-                <div class="form-group"><label>Cabinet ID</label><input type="text" id="data-${id}-cabinet_id"></div>
-                `;
-      } else if (ep.body) {
-        html += `<div class="form-group"><label>Request Body (JSON)</label>
-                <textarea id="body-${id}" rows="5">${JSON.stringify(ep.body, null, 2)}</textarea></div>`;
-      }
-
-      return html;
-    }
-
-    async function execute(id) {
-      const [sectionIdx, epIdx] = id.split('-').slice(1).map(Number);
-      const ep = routes[sectionIdx].endpoints[epIdx];
-
-      let url = API_URL + ep.path;
-
-      // Params
-      if (ep.params) {
-        ep.params.forEach(p => {
-          const val = document.getElementById(`param-${id}-${p}`).value;
-          url = url.replace(`:${p}`, val);
-        });
-      }
-
-      // Query
-      const queryParts = [];
-      if (ep.query) {
-        ep.query.forEach(q => {
-          const val = document.getElementById(`query-${id}-${q}`).value;
-          if (val) queryParts.push(`${q}=${encodeURIComponent(val)}`);
-        });
-      }
-      if (queryParts.length) url += '?' + queryParts.join('&');
-
-      const options = {
-        method: ep.method,
-        headers: {
-          'Authorization': 'Bearer ' + (localStorage.getItem('token') || '')
+      if (r.isFileUpload) {
+        c += "const formData = new FormData();\n";
+        if (r.fileFields) {
+          r.fileFields.forEach(function (f) {
+            if (f.type === "file") {
+              c += 'formData.append("' + f.name + '", fileInput.files[0]);\n';
+            } else {
+              c += 'formData.append("' + f.name + '", "' + (f.ph || "value") + '");\n';
+            }
+          });
         }
-      };
+        c += '\nfetch("' + API + r.path + '", {\n';
+        c += '  method: "' + r.method + '",\n';
+        c += "  headers: {\n";
+        c += '    "Authorization": "Bearer " + token\n';
+        c += "  },\n";
+        c += "  body: formData\n";
+      } else {
+        c += 'fetch("' + API + r.path + '", {\n';
+        c += '  method: "' + r.method + '",\n';
+        c += "  headers: {\n";
+        c += '    "Content-Type": "application/json",\n';
+        c += '    "Authorization": "Bearer " + token\n';
+        c += "  }";
+        if (r.method !== "GET" && r.body) {
+          c += ",\n  body: " + r.body;
+        }
+      }
+      c += "\n})\n.then(r => r.json())\n.then(console.log);";
+      return c;
+    }
 
-      // Body
-      if (ep.isUpload) {
-        const formData = new FormData();
-        const fileInput = document.getElementById(`file-${id}`);
-        if (fileInput.files[0]) formData.append('image', fileInput.files[0]);
+    function toggleBody(id) {
+      document.getElementById(id).classList.toggle("active");
+    }
 
-        ['caption', 'category', 'department_id', 'progenda_id', 'cabinet_id'].forEach(f => {
-          const val = document.getElementById(`data-${id}-${f}`).value;
-          if (val) formData.append(f, val);
+    function toggleFold(id) {
+      document.getElementById(id).classList.toggle("active");
+    }
+
+    function handleLogin() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      const disp = document.getElementById("token-display");
+
+      fetch(API + "/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, password: p }),
+      })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (data) {
+          if (data.success) {
+            localStorage.setItem("docs_token", data.data.token);
+            disp.innerHTML = "<strong>✓ Authorized!</strong> " + data.data.token;
+            disp.className = "success";
+            disp.style.display = "block";
+          } else {
+            disp.innerHTML = "<strong>✗ Failed:</strong> " + data.message;
+            disp.className = "error";
+            disp.style.display = "block";
+          }
+        })
+        .catch(function (e) {
+          alert("Login failed: " + e.message);
         });
-        options.body = formData;
-      } else if (ep.body) {
-        try {
-          const bodyVal = document.getElementById(`body-${id}`).value;
-          options.body = bodyVal; // raw string
-          options.headers['Content-Type'] = 'application/json';
-        } catch (e) {
-          alert('Invalid JSON');
+    }
+
+    function exec(id, method, path, hasParams, hasBody, isFileUpload) {
+      const area = document.getElementById(id + "-res");
+      const status = document.getElementById(id + "-status");
+      const dataBox = document.getElementById(id + "-data");
+      const token = localStorage.getItem("docs_token");
+
+      area.classList.add("active");
+      status.textContent = "Executing...";
+      status.className = "response-status";
+      dataBox.textContent = "";
+
+      let url = API + path;
+
+      if (path.includes("/:id")) {
+        const idInput = document.getElementById(id + "-path-id");
+        if (idInput && idInput.value) {
+          url = url.replace(":id", idInput.value);
+        } else if (method !== "POST" && path.includes(":id")) {
+          status.textContent = "Error: ID is required";
+          status.className = "response-status error";
           return;
         }
       }
 
-      try {
-        const res = await fetch(url, options);
-        const data = await res.json();
-        const resDiv = document.getElementById(`res-${id}`);
-        resDiv.style.display = 'block';
-        resDiv.querySelector('pre').textContent = JSON.stringify(data, null, 2);
-
-        if (data.data?.token) {
-          localStorage.setItem('token', data.data.token);
-          document.getElementById('authToken').value = data.data.token;
+      if (path.includes("/:name")) {
+        const nameInput = document.getElementById(id + "-path-name");
+        if (nameInput && nameInput.value) {
+          url = url.replace(":name", nameInput.value);
+        } else {
+          status.textContent = "Error: Name is required";
+          status.className = "response-status error";
+          return;
         }
-      } catch (err) {
-        alert('Request failed: ' + err.message);
       }
+
+      if (path.includes("/:slug")) {
+        const slugInput = document.getElementById(id + "-path-slug");
+        if (slugInput && slugInput.value) {
+          url = url.replace(":slug", slugInput.value);
+        } else {
+          status.textContent = "Error: Slug is required";
+          status.className = "response-status error";
+          return;
+        }
+      }
+
+      if (hasParams) {
+        const params = [];
+        document.querySelectorAll('[id^="' + id + '-p-"]').forEach(function (inp) {
+          if (inp.value) {
+            const name = inp.id.split("-p-")[1];
+            params.push(name + "=" + encodeURIComponent(inp.value));
+          }
+        });
+        if (params.length) url += "?" + params.join("&");
+      }
+
+      const opts = {
+        method: method,
+        headers: {},
+      };
+
+      if (token) opts.headers["Authorization"] = "Bearer " + token;
+
+      if (isFileUpload) {
+        const formData = new FormData();
+        document.querySelectorAll('[id^="' + id + '-file-"]').forEach(function (inp) {
+          if (inp.files && inp.files[0]) {
+            const name = inp.id.split("-file-")[1];
+            formData.append(name, inp.files[0]);
+          }
+        });
+        document.querySelectorAll('[id^="' + id + '-field-"]').forEach(function (inp) {
+          if (inp.value) {
+            const name = inp.id.split("-field-")[1];
+            formData.append(name, inp.value);
+          }
+        });
+        opts.body = formData;
+      } else {
+        opts.headers["Content-Type"] = "application/json";
+        if (hasBody) {
+          const bodyEl = document.getElementById(id + "-body");
+          if (bodyEl) opts.body = bodyEl.value;
+        }
+      }
+
+      const startTime = performance.now();
+      fetch(url, opts)
+        .then(function (res) {
+          const duration = Math.round(performance.now() - startTime);
+          status.textContent = "Status: " + res.status + " " + res.statusText + " (" + duration + "ms)";
+          status.className = "response-status " + (res.ok ? "success" : "error");
+          return res.json();
+        })
+        .then(function (data) {
+          dataBox.textContent = JSON.stringify(data, null, 2);
+        })
+        .catch(function (e) {
+          const duration = Math.round(performance.now() - startTime);
+          status.textContent = "Error: " + e.message + " (" + duration + "ms)";
+          status.className = "response-status error";
+          dataBox.textContent = e.stack || e.message;
+        });
     }
+
+    window.onload = function () {
+      render();
+      const saved = localStorage.getItem("docs_token");
+      if (saved) {
+        const d = document.getElementById("token-display");
+        d.innerHTML = "<strong>Token loaded from session</strong>";
+        d.style.background = "#eff6ff";
+        d.style.color = "#1e40af";
+        d.style.border = "1px solid #3b82f6";
+        d.style.display = "block";
+      }
+    };
   </script>
 </body>
 
