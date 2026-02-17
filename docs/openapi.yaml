@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: HIMASAKTA Backend API
-  version: "1.0"
+  version: "1.1"
   description: |
     Backend API for HIMASAKTA (Himpunan Mahasiswa Teknik Aktuaria) ITS Web Platform.
     Built with Go, Gin, GORM, and PostgreSQL.
@@ -74,6 +74,20 @@ components:
               type: string
               format: uuid
               nullable: true
+
+    Role:
+      allOf:
+        - $ref: '#/components/schemas/Timestamp'
+        - type: object
+          properties:
+            name:
+              type: string
+              description: Rank name (e.g., Kahima, Kadep)
+            level:
+              type: integer
+              description: Sorting index (1, 2, 3...)
+            description:
+              type: string
 
     News:
       allOf:
@@ -167,8 +181,11 @@ components:
               type: string
             name:
               type: string
-            role:
+            role_id:
               type: string
+              format: uuid
+            role:
+              $ref: '#/components/schemas/Role'
             department_id:
               type: string
               format: uuid
@@ -181,8 +198,21 @@ components:
               nullable: true
             photo:
               $ref: '#/components/schemas/Media'
-            period:
+            cabinet_id:
               type: string
+              format: uuid
+            index:
+              type: integer
+
+    MemberGroup:
+      type: object
+      properties:
+        role:
+          $ref: '#/components/schemas/Role'
+        members:
+          type: array
+          items:
+            $ref: '#/components/schemas/Member'
 
     Timeline:
       type: object
@@ -348,6 +378,100 @@ paths:
                     properties:
                       token:
                         type: string
+
+  # ── Role ──
+  /role:
+    get:
+      tags: [Role]
+      summary: List all roles
+      parameters:
+        - name: name
+          in: query
+          schema:
+            type: string
+        - $ref: '#/components/parameters/Page'
+        - $ref: '#/components/parameters/Limit'
+        - $ref: '#/components/parameters/Sort'
+        - $ref: '#/components/parameters/SortBy'
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    post:
+      tags: [Role]
+      security: [{BearerAuth: []}]
+      summary: Create role
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, level]
+              properties:
+                name:
+                  type: string
+                level:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        '201':
+          $ref: '#/components/responses/Success'
+
+  /role/{id}:
+    get:
+      tags: [Role]
+      summary: Get role by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    put:
+      tags: [Role]
+      security: [{BearerAuth: []}]
+      summary: Update role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                name:
+                  type: string
+                level:
+                  type: integer
+                description:
+                  type: string
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
+    delete:
+      tags: [Role]
+      security: [{BearerAuth: []}]
+      summary: Delete role
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          $ref: '#/components/responses/Success'
 
   # ── Cabinet Info ──
   /cabinet-info:
@@ -955,7 +1079,7 @@ paths:
           schema:
             type: string
             format: uuid
-      requestBody:
+      requestBodUpload
         content:
           application/json:
             schema:
@@ -1140,13 +1264,33 @@ paths:
           in: query
           schema:
             type: string
+        - name: groupby
+          in: query
+          description: Set to 'rank' to group members by role
+          schema:
+            type: string
         - $ref: '#/components/parameters/Page'
         - $ref: '#/components/parameters/Limit'
         - $ref: '#/components/parameters/Sort'
         - $ref: '#/components/parameters/SortBy'
       responses:
         '200':
-          $ref: '#/components/responses/Success'
+          description: Success (returns Array of Member or Array of MemberGroup)
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/responses/Success'
+                  - type: object
+                    properties:
+                      success:
+                        type: boolean
+                      message:
+                        type: string
+                      data:
+                        type: array
+                        items:
+                          $ref: '#/components/schemas/MemberGroup'
     post:
       tags: [Member]
       security: [{BearerAuth: []}]
@@ -1157,22 +1301,26 @@ paths:
           application/json:
             schema:
               type: object
-              required: [nrp, name, role, period]
+              required: [nrp, name, role_id, cabinet_id]
               properties:
                 nrp:
                   type: string
                 name:
                   type: string
-                role:
+                role_id:
                   type: string
+                  format: uuid
                 department_id:
                   type: string
                   format: uuid
                 photo_id:
                   type: string
                   format: uuid
-                period:
+                cabinet_id:
                   type: string
+                  format: uuid
+                index:
+                  type: integer
       responses:
         '201':
           $ref: '#/components/responses/Success'
@@ -1212,16 +1360,20 @@ paths:
                   type: string
                 name:
                   type: string
-                role:
+                role_id:
                   type: string
+                  format: uuid
                 department_id:
                   type: string
                   format: uuid
                 photo_id:
                   type: string
                   format: uuid
-                period:
+                cabinet_id:
                   type: string
+                  format: uuid
+                index:
+                  type: integer
       responses:
         '200':
           $ref: '#/components/responses/Success'
@@ -1293,39 +1445,3 @@ paths:
       responses:
         '200':
           $ref: '#/components/responses/Success'
-
-  # ── Uploads ──
-  /uploads:
-    post:
-      tags: [Uploads]
-      summary: Upload file to S3
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              required: [file]
-              properties:
-                file:
-                  type: string
-                  format: binary
-      responses:
-        '200':
-          description: Upload success
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  success:
-                    type: boolean
-                  message:
-                    type: string
-                  data:
-                    type: object
-                    properties:
-                      url:
-                        type: string
-                      path:
-                        type: string

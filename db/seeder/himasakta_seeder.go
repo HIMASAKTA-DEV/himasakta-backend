@@ -57,15 +57,27 @@ func HimasaktaSeeder(db *gorm.DB) error {
 		return err
 	}
 
-	// 4. Seed Member
+	// 4. Seed Role
+	role := entity.Role{
+		Id:          uuid.New(),
+		Name:        "Ketua Departemen",
+		Level:       1,
+		Description: "Kepala Departemen Kaderisasi",
+	}
+	if err := db.Create(&role).Error; err != nil {
+		return err
+	}
+
+	// 5. Seed Member
 	member := entity.Member{
 		Id:           uuid.New(),
 		Nrp:          "12345678",
 		Name:         "John Doe",
-		Role:         "Ketua Departemen",
+		RoleId:       &role.Id,
+		CabinetId:    &cabinet.Id,
 		DepartmentId: &dept.Id,
 		PhotoId:      &gallery1.Id,
-		Period:       "2024",
+		Index:        1,
 	}
 	if err := db.Create(&member).Error; err != nil {
 		return err

@@ -2,7 +2,11 @@
 
 ## About
 
-The official backend API for HIMASAKTA (Himpunan Mahasiswa Teknik Aktuaria) ITS Web Platform. Built with Go, Gin, GORM, and PostgreSQL (Supabase).
+<p align="center">
+  <img src="docs/graphviz.png" alt="git workflow" />
+  <br>
+Official backend API for HIMASAKTA (Himpunan Mahasiswa Aktuaria) ITS Web Platform. Built with Go, Gin, GORM, and PostgreSQL (Supabase).
+</p>
 
 ## Features
 
@@ -11,6 +15,7 @@ The official backend API for HIMASAKTA (Himpunan Mahasiswa Teknik Aktuaria) ITS 
 - **CMS Entities**:
   - `CabinetInfo`: Visi, Misi, and Cabinet details.
   - `Department`: HIMASAKTA departments.
+  - `Role`: Member ranks (Kahima, Kadep, etc.).
   - `Member`: Management of members and their roles.
   - `Progenda`: Program Kerja and Agenda management.
   - `MonthlyEvent`: Calendar of events.
@@ -25,6 +30,7 @@ The official backend API for HIMASAKTA (Himpunan Mahasiswa Teknik Aktuaria) ITS 
 ## Getting Started
 
 ### Environment Variables (.env)
+<details markdown="1">  
 
 ```env
 # APP
@@ -56,6 +62,7 @@ AWS_ACCESS_KEY=your-access-key
 AWS_SECRET_KEY=your-secret-key
 S3_PUBLIC_URL_PREFIX=https://your-project.supabase.co/storage/v1/object/public/your-bucket/
 ```
+</details>
 
 ### Running Locally
 
@@ -79,14 +86,11 @@ go run main.go --test
 ## API Routes (v1)
 
 All paginated endpoints accept `?page=`, `?limit=`, `?sort=`, `?sort_by=` query parameters.
+Default sorting is by `created_at DESC` (newest first), except for Members which prioritize Rank/Index.
 
 ### Authentication
 
 - `POST /api/v1/auth/login` — Superadmin login (returns JWT token)
-
-### Uploads
-
-- `POST /api/v1/uploads` — Upload file to S3 (multipart/form-data, field: `file`)
 
 ### Cabinet Info
 
@@ -104,6 +108,22 @@ All paginated endpoints accept `?page=`, `?limit=`, `?sort=`, `?sort_by=` query 
 - `POST /api/v1/department` — Create (fields: `name`, `description`, `logo_id`, `social_media_link`, `bank_soal_link`, `silabus_link`, `bank_ref_link`)
 - `PUT /api/v1/department/:id` — Update
 - `DELETE /api/v1/department/:id` — Delete
+
+### Role
+
+- `GET /api/v1/role` — List all (paginated, filter: `?name=`)
+- `GET /api/v1/role/:id` — Get by ID
+- `POST /api/v1/role` — Create (fields: `name`, `level`, `description`)
+- `PUT /api/v1/role/:id` — Update
+- `DELETE /api/v1/role/:id` — Delete
+
+### Member
+
+- `GET /api/v1/member` — List all (paginated, filters: `?name=`, `?groupby=rank`)
+- `GET /api/v1/member/:id` — Get by ID
+- `POST /api/v1/member` — Create (fields: `nrp`, `name`, `role_id`, `cabinet_id`, `department_id`, `photo_id`, `index`)
+- `PUT /api/v1/member/:id` — Update
+- `DELETE /api/v1/member/:id` — Delete
 
 ### News
 
@@ -139,14 +159,6 @@ All paginated endpoints accept `?page=`, `?limit=`, `?sort=`, `?sort_by=` query 
 - `PUT /api/v1/gallery/:id` — Update metadata
 - `DELETE /api/v1/gallery/:id` — Delete
 
-### Member
-
-- `GET /api/v1/member` — List all (paginated, filter: `?name=`)
-- `GET /api/v1/member/:id` — Get by ID
-- `POST /api/v1/member` — Create (fields: `nrp`, `name`, `role`, `period`, `department_id`, `photo_id`)
-- `PUT /api/v1/member/:id` — Update
-- `DELETE /api/v1/member/:id` — Delete
-
 ### NRP Whitelist
 
 - `POST /api/v1/nrp-whitelist` — Check NRP (field: `nrp`)
@@ -158,6 +170,7 @@ All paginated endpoints accept `?page=`, `?limit=`, `?sort=`, `?sort_by=` query 
 - All entities use **UUID** as Primary Key.
 - All entities include `Timestamp` (created_at, updated_at, deleted_at).
 - Media assets are referenced via `Gallery` FKs (e.g., `logo_id`, `thumbnail_id`, `photo_id`, `organigram_id`, `cabinet_id`).
+- Members are linked to `Role` and `CabinetInfo` via FKs.
 
 ---
 

@@ -39,5 +39,6 @@ func main() {
 	if err != nil {
 		log.Fatalf("Failed to initialize REST API: %v", err)
 	}
+	log.Println("Starting REST API...")
 	RestApi.Start()
 }

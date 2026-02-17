@@ -92,8 +92,12 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 		n.Title = req.Title
 		n.Slug = utils.ToSlug(req.Title)
 	}
-	n.Tagline = req.Tagline
-	n.Hashtags = req.Hashtags
+	if req.Tagline != "" {
+		n.Tagline = req.Tagline
+	}
+	if req.Hashtags != "" {
+		n.Hashtags = req.Hashtags
+	}
 	if req.Content != "" {
 		n.Content = req.Content
 	}

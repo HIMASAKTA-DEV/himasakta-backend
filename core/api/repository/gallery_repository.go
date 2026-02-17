@@ -52,6 +52,10 @@ func (r *galleryRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq met
 	var galleries []entity.Gallery
 	tx = tx.WithContext(ctx).Model(&entity.Gallery{})
 
+	if metaReq.SortBy == "" {
+		tx = tx.Order("created_at DESC")
+	}
+
 	if err := WithFilters(tx, &metaReq, AddModels(entity.Gallery{})).Find(&galleries).Error; err != nil {
 		return nil, metaReq, err
 	}
