@@ -34,35 +34,35 @@ func NewRouter(server *gin.Engine, s3 storage.AwsS3) *gin.Engine {
 			"message": "pong 123",
 		})
 	})
-	server.POST("/api/v1/uploads", func(ctx *gin.Context) {
-		file, err := ctx.FormFile("file")
-		if err != nil {
-			response.NewFailed("failed to get file", err).SendWithAbort(ctx)
-			return
-		}
+	// server.POST("/api/v1/uploads", func(ctx *gin.Context) {
+	// 	file, err := ctx.FormFile("file")
+	// 	if err != nil {
+	// 		response.NewFailed("failed to get file", err).SendWithAbort(ctx)
+	// 		return
+	// 	}
 
-		filename := fmt.Sprintf("assets-%s.%s", ulid.Make(), utils.GetExtensions(file.Filename))
+	// 	filename := fmt.Sprintf("assets-%s.%s", ulid.Make(), utils.GetExtensions(file.Filename))
 
-		// Map the folders based on extensions or just one folder
-		folderName := "others"
-		ext := strings.ToLower(utils.GetExtensions(file.Filename))
-		if ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "webp" {
-			folderName = "images"
-		}
+	// 	// Map the folders based on extensions or just one folder
+	// 	folderName := "others"
+	// 	ext := strings.ToLower(utils.GetExtensions(file.Filename))
+	// 	if ext == "jpg" || ext == "jpeg" || ext == "png" || ext == "webp" {
+	// 		folderName = "images"
+	// 	}
 
-		objectKey, err := s3.UploadFile(filename, file, folderName)
-		if err != nil {
-			response.NewFailed("failed upload to s3", err).SendWithAbort(ctx)
-			return
-		}
+	// 	objectKey, err := s3.UploadFile(filename, file, folderName)
+	// 	if err != nil {
+	// 		response.NewFailed("failed upload to s3", err).SendWithAbort(ctx)
+	// 		return
+	// 	}
 
-		fileURL := s3.GetPublicLink(objectKey)
+	// 	fileURL := s3.GetPublicLink(objectKey)
 
-		response.NewSuccess("success upload image", gin.H{
-			"url":  fileURL,
-			"path": objectKey,
-		}).Send(ctx)
-	})
+	// 	response.NewSuccess("success upload image", gin.H{
+	// 		"url":  fileURL,
+	// 		"path": objectKey,
+	// 	}).Send(ctx)
+	// })
 
 	server.Static("/api/static", "./public/uploads")
 	return server

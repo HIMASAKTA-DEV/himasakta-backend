@@ -1079,7 +1079,7 @@ paths:
           schema:
             type: string
             format: uuid
-      requestBody:
+      requestBodUpload
         content:
           application/json:
             schema:

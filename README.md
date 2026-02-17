@@ -3,7 +3,7 @@
 ## About
 
 <p align="center">
-  <img src="graphviz.png" alt="git workflow" />
+  <img src="docs/graphviz.png" alt="git workflow" />
   <br>
 Official backend API for HIMASAKTA (Himpunan Mahasiswa Aktuaria) ITS Web Platform. Built with Go, Gin, GORM, and PostgreSQL (Supabase).
 </p>

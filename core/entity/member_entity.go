@@ -6,7 +6,7 @@ type Member struct {
 	Timestamp
 	Id           uuid.UUID   `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
 	Nrp          string      `gorm:"type:varchar(20);not null" json:"nrp"`
-	Name         string      `gorm:"type:varchar(255);not null" json:"name"` // Removed unique constraint as names might not be unique across periods/cabinets? Or keeping it? Original had unique. Keeping unique for now as requested changes didn't specify removing it, but usually names aren't unique. Let's keep it consistent with original for now.
+	Name         string      `gorm:"type:varchar(255);not null" json:"name"` // Removed unique constraint 
 	RoleId       *uuid.UUID  `gorm:"type:uuid" json:"role_id"`
 	Role         *Role       `gorm:"foreignKey:RoleId" json:"role"`
 	DepartmentId *uuid.UUID  `gorm:"type:uuid" json:"department_id"`
