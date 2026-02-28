@@ -34,7 +34,7 @@ func (c *nrpWhitelistController) CheckWhitelist(ctx *gin.Context) {
 	res, err := c.service.Check(ctx.Request.Context(), req)
 	if err != nil {
 		// If not found
-		response.NewFailedWithCode(403, "NRP is not allowed", err)
+		response.NewFailedWithCode(403, "NRP is not allowed", err).Send(ctx)
 		return
 	}
 	response.NewSuccess("NRP is allowed", res).Send(ctx)
@@ -84,8 +84,8 @@ func (c *nrpWhitelistController) Update(ctx *gin.Context) {
 func (c *nrpWhitelistController) Delete(ctx *gin.Context) {
 	err := c.service.Delete(ctx.Request.Context(), ctx.Param("nrp"))
 	if err != nil {
-		response.NewFailed("failed delete cabinet info", err).Send(ctx)
+		response.NewFailed("failed delete nrp whitelist", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("success delete cabinet info", nil).Send(ctx)
+	response.NewSuccess("success delete nrp whitelist", nil).Send(ctx)
 }

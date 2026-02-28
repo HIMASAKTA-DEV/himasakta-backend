@@ -272,13 +272,16 @@ All entities include these GORM standard fields:
 
 ### Endpoints
 
-| Method | Path | Auth | Description |
-|---|---|---|---|
-| `GET` | `/progenda` | ❌ | List all progendas (paginated) |
-| `GET` | `/progenda/:id` | ❌ | Get single progenda |
 | `POST` | `/progenda` | ✅ | Create progenda |
 | `PUT` | `/progenda/:id` | ✅ | Update progenda |
 | `DELETE` | `/progenda/:id` | ✅ | Delete progenda |
+
+#### Individual Timeline CRUD
+| Method | Path | Auth | Description |
+|---|---|---|---|
+| `POST` | `/progenda/:id/timeline` | ✅ | Add individual timeline to progenda |
+| `PUT` | `/progenda/timeline/:timelineId` | ✅ | Update individual timeline |
+| `DELETE` | `/progenda/timeline/:timelineId` | ✅ | Delete individual timeline |
 
 ---
 
@@ -300,6 +303,7 @@ All entities include these GORM standard fields:
 > [!WARNING]
 > No `title` or `description` fields — only `image_url`, `caption`, `category`.
 > Has `progenda_id` to link media to progenda feeds.
+> **Max file size is 10MB.**
 
 ### Endpoints
 
@@ -307,7 +311,7 @@ All entities include these GORM standard fields:
 |---|---|---|---|
 | `GET` | `/gallery` | ❌ | List all gallery items (paginated) |
 | `GET` | `/gallery/:id` | ❌ | Get single gallery item |
-| `POST` | `/gallery` | ✅ | Upload image (multipart/form-data: `image`, `caption`, `category`) |
+| `POST` | `/gallery` | ✅ | Upload image (multipart/form-data, **max 10MB**: `image`, `caption`, `category`) |
 | `PUT` | `/gallery/:id` | ✅ | Update gallery item |
 | `DELETE` | `/gallery/:id` | ✅ | Delete gallery item |
 

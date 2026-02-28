@@ -33,6 +33,11 @@ func Migrate(db *gorm.DB) error {
 		return err
 	}
 
+	// Ensure name column is nullable in nrp_whitelists
+	if err := db.Exec(`ALTER TABLE nrp_whitelists ALTER COLUMN name DROP NOT NULL`).Error; err != nil {
+		mylog.Infof("Failed to drop NOT NULL on nrp_whitelists.name: %v", err)
+	}
+
 	// if err := db.Exec(`CREATE UNIQUE INDEX IF NOT EXISTS idx_users_email ON users(email) WHERE deleted_at IS NULL;`).Error; err != nil {
 	// 	return err
 	// }

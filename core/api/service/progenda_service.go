@@ -6,6 +6,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
@@ -146,7 +147,7 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	progenda, err := s.progendaRepo.Update(ctx, tx, p)
 	if err != nil {
 		tx.Rollback()
-		return entity.Progenda{}, err
+		return entity.Progenda{}, myerror.ParseDBError(err, "progenda")
 
 	}
 

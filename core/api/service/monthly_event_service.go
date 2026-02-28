@@ -6,6 +6,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 )
@@ -28,13 +29,14 @@ func NewMonthlyEvent(repo repository.MonthlyEventRepository) MonthlyEventService
 }
 
 func (s *monthlyEventService) Create(ctx context.Context, req dto.CreateMonthlyEventRequest) (entity.MonthlyEvent, error) {
-	return s.repo.Create(ctx, nil, entity.MonthlyEvent{
+	res, err := s.repo.Create(ctx, nil, entity.MonthlyEvent{
 		Title:       req.Title,
 		ThumbnailId: req.ThumbnailId,
 		Description: req.Description,
 		Month:       req.Month,
 		Link:        req.Link,
 	})
+	return res, myerror.ParseDBError(err, "event")
 }
 
 func (s *monthlyEventService) GetAll(ctx context.Context, metaReq meta.Meta, title string) ([]entity.MonthlyEvent, meta.Meta, error) {
@@ -74,7 +76,8 @@ func (s *monthlyEventService) Update(ctx context.Context, id string, req dto.Upd
 		e.Link = req.Link
 	}
 
-	return s.repo.Update(ctx, nil, e)
+	res, err := s.repo.Update(ctx, nil, e)
+	return res, myerror.ParseDBError(err, "event")
 }
 
 func (s *monthlyEventService) Delete(ctx context.Context, id string) error {

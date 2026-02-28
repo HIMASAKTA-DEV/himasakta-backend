@@ -47,7 +47,7 @@ var (
 	ErrInvalidTypeFile = errors.New("invalid type file")
 )
 
-func NewAwsS3() AwsS3 {
+func NewAwsS3() (AwsS3, error) {
 	bucket := os.Getenv("S3_BUCKET")
 	region := os.Getenv("AWS_REGION")
 	endpoint := os.Getenv("S3_ENDPOINT")
@@ -82,7 +82,7 @@ func NewAwsS3() AwsS3 {
 
 	cfg, err = config.LoadDefaultConfig(context.TODO(), options...)
 	if err != nil {
-		panic(fmt.Sprintf("failed to load AWS configuration: %v", err))
+		return nil, fmt.Errorf("failed to load AWS configuration: %w", err)
 	}
 
 	client := s3.NewFromConfig(cfg, func(o *s3.Options) {
@@ -99,7 +99,7 @@ func NewAwsS3() AwsS3 {
 		endpoint:   endpoint,
 		actions:    nil,
 		isRollback: false,
-	}
+	}, nil
 }
 
 // Gunakan untuk mengupload file ke s3 dimana defaultnya mengizinkan semua jenis mimetype

@@ -7,7 +7,7 @@ import (
 )
 
 type CreateTimelineRequest struct {
-	ProgendaId uuid.UUID `json:"progenda_id" binding:"required"`
+	ProgendaId uuid.UUID `json:"progenda_id"`
 	Date       time.Time `json:"date" binding:"required"`
 	Info       string    `json:"info"`
 	Link       string    `json:"link"`

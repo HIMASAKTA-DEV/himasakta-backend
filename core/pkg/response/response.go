@@ -48,11 +48,12 @@ func NewSuccessCreated(msg string, data any, meta ...any) Response {
 
 // response default status code internal server error (500)
 func NewFailed(msg string, err error, data ...any) Response {
+	errStr := myerror.ParseValidationError(err)
 	res := Response{
 		StatusCode: http.StatusInternalServerError,
 		Success:    false,
 		Message:    msg,
-		Error:      err.Error(),
+		Error:      errStr,
 	}
 
 	if myErr, ok := err.(myerror.Error); ok {
@@ -67,11 +68,12 @@ func NewFailed(msg string, err error, data ...any) Response {
 }
 
 func NewFailedWithCode(statusCode int, msg string, err error, data ...any) Response {
+	errStr := myerror.ParseValidationError(err)
 	res := Response{
 		StatusCode: statusCode,
 		Success:    false,
 		Message:    msg,
-		Error:      err.Error(),
+		Error:      errStr,
 	}
 
 	if len(data) > 0 {

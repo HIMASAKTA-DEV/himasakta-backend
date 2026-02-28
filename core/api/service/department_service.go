@@ -28,9 +28,8 @@ type departmentService struct {
 func NewDepartment(repo repository.DepartmentRepository) DepartmentService {
 	return &departmentService{repo}
 }
-
 func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartmentRequest) (entity.Department, error) {
-	return s.repo.Create(ctx, nil, entity.Department{
+	res, err := s.repo.Create(ctx, nil, entity.Department{
 		Name:            req.Name,
 		Description:     req.Description,
 		LogoId:          req.LogoId,
@@ -39,6 +38,7 @@ func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartment
 		SilabusLink:     req.SilabusLink,
 		BankRefLink:     req.BankRefLink,
 	})
+	return res, myerror.ParseDBError(err, "department")
 }
 
 func (s *departmentService) GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error) {
@@ -100,7 +100,8 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 		d.BankRefLink = req.BankRefLink
 	}
 
-	return s.repo.Update(ctx, nil, d)
+	res, err := s.repo.Update(ctx, nil, d)
+	return res, myerror.ParseDBError(err, "department")
 }
 
 func (s *departmentService) Delete(ctx context.Context, id string) error {

@@ -33,7 +33,7 @@ func NewNews(repo repository.NewsRepository) NewsService {
 }
 
 func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (entity.News, error) {
-	return s.repo.Create(ctx, nil, entity.News{
+	res, err := s.repo.Create(ctx, nil, entity.News{
 		Title:       req.Title,
 		Slug:        utils.ToSlug(req.Title),
 		Tagline:     req.Tagline,
@@ -42,6 +42,7 @@ func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (en
 		ThumbnailId: req.ThumbnailId,
 		PublishedAt: req.PublishedAt,
 	})
+	return res, myerror.ParseDBError(err, "news")
 }
 
 func (s *newsService) GetAll(ctx context.Context, metaReq meta.Meta, search string, category string, title string) ([]entity.News, meta.Meta, error) {
@@ -109,7 +110,8 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 		n.PublishedAt = *req.PublishedAt
 	}
 
-	return s.repo.Update(ctx, nil, n)
+	res, err := s.repo.Update(ctx, nil, n)
+	return res, myerror.ParseDBError(err, "news")
 }
 
 func (s *newsService) Delete(ctx context.Context, id string) error {

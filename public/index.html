@@ -559,6 +559,29 @@
             hasParams: true,
             resp: '{\n  "success": true,\n  "data": null\n}',
           },
+          {
+            method: "POST",
+            path: "/progenda/:id/timeline",
+            desc: "Add individual timeline to progenda",
+            hasParams: true,
+            body: '{\n  "date": "2026-03-01T00:00:00Z",\n  "info": "New Phase",\n  "link": "https://..."\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/progenda/timeline/:timelineId",
+            desc: "Update individual timeline",
+            params: [{ name: "timelineId", ph: "uuid" }],
+            body: '{\n  "date": "2026-03-05T00:00:00Z",\n  "info": "Updated Info",\n  "link": "https://..."\n}',
+            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+          },
+          {
+            method: "DELETE",
+            path: "/progenda/timeline/:timelineId",
+            desc: "Delete individual timeline",
+            params: [{ name: "timelineId", ph: "uuid" }],
+            resp: '{\n  "success": true,\n  "data": null\n}',
+          },
         ],
       },
       {
@@ -903,19 +926,26 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ username: u, password: p }),
       })
-        .then(function (res) {
-          return res.json();
-        })
-        .then(function (data) {
-          if (data.success) {
-            localStorage.setItem("docs_token", data.data.token);
-            disp.innerHTML = "<strong>✓ Authorized!</strong> " + data.data.token;
-            disp.className = "success";
-            disp.style.display = "block";
+        .then(async function (res) {
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const data = await res.json();
+            if (data.success) {
+              localStorage.setItem("docs_token", data.data.token);
+              disp.innerHTML = "<strong>✓ Authorized!</strong> " + data.data.token;
+              disp.className = "success";
+              disp.style.display = "block";
+            } else {
+              disp.innerHTML = "<strong>✗ Failed:</strong> " + data.message;
+              disp.className = "error";
+              disp.style.display = "block";
+            }
           } else {
-            disp.innerHTML = "<strong>✗ Failed:</strong> " + data.message;
+            const text = await res.text();
+            disp.innerHTML = "<strong>✗ Server Error:</strong> Non-JSON response received. Check console.";
             disp.className = "error";
             disp.style.display = "block";
+            console.error("Non-JSON login response:", text);
           }
         })
         .catch(function (e) {
@@ -969,6 +999,17 @@
         }
       }
 
+      if (path.includes("/:timelineId")) {
+        const tlInput = document.querySelector('[id$="-p-timelineId"]');
+        if (tlInput && tlInput.value) {
+          url = url.replace(":timelineId", tlInput.value);
+        } else {
+          status.textContent = "Error: Timeline ID is required";
+          status.className = "response-status error";
+          return;
+        }
+      }
+
       if (hasParams) {
         const params = [];
         document.querySelectorAll('[id^="' + id + '-p-"]').forEach(function (inp) {
@@ -1012,18 +1053,28 @@
 
       const startTime = performance.now();
       fetch(url, opts)
-        .then(function (res) {
+        .then(async function (res) {
           const duration = Math.round(performance.now() - startTime);
           status.textContent = "Status: " + res.status + " " + res.statusText + " (" + duration + "ms)";
           status.className = "response-status " + (res.ok ? "success" : "error");
-          return res.json();
-        })
-        .then(function (data) {
-          dataBox.textContent = JSON.stringify(data, null, 2);
+
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            try {
+              const data = await res.json();
+              dataBox.textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+              const text = await res.text();
+              dataBox.textContent = "JSON Parse Error: " + e.message + "\n\nRaw Response:\n" + text;
+            }
+          } else {
+            const text = await res.text();
+            dataBox.textContent = "Non-JSON Response:\n" + text;
+          }
         })
         .catch(function (e) {
           const duration = Math.round(performance.now() - startTime);
-          status.textContent = "Error: " + e.message + " (" + duration + "ms)";
+          status.textContent = "Fetch Error: " + e.message + " (" + duration + "ms)";
           status.className = "response-status error";
           dataBox.textContent = e.stack || e.message;
         });

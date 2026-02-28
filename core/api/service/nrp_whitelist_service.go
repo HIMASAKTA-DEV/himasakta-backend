@@ -6,6 +6,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 )
@@ -26,10 +27,11 @@ func NewNrpWhitelist(repo repository.NrpWhitelistRepository) NrpWhitelistService
 	return &nrpWhitelistService{repo}
 }
 func (s *nrpWhitelistService) Create(ctx context.Context, req dto.CreateNrpWhitelistRequest) (entity.NrpWhitelist, error) {
-	return s.repo.Create(ctx, nil, entity.NrpWhitelist{
+	res, err := s.repo.Create(ctx, nil, entity.NrpWhitelist{
 		Nrp:  req.Nrp,
 		Name: req.Name,
 	})
+	return res, myerror.ParseDBError(err, "NRP whitelist")
 }
 
 func (s *nrpWhitelistService) Check(ctx context.Context, req dto.CheckNrpWhitelistRequest) (entity.NrpWhitelist, error) {
@@ -55,7 +57,8 @@ func (s *nrpWhitelistService) Update(ctx context.Context, id string, req dto.Upd
 		ci.Name = req.Name
 	}
 
-	return s.repo.Update(ctx, nil, ci)
+	res, err := s.repo.Update(ctx, nil, ci)
+	return res, myerror.ParseDBError(err, "NRP whitelist")
 }
 
 func (s *nrpWhitelistService) Delete(ctx context.Context, nrp string) error {

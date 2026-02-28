@@ -36,9 +36,9 @@ func (c *galleryController) Create(ctx *gin.Context) {
 		return
 	}
 
-	// Validate file size (e.g., max 50MB)
-	if file.Size > 50*1024*1024 {
-		response.NewFailedWithCode(400, "file size exceeds 50MB limit", nil).Send(ctx)
+	// Validate file size (e.g., max 10MB)
+	if file.Size > 10*1024*1024 {
+		response.NewFailedWithCode(400, "file size exceeds 10MB limit", nil).Send(ctx)
 		return
 	}
 
@@ -71,7 +71,7 @@ func (c *galleryController) Create(ctx *gin.Context) {
 	// Upload to S3
 	filename := fmt.Sprintf("%s-%s", uuid.New().String(), file.Filename)
 	objectKey, err := c.s3Storage.UploadFile(filename, file, "gallery",
-		"image/jpeg", "image/png", "image/jpg", "image/webp", "image/gif", "image/heif", "image/heic", "image/bmp", "image/tiff")
+		"image/jpeg", "image/png", "image/webp", "image/gif", "image/heif", "image/heic", "image/bmp", "image/tiff", "image/avif")
 	if err != nil {
 		response.NewFailed("failed to upload image to storage", err).Send(ctx)
 		return

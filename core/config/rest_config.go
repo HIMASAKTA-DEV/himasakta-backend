@@ -34,8 +34,11 @@ func NewRest() (RestConfig, error) {
 
 	app := gin.Default()
 	app.Use(gzip.Gzip(gzip.DefaultCompression))
-	
-	s3 := storage.NewAwsS3()
+
+	s3, err := storage.NewAwsS3()
+	if err != nil {
+		return RestConfig{}, fmt.Errorf("storage initialization failed: %w", err)
+	}
 	server := NewRouter(app, s3)
 	_ = middleware.New(db)
 
@@ -60,6 +63,9 @@ func NewRest() (RestConfig, error) {
 	timelineRepo := repository.NewTimeline(db)
 	progendaService := service.NewProgenda(db, progendaRepo, timelineRepo)
 	progendaController := controller.NewProgenda(progendaService)
+
+	timelineService := service.NewTimeline(timelineRepo)
+	timelineController := controller.NewTimeline(timelineService)
 
 	monthlyEventRepo := repository.NewMonthlyEvent(db)
 	monthlyEventService := service.NewMonthlyEvent(monthlyEventRepo)
@@ -93,7 +99,7 @@ func NewRest() (RestConfig, error) {
 	routes.Department(server, deptController, m)
 	routes.CabinetInfo(server, cabinetController, m)
 	routes.Member(server, memberController, m)
-	routes.Progenda(server, progendaController, m)
+	routes.Progenda(server, progendaController, timelineController, m)
 	routes.MonthlyEvent(server, monthlyEventController, m)
 	routes.News(server, newsController, m)
 	routes.NrpWhitelist(server, nrpWhitelistController, m)

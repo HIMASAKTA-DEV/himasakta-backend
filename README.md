@@ -11,7 +11,8 @@ Official backend API for HIMASAKTA (Himpunan Mahasiswa Aktuaria) ITS Web Platfor
 ## Features
 
 - **Superadmin Authentication**: Secure login using JWT and environment variables.
-- **Centralized Gallery**: All media assets (images, logos, photos) are managed via the Gallery component and stored in Supabase S3.
+- **Hintful Validation**: Technical validation errors (e.g., `required`) are translated into user-friendly Indonesian messages.
+- **Centralized Gallery**: All media assets are managed via the Gallery component and stored in Supabase S3 (10MB limit).
 - **CMS Entities**:
   - `CabinetInfo`: Visi, Misi, and Cabinet details.
   - `Department`: HIMASAKTA departments.

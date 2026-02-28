@@ -6,6 +6,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
+	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 )
@@ -28,7 +29,7 @@ func NewMember(repo repository.MemberRepository) MemberService {
 }
 
 func (s *memberService) Create(ctx context.Context, req dto.CreateMemberRequest) (entity.Member, error) {
-	return s.repo.Create(ctx, nil, entity.Member{
+	res, err := s.repo.Create(ctx, nil, entity.Member{
 		Nrp:          req.Nrp,
 		Name:         req.Name,
 		RoleId:       req.RoleId,
@@ -37,6 +38,7 @@ func (s *memberService) Create(ctx context.Context, req dto.CreateMemberRequest)
 		CabinetId:    req.CabinetId,
 		Index:        req.Index,
 	})
+	return res, myerror.ParseDBError(err, "member")
 }
 
 func (s *memberService) GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Member, meta.Meta, error) {
@@ -116,7 +118,8 @@ func (s *memberService) Update(ctx context.Context, id string, req dto.UpdateMem
 		m.Index = req.Index
 	}
 
-	return s.repo.Update(ctx, nil, m)
+	res, err := s.repo.Update(ctx, nil, m)
+	return res, myerror.ParseDBError(err, "member")
 }
 
 func (s *memberService) Delete(ctx context.Context, id string) error {

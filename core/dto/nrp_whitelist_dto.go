@@ -2,12 +2,12 @@ package dto
 
 type CreateNrpWhitelistRequest struct {
 	Nrp  string `json:"nrp" binding:"required"`
-	Name string `json:"name" binding:"required"`
+	Name string `json:"name"`
 }
 
 type UpdateNrpWhitelistRequest struct {
 	Nrp  string `json:"nrp" binding:"required"`
-	Name string `json:"name" binding:"required"`
+	Name string `json:"name"`
 }
 
 type CheckNrpWhitelistRequest struct {
