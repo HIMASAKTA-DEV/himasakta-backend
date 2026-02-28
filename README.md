@@ -151,6 +151,9 @@ Default sorting is by `created_at DESC` (newest first), except for Members which
 - `POST /api/v1/progenda` — Create (fields: `name`, `thumbnail_id`, `goal`, `description`, social links, `department_id`, `timelines[]`)
 - `PUT /api/v1/progenda/:id` — Update
 - `DELETE /api/v1/progenda/:id` — Delete
+- `POST /api/v1/progenda/:id/timeline` — Add individual timeline
+- `PUT /api/v1/progenda/timeline/:timelineId` — Update individual timeline
+- `DELETE /api/v1/progenda/timeline/:timelineId` — Delete individual timeline
 
 ### Gallery
 

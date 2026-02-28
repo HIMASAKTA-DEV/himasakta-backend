@@ -6,7 +6,7 @@ type Member struct {
 	Timestamp
 	Id           uuid.UUID   `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
 	Nrp          string      `gorm:"type:varchar(20);not null" json:"nrp"`
-	Name         string      `gorm:"type:varchar(255);not null" json:"name"` // Removed unique constraint 
+	Name         string      `gorm:"type:varchar(255);not null" json:"name"`
 	RoleId       *uuid.UUID  `gorm:"type:uuid" json:"role_id"`
 	Role         *Role       `gorm:"foreignKey:RoleId" json:"role"`
 	DepartmentId *uuid.UUID  `gorm:"type:uuid" json:"department_id"`
@@ -14,7 +14,8 @@ type Member struct {
 	PhotoId      *uuid.UUID  `gorm:"type:uuid" json:"photo_id"`
 	Photo        *Gallery    `gorm:"foreignKey:PhotoId" json:"photo"`
 	CabinetId    *uuid.UUID  `gorm:"type:uuid" json:"cabinet_id"`
-	Index        int         `gorm:"type:int" json:"index"` // Sorting index within role/division
+	Cabinet      *CabinetInfo `gorm:"foreignKey:CabinetId" json:"cabinet"`
+	Index        int         `gorm:"type:int" json:"index"`
 }
 
 func (Member) TableName() string {

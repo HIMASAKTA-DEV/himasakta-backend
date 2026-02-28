@@ -352,7 +352,7 @@ All entities include these GORM standard fields:
 
 | Method | Path | Auth | Description |
 |---|---|---|---|
-| `GET` | `/member` | ❌ | List all members (paginated, supports `?search=&department_id=&period=`) |
+| `GET` | `/member` | ❌ | List all members (paginated, supports `?search=&department_id=`) |
 | `GET` | `/member/:id` | ❌ | Get single member |
 | `POST` | `/member` | ✅ | Create member |
 | `PUT` | `/member/:id` | ✅ | Update member |

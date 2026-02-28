@@ -658,7 +658,7 @@
             method: "POST",
             path: "/member",
             desc: "Create member",
-            body: '{\n  "nrp": "123456",\n  "name": "John Doe",\n  "role": "Staff",\n  "period": "2023-2024",\n  "department_id": "uuid-of-department",\n  "photo_id": "uuid-of-gallery"\n}',
+            body: '{\n  "nrp": "123456",\n  "name": "John Doe",\n  "role_id": "uuid-of-role",\n  "cabinet_id": "uuid-of-cabinet",\n  "department_id": "uuid-of-department",\n  "photo_id": "uuid-of-gallery"\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {
@@ -666,7 +666,7 @@
             path: "/member/:id",
             desc: "Update member",
             hasParams: true,
-            body: '{\n  "nrp": "654321",\n  "name": "Jane Doe",\n  "role": "Head",\n  "period": "2024-2025",\n  "department_id": "uuid-of-department",\n  "photo_id": "uuid-of-gallery"\n}',
+            body: '{\n  "nrp": "654321",\n  "name": "Jane Doe",\n  "role_id": "uuid-of-role",\n  "cabinet_id": "uuid-of-cabinet",\n  "department_id": "uuid-of-department",\n  "photo_id": "uuid-of-gallery"\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {

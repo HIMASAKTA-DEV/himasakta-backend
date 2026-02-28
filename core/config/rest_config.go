@@ -28,6 +28,11 @@ func NewRest() (RestConfig, error) {
 		return RestConfig{}, fmt.Errorf("database connection failed")
 	}
 
+	// Auto-migrate on startup
+	// if err := migrations.Migrate(db); err != nil {
+	// 	log.Printf("Migration failed: %v", err)
+	// }
+
 	if mode := os.Getenv("APP_MODE"); mode == "production" || mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
 	}
