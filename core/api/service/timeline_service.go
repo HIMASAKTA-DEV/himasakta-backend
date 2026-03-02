@@ -40,11 +40,15 @@ func (s *timelineService) Update(ctx context.Context, id uuid.UUID, req dto.Upda
 		return entity.Timeline{}, err
 	}
 
-	if !req.Date.IsZero() {
-		tl.Date = req.Date
+	if req.Date != nil {
+		tl.Date = *req.Date
 	}
-	tl.Info = req.Info
-	tl.Link = req.Link
+	if req.Info != nil {
+		tl.Info = *req.Info
+	}
+	if req.Link != nil {
+		tl.Link = *req.Link
+	}
 
 	res, err := s.repo.BulkUpdate(ctx, nil, []entity.Timeline{tl})
 	if err != nil || len(res) == 0 {

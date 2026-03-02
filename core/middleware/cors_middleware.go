@@ -8,7 +8,8 @@ func CORSMiddleware() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 		origin := ctx.Request.Header.Get("Origin")
 		if origin != "" {
-			// Allow all origins or specific ones
+			// In production, you should check this against a whitelist:
+			// allowedOrigins := []string{"https://yourdomain.com"}
 			ctx.Writer.Header().Set("Access-Control-Allow-Origin", origin)
 		}
 

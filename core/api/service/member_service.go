@@ -32,10 +32,10 @@ func (s *memberService) Create(ctx context.Context, req dto.CreateMemberRequest)
 	res, err := s.repo.Create(ctx, nil, entity.Member{
 		Nrp:          req.Nrp,
 		Name:         req.Name,
-		RoleId:       req.RoleId,
-		DepartmentId: req.DepartmentId,
-		PhotoId:      req.PhotoId,
-		CabinetId:    req.CabinetId,
+		RoleId:       req.RoleId.ID,
+		DepartmentId: req.DepartmentId.ID,
+		PhotoId:      req.PhotoId.ID,
+		CabinetId:    req.CabinetId.ID,
 		Index:        req.Index,
 	})
 	return res, myerror.ParseDBError(err, "member")
@@ -47,7 +47,7 @@ func (s *memberService) GetAll(ctx context.Context, metaReq meta.Meta, name stri
 
 func (s *memberService) GetAllGrouped(ctx context.Context) ([]dto.MemberGroupResponse, error) {
 	// Fetch all members (large limit)
-	mReq := meta.Meta{Page: 1, Limit: 1000} 
+	mReq := meta.Meta{Page: 1, Limit: 1000}
 	members, _, err := s.repo.GetAll(ctx, nil, mReq, "")
 	if err != nil {
 		return nil, err
@@ -55,10 +55,10 @@ func (s *memberService) GetAllGrouped(ctx context.Context) ([]dto.MemberGroupRes
 
 	var groups []dto.MemberGroupResponse
 	var currentGroup *dto.MemberGroupResponse
-	
+
 	for _, m := range members {
 		if m.Role == nil {
-			continue 
+			continue
 		}
 
 		if currentGroup == nil || currentGroup.Role.Id != m.Role.Id {
@@ -75,7 +75,7 @@ func (s *memberService) GetAllGrouped(ctx context.Context) ([]dto.MemberGroupRes
 	if currentGroup != nil {
 		groups = append(groups, *currentGroup)
 	}
-	
+
 	return groups, nil
 }
 
@@ -93,29 +93,29 @@ func (s *memberService) Update(ctx context.Context, id string, req dto.UpdateMem
 		return m, err
 	}
 
-	if req.Nrp != "" {
-		m.Nrp = req.Nrp
+	if req.Nrp != nil {
+		m.Nrp = *req.Nrp
 	}
-	if req.Name != "" {
-		m.Name = req.Name
+	if req.Name != nil {
+		m.Name = *req.Name
 	}
-	if req.RoleId != nil {
-		m.RoleId = req.RoleId
+	if req.RoleId.Valid {
+		m.RoleId = req.RoleId.ID
 		m.Role = nil
 	}
-	if req.DepartmentId != nil {
-		m.DepartmentId = req.DepartmentId
+	if req.DepartmentId.Valid {
+		m.DepartmentId = req.DepartmentId.ID
 		m.Department = nil
 	}
-	if req.PhotoId != nil {
-		m.PhotoId = req.PhotoId
+	if req.PhotoId.Valid {
+		m.PhotoId = req.PhotoId.ID
 		m.Photo = nil
 	}
-	if req.CabinetId != nil {
-		m.CabinetId = req.CabinetId
+	if req.CabinetId.Valid {
+		m.CabinetId = req.CabinetId.ID
 	}
-	if req.Index != 0 {
-		m.Index = req.Index
+	if req.Index != nil {
+		m.Index = *req.Index
 	}
 
 	res, err := s.repo.Update(ctx, nil, m)

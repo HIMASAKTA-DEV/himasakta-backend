@@ -43,7 +43,7 @@ func (s *progendaService) Create(ctx context.Context, req dto.CreateProgendaRequ
 	//create progenda
 	progenda, err := s.progendaRepo.Create(ctx, tx, entity.Progenda{
 		Name:          req.Name,
-		ThumbnailId:   req.ThumbnailId,
+		ThumbnailId:   req.ThumbnailId.ID,
 		Goal:          req.Goal,
 		Description:   req.Description,
 		WebsiteLink:   req.WebsiteLink,
@@ -51,7 +51,7 @@ func (s *progendaService) Create(ctx context.Context, req dto.CreateProgendaRequ
 		TwitterLink:   req.TwitterLink,
 		LinkedinLink:  req.LinkedinLink,
 		YoutubeLink:   req.YoutubeLink,
-		DepartmentId:  req.DepartmentId,
+		DepartmentId:  req.DepartmentId.ID,
 	})
 	if err != nil {
 		tx.Rollback()
@@ -114,33 +114,36 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	}
 
 	//update Progenda
-	if req.Name != "" {
-		p.Name = req.Name
+	if req.Name != nil {
+		p.Name = *req.Name
 	}
-	if req.ThumbnailId != nil {
-		p.ThumbnailId = req.ThumbnailId
+	if req.ThumbnailId.Valid {
+		p.ThumbnailId = req.ThumbnailId.ID
 		p.Thumbnail = nil
 	}
-	if req.Goal != "" {
-		p.Goal = req.Goal
+	if req.Goal != nil {
+		p.Goal = *req.Goal
 	}
-	if req.Description != "" {
-		p.Description = req.Description
+	if req.Description != nil {
+		p.Description = *req.Description
 	}
-	if req.WebsiteLink != "" {
-		p.WebsiteLink = req.WebsiteLink
+	if req.WebsiteLink != nil {
+		p.WebsiteLink = *req.WebsiteLink
 	}
-	if req.InstagramLink != "" {
-		p.InstagramLink = req.InstagramLink
+	if req.InstagramLink != nil {
+		p.InstagramLink = *req.InstagramLink
 	}
-	if req.LinkedinLink != "" {
-		p.LinkedinLink = req.LinkedinLink
+	if req.TwitterLink != nil {
+		p.TwitterLink = *req.TwitterLink
 	}
-	if req.YoutubeLink != "" {
-		p.YoutubeLink = req.YoutubeLink
+	if req.LinkedinLink != nil {
+		p.LinkedinLink = *req.LinkedinLink
 	}
-	if req.DepartmentId != nil {
-		p.DepartmentId = req.DepartmentId
+	if req.YoutubeLink != nil {
+		p.YoutubeLink = *req.YoutubeLink
+	}
+	if req.DepartmentId.Valid {
+		p.DepartmentId = req.DepartmentId.ID
 		p.Department = nil
 	}
 
@@ -155,13 +158,20 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	var timelines []entity.Timeline
 
 	for _, tl := range req.Timelines {
-		timelines = append(timelines, entity.Timeline{
+		timeline := entity.Timeline{
 			Id:         tl.Id,
 			ProgendaId: &uid,
-			Date:       tl.Date,
-			Info:       tl.Info,
-			Link:       tl.Link,
-		})
+		}
+		if tl.Date != nil {
+			timeline.Date = *tl.Date
+		}
+		if tl.Info != nil {
+			timeline.Info = *tl.Info
+		}
+		if tl.Link != nil {
+			timeline.Link = *tl.Link
+		}
+		timelines = append(timelines, timeline)
 	}
 
 	_, err = s.timelineRepo.BulkUpdate(ctx, tx, timelines)

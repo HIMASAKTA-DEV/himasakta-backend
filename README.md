@@ -54,6 +54,7 @@ DB_PORT=5432
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=admin
 JWT_SECRET=your_jwt_secret
+JWT_EXPIRATION=24h # 24h or 1h
 
 # STORAGE (Supabase S3)
 S3_ENDPOINT=https://your-project.supabase.co/storage/v1/s3
@@ -128,7 +129,7 @@ Default sorting is by `created_at DESC` (newest first), except for Members which
 
 ### News
 
-- `GET /api/v1/news` — List all (paginated, filters: `?search=`, `?category=`, `?title=`)
+- `GET /api/v1/news` — List all (paginated, filters: `?search=`, `?category=`, `?title=`, `?tags=#baru,#its`)
 - `GET /api/v1/news/autocompletion` — Title autocompletion (`?search=`)
 - `GET /api/v1/news/:slug` — Get by slug
 - `POST /api/v1/news` — Create (fields: `title`, `tagline`, `hashtags`, `content`, `thumbnail_id`, `published_at`)

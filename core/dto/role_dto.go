@@ -7,7 +7,7 @@ type CreateRoleRequest struct {
 }
 
 type UpdateRoleRequest struct {
-	Name        string `json:"name"`
-	Level       int    `json:"level"`
-	Description string `json:"description"`
+	Name        *string `json:"name"`
+	Level       *int    `json:"level"`
+	Description *string `json:"description"`
 }

@@ -17,7 +17,7 @@ import (
 
 type NewsService interface {
 	Create(ctx context.Context, req dto.CreateNewsRequest) (entity.News, error)
-	GetAll(ctx context.Context, metaReq meta.Meta, search string, category string, title string) ([]entity.News, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta, search string, tags string, title string) ([]entity.News, meta.Meta, error)
 	GetBySlug(ctx context.Context, slugOrId string) (entity.News, error)
 	Update(ctx context.Context, id string, req dto.UpdateNewsRequest) (entity.News, error)
 	Delete(ctx context.Context, id string) error
@@ -33,24 +33,29 @@ func NewNews(repo repository.NewsRepository) NewsService {
 }
 
 func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (entity.News, error) {
+	hashtags, err := utils.SanitizeHashtags(req.Hashtags)
+	if err != nil {
+		return entity.News{}, err
+	}
+
 	res, err := s.repo.Create(ctx, nil, entity.News{
 		Title:       req.Title,
 		Slug:        utils.ToSlug(req.Title),
 		Tagline:     req.Tagline,
-		Hashtags:    req.Hashtags,
+		Hashtags:    hashtags,
 		Content:     req.Content,
-		ThumbnailId: req.ThumbnailId,
+		ThumbnailId: req.ThumbnailId.ID,
 		PublishedAt: req.PublishedAt,
 	})
 	return res, myerror.ParseDBError(err, "news")
 }
 
-func (s *newsService) GetAll(ctx context.Context, metaReq meta.Meta, search string, category string, title string) ([]entity.News, meta.Meta, error) {
-	var categories []string
-	if category != "" {
-		categories = strings.Split(category, ",")
+func (s *newsService) GetAll(ctx context.Context, metaReq meta.Meta, search string, tags string, title string) ([]entity.News, meta.Meta, error) {
+	var tagsList []string
+	if tags != "" {
+		tagsList = strings.Split(tags, ",")
 	}
-	return s.repo.GetAll(ctx, nil, metaReq, search, categories, title)
+	return s.repo.GetAll(ctx, nil, metaReq, search, tagsList, title)
 }
 
 func (s *newsService) GetAutocompletion(ctx context.Context, query string) ([]string, error) {
@@ -89,21 +94,25 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 		return n, err
 	}
 
-	if req.Title != "" {
-		n.Title = req.Title
-		n.Slug = utils.ToSlug(req.Title)
+	if req.Title != nil {
+		n.Title = *req.Title
+		n.Slug = utils.ToSlug(*req.Title)
 	}
-	if req.Tagline != "" {
-		n.Tagline = req.Tagline
+	if req.Tagline != nil {
+		n.Tagline = *req.Tagline
 	}
-	if req.Hashtags != "" {
-		n.Hashtags = req.Hashtags
+	if req.Hashtags != nil {
+		hashtags, err := utils.SanitizeHashtags(*req.Hashtags)
+		if err != nil {
+			return n, err
+		}
+		n.Hashtags = hashtags
 	}
-	if req.Content != "" {
-		n.Content = req.Content
+	if req.Content != nil {
+		n.Content = *req.Content
 	}
-	if req.ThumbnailId != nil {
-		n.ThumbnailId = req.ThumbnailId
+	if req.ThumbnailId.Valid {
+		n.ThumbnailId = req.ThumbnailId.ID
 		n.Thumbnail = nil
 	}
 	if req.PublishedAt != nil {

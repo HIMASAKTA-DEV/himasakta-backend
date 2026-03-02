@@ -29,7 +29,7 @@ func (s *authService) Login(ctx context.Context, req dto.LoginRequest) (dto.Logi
 		return dto.LoginResponse{}, errors.New("invalid username or password")
 	}
 
-	token, err := s.jwtService.CreateToken("superadmin", "superadmin")
+	token, err := s.jwtService.CreateToken("superadmin", "superadmin", "superadmin")
 	if err != nil {
 		return dto.LoginResponse{}, err
 	}

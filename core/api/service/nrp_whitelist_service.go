@@ -50,11 +50,11 @@ func (s *nrpWhitelistService) Update(ctx context.Context, id string, req dto.Upd
 	if err != nil {
 		return ci, err
 	}
-	if req.Nrp != "" {
-		ci.Nrp = req.Nrp
+	if req.Nrp != nil {
+		ci.Nrp = *req.Nrp
 	}
-	if req.Name != "" {
-		ci.Name = req.Name
+	if req.Name != nil {
+		ci.Name = *req.Name
 	}
 
 	res, err := s.repo.Update(ctx, nil, ci)

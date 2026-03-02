@@ -31,9 +31,9 @@ func (s *galleryService) Create(ctx context.Context, req dto.CreateGalleryReques
 		ImageUrl:     req.ImageUrl,
 		Caption:      req.Caption,
 		Category:     req.Category,
-		DepartmentId: req.DepartmentId,
-		ProgendaId:   req.ProgendaId,
-		CabinetId:    req.CabinetId,
+		DepartmentId: req.DepartmentId.ID,
+		ProgendaId:   req.ProgendaId.ID,
+		CabinetId:    req.CabinetId.ID,
 	})
 }
 
@@ -60,23 +60,23 @@ func (s *galleryService) Update(ctx context.Context, id string, req dto.UpdateGa
 		return entity.Gallery{}, err
 	}
 
-	if req.ImageUrl != "" {
-		gallery.ImageUrl = req.ImageUrl
+	if req.ImageUrl != nil {
+		gallery.ImageUrl = *req.ImageUrl
 	}
-	if req.Caption != "" {
-		gallery.Caption = req.Caption
+	if req.Caption != nil {
+		gallery.Caption = *req.Caption
 	}
-	if req.Category != "" {
-		gallery.Category = req.Category
+	if req.Category != nil {
+		gallery.Category = *req.Category
 	}
-	if req.DepartmentId != nil {
-		gallery.DepartmentId = req.DepartmentId
+	if req.DepartmentId.Valid {
+		gallery.DepartmentId = req.DepartmentId.ID
 	}
-	if req.ProgendaId != nil {
-		gallery.ProgendaId = req.ProgendaId
+	if req.ProgendaId.Valid {
+		gallery.ProgendaId = req.ProgendaId.ID
 	}
-	if req.CabinetId != nil {
-		gallery.CabinetId = req.CabinetId
+	if req.CabinetId.Valid {
+		gallery.CabinetId = req.CabinetId.ID
 	}
 
 	return s.galleryRepo.Update(ctx, nil, gallery)

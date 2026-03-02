@@ -79,7 +79,7 @@ func (c *cabinetInfoController) GetById(ctx *gin.Context) {
 func (c *cabinetInfoController) Update(ctx *gin.Context) {
 	var req dto.UpdateCabinetInfoRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.NewFailed("invalid request body", err).Send(ctx)
+		response.NewFailedWithCode(400, "invalid request body", err).Send(ctx)
 		return
 	}
 	res, err := c.service.Update(ctx.Request.Context(), ctx.Param("id"), req)
