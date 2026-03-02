@@ -35,9 +35,9 @@ func (s *cabinetInfoService) Create(ctx context.Context, req dto.CreateCabinetIn
 		Tagline:      req.Tagline,
 		PeriodStart:  req.PeriodStart,
 		PeriodEnd:    req.PeriodEnd,
-		LogoId:       req.LogoId,
+		LogoId:       req.LogoId.ID,
 		IsActive:     req.IsActive,
-		OrganigramId: req.OrganigramId,
+		OrganigramId: req.OrganigramId.ID,
 	})
 }
 
@@ -61,34 +61,34 @@ func (s *cabinetInfoService) Update(ctx context.Context, id string, req dto.Upda
 		return ci, err
 	}
 
-	if req.Visi != "" {
-		ci.Visi = req.Visi
+	if req.Visi != nil {
+		ci.Visi = *req.Visi
 	}
-	if req.Misi != "" {
-		ci.Misi = req.Misi
+	if req.Misi != nil {
+		ci.Misi = *req.Misi
 	}
-	if req.Description != "" {
-		ci.Description = req.Description
+	if req.Description != nil {
+		ci.Description = *req.Description
 	}
-	if req.Tagline != "" {
-		ci.Tagline = req.Tagline
+	if req.Tagline != nil {
+		ci.Tagline = *req.Tagline
 	}
-	if req.PeriodStart != "" {
-		ci.PeriodStart = req.PeriodStart
+	if req.PeriodStart != nil {
+		ci.PeriodStart = *req.PeriodStart
 	}
-	if req.PeriodEnd != "" {
-		ci.PeriodEnd = req.PeriodEnd
+	if req.PeriodEnd != nil {
+		ci.PeriodEnd = *req.PeriodEnd
 	}
-	if req.LogoId != nil {
-		ci.LogoId = req.LogoId
+	if req.LogoId.Valid {
+		ci.LogoId = req.LogoId.ID
 		ci.Logo = nil
 	}
-	if req.OrganigramId != nil {
-		ci.OrganigramId = req.OrganigramId
+	if req.OrganigramId.Valid {
+		ci.OrganigramId = req.OrganigramId.ID
 		ci.Organigram = nil
 	}
 	if req.IsActive != nil {
-		ci.IsActive = *req.IsActive
+		ci.IsActive = req.IsActive
 	}
 
 	return s.repo.Update(ctx, nil, ci)

@@ -85,11 +85,25 @@ func IsValid(tokenString string) (bool, error) {
 func getSecretKey() string {
 	secretKey := os.Getenv("JWT_SECRET")
 	if secretKey == "" {
-		secretKey = "Template"
+		panic("JWT_SECRET environment variable is not set")
 	}
 	return secretKey
 }
 
 func getIssuer() string {
-	return "CRS Backend 2025"
+	return "HIMASAKTA API"
+}
+
+func GetExpirationDuration() time.Duration {
+	exp := os.Getenv("JWT_EXPIRATION")
+	if exp == "" {
+		return 24 * time.Hour
+	}
+
+	duration, err := time.ParseDuration(exp)
+	if err != nil {
+		return 24 * time.Hour
+	}
+
+	return duration
 }

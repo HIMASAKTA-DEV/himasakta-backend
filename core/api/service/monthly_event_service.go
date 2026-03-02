@@ -31,7 +31,7 @@ func NewMonthlyEvent(repo repository.MonthlyEventRepository) MonthlyEventService
 func (s *monthlyEventService) Create(ctx context.Context, req dto.CreateMonthlyEventRequest) (entity.MonthlyEvent, error) {
 	res, err := s.repo.Create(ctx, nil, entity.MonthlyEvent{
 		Title:       req.Title,
-		ThumbnailId: req.ThumbnailId,
+		ThumbnailId: req.ThumbnailId.ID,
 		Description: req.Description,
 		Month:       req.Month,
 		Link:        req.Link,
@@ -59,21 +59,21 @@ func (s *monthlyEventService) Update(ctx context.Context, id string, req dto.Upd
 		return e, err
 	}
 
-	if req.Title != "" {
-		e.Title = req.Title
+	if req.Title != nil {
+		e.Title = *req.Title
 	}
-	if req.ThumbnailId != nil {
-		e.ThumbnailId = req.ThumbnailId
+	if req.ThumbnailId.Valid {
+		e.ThumbnailId = req.ThumbnailId.ID
 		e.Thumbnail = nil
 	}
-	if req.Description != "" {
-		e.Description = req.Description
+	if req.Description != nil {
+		e.Description = *req.Description
 	}
 	if req.Month != nil {
 		e.Month = *req.Month
 	}
-	if req.Link != "" {
-		e.Link = req.Link
+	if req.Link != nil {
+		e.Link = *req.Link
 	}
 
 	res, err := s.repo.Update(ctx, nil, e)

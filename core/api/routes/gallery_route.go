@@ -14,7 +14,7 @@ func Gallery(app *gin.Engine, controller controller.GalleryController, middlewar
 
 		// Protected routes (Admin only)
 		protected := routes.Group("")
-		protected.Use(middleware.AuthMiddleware())
+		protected.Use(middleware.AuthMiddleware(), middleware.OnlyAllow("superadmin"))
 		{
 			protected.POST("", controller.Create)
 			protected.PUT("/:id", controller.Update)

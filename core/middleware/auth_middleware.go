@@ -77,6 +77,7 @@ func (m Middleware) AuthMiddleware() gin.HandlerFunc {
 		ctx.Set("payload", idToken)
 		ctx.Set("user_id", idToken["user_id"])
 		ctx.Set("username", idToken["username"])
+		ctx.Set("role", idToken["role"])
 		ctx.Next()
 	}
 }

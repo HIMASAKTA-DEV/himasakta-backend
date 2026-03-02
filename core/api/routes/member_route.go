@@ -13,7 +13,7 @@ func Member(app *gin.Engine, c controller.MemberController, m middleware.Middlew
 		r.GET("/:id", c.GetById)
 
 		p := r.Group("")
-		p.Use(m.AuthMiddleware())
+		p.Use(m.AuthMiddleware(), m.OnlyAllow("superadmin"))
 		{
 			p.POST("", c.Create)
 			p.PUT("/:id", c.Update)

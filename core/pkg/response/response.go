@@ -1,10 +1,13 @@
 package response
 
 import (
+	"errors"
 	"net/http"
+	"strings"
 
 	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/gin-gonic/gin"
+	"gorm.io/gorm"
 )
 
 type Response struct {
@@ -48,16 +51,20 @@ func NewSuccessCreated(msg string, data any, meta ...any) Response {
 
 // response default status code internal server error (500)
 func NewFailed(msg string, err error, data ...any) Response {
+	statusCode := http.StatusInternalServerError
 	errStr := myerror.ParseValidationError(err)
+
+	if myErr, ok := err.(myerror.Error); ok {
+		statusCode = myErr.StatusCode
+	} else if errors.Is(err, gorm.ErrRecordNotFound) || strings.Contains(strings.ToLower(err.Error()), "not found") {
+		statusCode = http.StatusNotFound
+	}
+
 	res := Response{
-		StatusCode: http.StatusInternalServerError,
+		StatusCode: statusCode,
 		Success:    false,
 		Message:    msg,
 		Error:      errStr,
-	}
-
-	if myErr, ok := err.(myerror.Error); ok {
-		res.StatusCode = myErr.StatusCode
 	}
 
 	if len(data) > 0 {

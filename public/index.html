@@ -412,7 +412,7 @@
             desc: "List all news articles (paginated)",
             params: [
               { name: "search", ph: "Keyword..." },
-              { name: "category", ph: "comma,separated" },
+              { name: "tags", ph: "#baru,#its (comma separated)" },
               { name: "title", ph: "Exact title" },
               { name: "page", ph: "1" },
               { name: "limit", ph: "10" },
@@ -439,7 +439,7 @@
             method: "POST",
             path: "/news",
             desc: "Create news article",
-            body: '{\n  "title": "Penerimaan Anggota Baru",\n  "tagline": "Ayo bergabung!",\n  "hashtags": "OPREC,HIMASAKTA",\n  "content": "# Selamat Datang\\nKami membuka pendaftaran.",\n  "thumbnail_id": null,\n  "published_at": "2026-02-01T10:00:00Z"\n}',
+            body: '{\n  "title": "Penerimaan Anggota Baru",\n  "tagline": "Ayo bergabung!",\n  "hashtags": "#OPREC,#HIMASAKTA",\n  "content": "# Selamat Datang\\nKami membuka pendaftaran.",\n  "thumbnail_id": null,\n  "published_at": "2026-02-01T10:00:00Z"\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {
@@ -447,7 +447,7 @@
             path: "/news/:id",
             desc: "Update news article",
             hasParams: true,
-            body: '{\n  "title": "Updated Title",\n  "tagline": "Updated tagline",\n  "hashtags": "UPDATED",\n  "content": "Updated content...",\n  "thumbnail_id": "uuid-of-gallery",\n  "published_at": "2026-02-15T10:00:00Z"\n}',
+            body: '{\n  "title": "Updated Title",\n  "tagline": "Updated tagline",\n  "hashtags": "#UPDATED",\n  "content": "Updated content...",\n  "thumbnail_id": "uuid-of-gallery",\n  "published_at": "2026-02-15T10:00:00Z"\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {

@@ -56,14 +56,14 @@ func (s *roleService) Update(ctx context.Context, id string, req dto.UpdateRoleR
 		return r, err
 	}
 
-	if req.Name != "" {
-		r.Name = req.Name
+	if req.Name != nil {
+		r.Name = *req.Name
 	}
-	if req.Level != 0 {
-		r.Level = req.Level
+	if req.Level != nil {
+		r.Level = *req.Level
 	}
-	if req.Description != "" {
-		r.Description = req.Description
+	if req.Description != nil {
+		r.Description = *req.Description
 	}
 
 	return s.repo.Update(ctx, nil, r)

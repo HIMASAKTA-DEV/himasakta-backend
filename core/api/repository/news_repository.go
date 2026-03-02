@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
@@ -54,6 +55,16 @@ func (r *newsRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.M
 
 	if search != "" {
 		tx = tx.Where("title ILIKE ?", "%"+search+"%")
+	}
+
+	if len(categories) > 0 {
+		var tagConditions []string
+		var tagValues []interface{}
+		for _, tag := range categories {
+			tagConditions = append(tagConditions, "hashtags ILIKE ?")
+			tagValues = append(tagValues, "%"+tag+"%")
+		}
+		tx = tx.Where(fmt.Sprintf("(%s)", strings.Join(tagConditions, " OR ")), tagValues...)
 	}
 
 	if metaReq.SortBy == "" {

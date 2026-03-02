@@ -41,9 +41,9 @@ func (c *newsController) Create(ctx *gin.Context) {
 
 func (c *newsController) GetAll(ctx *gin.Context) {
 	search := ctx.Query("search")
-	category := ctx.Query("category")
+	tags := ctx.Query("tags")
 	title := ctx.Query("title")
-	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), search, category, title)
+	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), search, tags, title)
 	if err != nil {
 		response.NewFailed("failed get news", err).Send(ctx)
 		return
@@ -73,7 +73,7 @@ func (c *newsController) GetById(ctx *gin.Context) {
 func (c *newsController) Update(ctx *gin.Context) {
 	var req dto.UpdateNewsRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.NewFailed("invalid request body", err).Send(ctx)
+		response.NewFailedWithCode(400, "invalid request body", err).Send(ctx)
 		return
 	}
 	res, err := c.service.Update(ctx.Request.Context(), ctx.Param("id"), req)

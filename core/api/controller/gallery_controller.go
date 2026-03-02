@@ -83,9 +83,9 @@ func (c *galleryController) Create(ctx *gin.Context) {
 		ImageUrl:     imageUrl,
 		Caption:      caption,
 		Category:     category,
-		DepartmentId: deptId,
-		ProgendaId:   progId,
-		CabinetId:    cabId,
+		DepartmentId: meta.NullUUID{ID: deptId},
+		ProgendaId:   meta.NullUUID{ID: progId},
+		CabinetId:    meta.NullUUID{ID: cabId},
 	}
 
 	result, err := c.galleryService.Create(ctx.Request.Context(), req)
@@ -125,7 +125,7 @@ func (c *galleryController) Update(ctx *gin.Context) {
 	id := ctx.Param("id")
 	var req dto.UpdateGalleryRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.NewFailed("invalid request body", err).Send(ctx)
+		response.NewFailedWithCode(400, "invalid request body", err).Send(ctx)
 		return
 	}
 
