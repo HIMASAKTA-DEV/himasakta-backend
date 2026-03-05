@@ -14,7 +14,7 @@ func MonthlyEvent(app *gin.Engine, c controller.MonthlyEventController, m middle
 		r.GET("/:id", c.GetById)
 
 		p := r.Group("")
-		p.Use(m.AuthMiddleware())
+		p.Use(m.AuthMiddleware(), m.OnlyAllow("superadmin"))
 		{
 			p.POST("", c.Create)
 			p.PUT("/:id", c.Update)

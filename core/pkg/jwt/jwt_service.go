@@ -1,11 +1,7 @@
 package myjwt
 
-import (
-	"time"
-)
-
 type JWT interface {
-	CreateToken(userId string, username string) (string, error)
+	CreateToken(userId string, username string, role string) (string, error)
 	ValidateToken(token string) (bool, error)
 	GetClaims(token string) (map[string]string, error)
 }
@@ -22,12 +18,13 @@ func NewJWT() JWT {
 	}
 }
 
-func (j *jwtService) CreateToken(userId string, username string) (string, error) {
+func (j *jwtService) CreateToken(userId string, username string, role string) (string, error) {
 	payload := map[string]string{
 		"user_id":  userId,
 		"username": username,
+		"role":     role,
 	}
-	return GenerateToken(payload, 24*time.Hour)
+	return GenerateToken(payload, GetExpirationDuration())
 }
 
 func (j *jwtService) ValidateToken(token string) (bool, error) {

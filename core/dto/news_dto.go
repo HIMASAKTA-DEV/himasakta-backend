@@ -3,7 +3,7 @@ package dto
 import (
 	"time"
 
-	"github.com/google/uuid"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 )
 
 type CreateNewsRequest struct {

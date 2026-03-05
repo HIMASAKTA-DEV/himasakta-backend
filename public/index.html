@@ -264,6 +264,61 @@
       border: 1px solid #e2e8f0;
       overflow-x: auto;
     }
+
+    /* Accordion Styles */
+    .section-container {
+      margin-bottom: 25px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .section-header {
+      background: #ffffff;
+      padding: 18px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .section-header:hover {
+      background: #f8fafc;
+    }
+
+    .section-header h2 {
+      font-size: 1.125rem;
+      color: #1e293b;
+      margin: 0;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .section-header .chevron {
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      fill: #64748b;
+    }
+
+    .section-container.active .section-header .chevron {
+      transform: rotate(180deg);
+    }
+
+    .section-content {
+      display: none;
+      padding: 24px;
+      background: #fbfcfe;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .section-container.active .section-content {
+      display: block;
+    }
   </style>
 </head>
 
@@ -314,7 +369,7 @@
             path: "/auth/login",
             desc: "Generate JWT token",
             body: '{\n  "username": "admin",\n  "password": "admin"\n}',
-            resp: '{\n  "success": true,\n  "message": "login success",\n  "data": { "token": "JWT_HERE" }\n}',
+            resp: '{\n  "success": true,\n  "message": "login success",\n  "data": {\n    "token": "JWT_TOKEN_HERE"\n  }\n}',
           },
         ],
       },
@@ -331,27 +386,27 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "message": "success get cabinet infos",\n  "data": [ ... ],\n  "meta": { "page": 1, "limit": 10, "total_data": 0, "total_page": 0, "sort": "asc", "sort_by": "id" }\n}',
+            resp: '{\n  "success": true,\n  "message": "success get cabinet infos",\n  "data": [\n    {\n      "id": "uuid",\n      "created_at": "2026-03-05T00:00:00Z",\n      "updated_at": "2026-03-05T00:00:00Z",\n      "visi": "...",\n      "misi": "...",\n      "description": "...",\n      "tagline": "...",\n      "period_start": "2024-01-01T00:00:00Z",\n      "period_end": "2024-12-31T00:00:00Z",\n      "logo_id": "uuid",\n      "logo": { "id": "uuid", "image_url": "..." },\n      "organigram_id": "uuid",\n      "organigram": { "id": "uuid", "image_url": "..." },\n      "is_active": true\n    }\n  ],\n  "meta": { "page": 1, "limit": 10, "total_data": 1, "total_page": 1, "sort": "asc", "sort_by": "id" }\n}',
           },
           {
             method: "GET",
             path: "/current-cabinet",
             desc: "Get current active cabinet",
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": {\n    "id": "uuid",\n    "created_at": "...",\n    "updated_at": "...",\n    "visi": "...",\n    "misi": "...",\n    "description": "...",\n    "tagline": "...",\n    "period_start": "...",\n    "period_end": "...",\n    "logo_id": "uuid",\n    "logo": { ... },\n    "organigram_id": "uuid",\n    "organigram": { ... },\n    "is_active": true\n  }\n}',
           },
           {
             method: "GET",
             path: "/cabinet-info/:id",
             desc: "Get cabinet info by ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "visi": "...", "misi": "...", ... }\n}',
           },
           {
             method: "POST",
             path: "/cabinet-info",
             desc: "Create cabinet info",
             body: '{\n  "visi": "Menjadi organisasi...",\n  "misi": "Melakukan...",\n  "description": "Kabinet ...",\n  "tagline": "Bersinergi",\n  "period_start": "2024-01-01",\n  "period_end": "2024-12-31",\n  "logo_id": null,\n  "organigram_id": null,\n  "is_active": true\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "message": "success create cabinet info",\n  "data": { "id": "uuid", "visi": "...", "misi": "...", "is_active": true, ... }\n}',
           },
           {
             method: "PUT",
@@ -426,7 +481,7 @@
             desc: "List all news articles (paginated)",
             params: [
               { name: "search", ph: "Keyword..." },
-              { name: "category", ph: "comma,separated" },
+              { name: "tags", ph: "#baru,#its (comma separated)" },
               { name: "title", ph: "Exact title" },
               { name: "page", ph: "1" },
               { name: "limit", ph: "10" },
@@ -487,27 +542,27 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "title": "...",\n      "thumbnail_id": "uuid",\n      "thumbnail": { ... },\n      "description": "...",\n      "month": "2026-02-01T00:00:00Z",\n      "link": "...",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
             path: "/monthly-event/this-month",
             desc: "Get events for current month (no pagination)",
-            resp: '{\n  "success": true,\n  "data": [ ... ]\n}',
+            resp: '{\n  "success": true,\n  "data": [ { "id": "uuid", "title": "...", ... } ]\n}',
           },
           {
             method: "GET",
             path: "/monthly-event/:id",
             desc: "Get monthly event by ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "title": "...", ... }\n}',
           },
           {
             method: "POST",
             path: "/monthly-event",
             desc: "Create monthly event",
             body: '{\n  "title": "HIMASAKTA Cup",\n  "thumbnail_id": null,\n  "description": "Kompetisi tahunan",\n  "month": "2026-02-01T00:00:00Z",\n  "link": "https://youtube.com"\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "message": "success create monthly event",\n  "data": { "id": "uuid", "title": "...", ... }\n}',
           },
           {
             method: "PUT",
@@ -542,21 +597,21 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [ ... ],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "name": "...",\n      "thumbnail_id": "uuid",\n      "thumbnail": { ... },\n      "goal": "...",\n      "description": "...",\n      "website_link": "...",\n      "instagram_link": "...",\n      "twitter_link": "...",\n      "linkedin_link": "...",\n      "youtube_link": "...",\n      "department_id": "uuid",\n      "department": { ... },\n      "timelines": [ ... ],\n      "feeds": [ ... ],\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
             path: "/progenda/:id",
             desc: "Get progenda by ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "timelines": [ { "id": "uuid", "date": "...", "info": "...", "link": "..." } ], ... }\n}',
           },
           {
             method: "POST",
             path: "/progenda",
             desc: "Create progenda",
             body: '{\n  "name": "Program Kerja A",\n  "thumbnail_id": null,\n  "goal": "Tujuan...",\n  "description": "Deskripsi...",\n  "website_link": "https://...",\n  "instagram_link": "",\n  "twitter_link": "",\n  "linkedin_link": "",\n  "youtube_link": "",\n  "department_id": "uuid-of-department",\n  "timelines": [\n    {\n      "date": "2026-01-19T00:00:00Z",\n      "info": "Fase 1",\n      "link": "https://..."\n    }\n  ]\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "message": "success create progenda",\n  "data": { "id": "uuid", "name": "Program Kerja A", ... }\n}',
           },
           {
             method: "PUT",
@@ -579,7 +634,7 @@
             desc: "Add individual timeline to progenda",
             hasParams: true,
             body: '{\n  "date": "2026-03-01T00:00:00Z",\n  "info": "New Phase",\n  "link": "https://..."\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "date": "...", "info": "...", ... }\n}',
           },
           {
             method: "PUT",
@@ -612,21 +667,21 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "level" },
             ],
-            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "name": "Kahima",\n      "level": 1,\n      "description": "...",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
             path: "/role/:id",
             desc: "Get role by ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "level": 1, ... }\n}',
           },
           {
             method: "POST",
             path: "/role",
             desc: "Create role",
             body: '{\n  "name": "Kahima",\n  "level": 1,\n  "description": "Ketua Himpunan"\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "message": "role created successfully",\n  "data": { "id": "uuid", "name": "Kahima", "level": 1, ... }\n}',
           },
           {
             method: "PUT",
@@ -659,21 +714,21 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "nrp": "...",\n      "name": "...",\n      "role_id": "uuid",\n      "role": { ... },\n      "department_id": "uuid",\n      "department": { ... },\n      "photo_id": "uuid",\n      "photo": { ... },\n      "cabinet_id": "uuid",\n      "cabinet": { ... },\n      "index": 0,\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
             path: "/member/:id",
             desc: "Get member by ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "nrp": "...", "role": { ... }, ... }\n}',
           },
           {
             method: "POST",
             path: "/member",
             desc: "Create member",
             body: '{\n  "nrp": "123456",\n  "name": "John Doe",\n  "role_id": "uuid-of-role",\n  "cabinet_id": "uuid-of-cabinet",\n  "department_id": "uuid-of-department",\n  "photo_id": "uuid-of-gallery"\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "message": "member created successfully",\n  "data": { "id": "uuid", "name": "John Doe", "nrp": "123456", ... }\n}',
           },
           {
             method: "PUT",
@@ -706,14 +761,14 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "image_url": "...",\n      "caption": "...",\n      "category": "...",\n      "department_id": "uuid",\n      "progenda_id": "uuid",\n      "cabinet_id": "uuid",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
             path: "/gallery/:id",
             desc: "Get gallery item by ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "image_url": "...", "caption": "...", ... }\n}',
           },
           {
             method: "POST",
@@ -728,7 +783,7 @@
               { name: "progenda_id", type: "text", label: "Progenda ID (UUID, optional)", ph: "UUID..." },
               { name: "cabinet_id", type: "text", label: "Cabinet ID (UUID, optional)", ph: "UUID..." },
             ],
-            resp: '{\n  "success": true,\n  "message": "success create gallery",\n  "data": { "id": "uuid", "image_url": "https://...", "caption": "...", "category": "..." }\n}',
+            resp: '{\n  "success": true,\n  "message": "success create gallery",\n  "data": { "id": "uuid", "image_url": "https://...", "caption": "...", "category": "...", ... }\n}',
           },
           {
             method: "PUT",
@@ -751,11 +806,29 @@
         section: "NRP Whitelist",
         items: [
           {
+            method: "GET",
+            path: "/nrp-whitelist",
+            desc: "List all NRPs in whitelist (admin)",
+            params: [
+              { name: "page", ph: "1" },
+              { name: "limit", ph: "10" }
+            ],
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "nrp": "5025211014",\n      "name": "...",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
+          },
+          {
             method: "POST",
             path: "/nrp-whitelist/add",
             desc: "Add NRP to whitelist (admin)",
-            body: '{\n  "nrp": "5025251104"\n}',
-            resp: '{\n  "success": true,\n  "message": "success add nrp whitelist",\n  "data": null\n}',
+            body: '{\n  "nrp": "5025251104",\n  "name": "John Doe"\n}',
+            resp: '{\n  "success": true,\n  "message": "success add nrp whitelist",\n  "data": { "id": "uuid", "nrp": "5025251104", "name": "John Doe", ... }\n}',
+          },
+          {
+            method: "PUT",
+            path: "/nrp-whitelist/:id",
+            desc: "Update NRP whitelist entry (admin)",
+            hasParams: true,
+            body: '{\n  "nrp": "5025251104",\n  "name": "John Doe Updated"\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "nrp": "...", "name": "...", ... }\n}',
           },
           {
             method: "POST",
@@ -766,10 +839,25 @@
           },
           {
             method: "DELETE",
-            path: "/nrp-whitelist/:id",
+            path: "/nrp-whitelist/:nrp",
             hasParams: true,
             desc: "Delete NRP from whitelist (admin)",
             resp: '{\n  "success": true,\n  "data": null\n}',
+          },
+        ],
+      },
+      {
+        section: "Academic Calendar",
+        items: [
+          {
+            method: "GET",
+            path: "/kalender-akademik",
+            desc: "Get all events and timelines in one array",
+            params: [
+              { name: "month", ph: "3" },
+              { name: "year", ph: "2026" }
+            ],
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "title": "...",\n      "type": "monthly_event",\n      "date": "2026-03-05T00:00:00Z",\n      "description": "...",\n      "link": "...",\n      "progenda_id": "uuid",\n      "progenda_name": "..."\n    }\n  ]\n}',
           },
         ],
       },
@@ -777,12 +865,23 @@
 
     function render() {
       const box = document.getElementById("endpoints");
-      routes.forEach(function (sec) {
-        const title = document.createElement("h2");
-        title.style.marginTop = "40px";
-        title.style.marginBottom = "20px";
-        title.textContent = sec.section;
-        box.appendChild(title);
+      box.innerHTML = "";
+      routes.forEach(function (sec, sIdx) {
+        const secId = "section-" + sIdx;
+        const container = document.createElement("div");
+        container.className = "section-container";
+        container.id = secId;
+
+        const headerNode = document.createElement("div");
+        headerNode.className = "section-header";
+        headerNode.onclick = () => toggleSection(secId);
+        headerNode.innerHTML = `
+          <h2>${sec.section}</h2>
+          <svg class="chevron" viewBox="0 0 20 20"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>
+        `;
+
+        const contentNode = document.createElement("div");
+        contentNode.className = "section-content";
 
         sec.items.forEach(function (r, idx) {
           const id = sec.section.toLowerCase().replace(/\s+/g, "-") + "-" + idx;
@@ -804,7 +903,7 @@
             '<div class="fold">' +
             '<div class="fold-title" onclick="toggleFold(\'' +
             id +
-            "-req')\">" + "▶ Example Request (JavaScript)</div>" +
+            "-req', event)\">" + "▶ Example Request (JavaScript)</div>" +
             '<div class="fold-content" id="' +
             id +
             '-req">' +
@@ -814,7 +913,7 @@
             '<div class="fold">' +
             '<div class="fold-title" onclick="toggleFold(\'' +
             id +
-            "-resp')\">" + "▶ Example Response</div>" +
+            "-resp', event)\">" + "▶ Example Response</div>" +
             '<div class="fold-content" id="' +
             id +
             '-resp">' +
@@ -882,9 +981,17 @@
           body.innerHTML = html;
           card.appendChild(header);
           card.appendChild(body);
-          box.appendChild(card);
+          contentNode.appendChild(card);
         });
+
+        container.appendChild(headerNode);
+        container.appendChild(contentNode);
+        box.appendChild(container);
       });
+    }
+
+    function toggleSection(id) {
+      document.getElementById(id).classList.toggle("active");
     }
 
     function genFetch(r) {

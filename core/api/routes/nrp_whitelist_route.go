@@ -12,9 +12,11 @@ func NrpWhitelist(app *gin.Engine, c controller.NrpWhitelistController, m middle
 		r.POST("", c.CheckWhitelist)
 
 		p := r.Group("")
-		p.Use(m.AuthMiddleware())
+		p.Use(m.AuthMiddleware(), m.OnlyAllow("superadmin"))
 		{
+			p.GET("", c.GetAll)
 			p.POST("/add", c.Create)
+			p.PUT("/:id", c.Update)
 			p.DELETE("/:nrp", c.Delete)
 		}
 	}

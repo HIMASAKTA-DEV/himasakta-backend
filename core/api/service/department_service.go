@@ -32,7 +32,7 @@ func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartment
 	res, err := s.repo.Create(ctx, nil, entity.Department{
 		Name:            req.Name,
 		Description:     req.Description,
-		LogoId:          req.LogoId,
+		LogoId:          req.LogoId.ID,
 		SocialMediaLink: req.SocialMediaLink,
 		BankSoalLink:    req.BankSoalLink,
 		SilabusLink:     req.SilabusLink,
@@ -78,27 +78,27 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 		return d, err
 	}
 
-	if req.Name != "" {
-		d.Name = req.Name
+	if req.Name != nil {
+		d.Name = *req.Name
 	}
-	if req.Description != "" {
-		d.Description = req.Description
+	if req.Description != nil {
+		d.Description = *req.Description
 	}
-	if req.LogoId != nil {
-		d.LogoId = req.LogoId
+	if req.LogoId.Valid {
+		d.LogoId = req.LogoId.ID
 		d.Logo = nil
 	}
-	if req.SocialMediaLink != "" {
-		d.SocialMediaLink = req.SocialMediaLink
+	if req.SocialMediaLink != nil {
+		d.SocialMediaLink = *req.SocialMediaLink
 	}
-	if req.BankSoalLink != "" {
-		d.BankSoalLink = req.BankSoalLink
+	if req.BankSoalLink != nil {
+		d.BankSoalLink = *req.BankSoalLink
 	}
-	if req.SilabusLink != "" {
-		d.SilabusLink = req.SilabusLink
+	if req.SilabusLink != nil {
+		d.SilabusLink = *req.SilabusLink
 	}
-	if req.BankRefLink != "" {
-		d.BankRefLink = req.BankRefLink
+	if req.BankRefLink != nil {
+		d.BankRefLink = *req.BankRefLink
 	}
 	if req.LeaderId != nil {
 		d.LeaderId = req.LeaderId

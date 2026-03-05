@@ -70,7 +70,7 @@ func (c *memberController) GetById(ctx *gin.Context) {
 func (c *memberController) Update(ctx *gin.Context) {
 	var req dto.UpdateMemberRequest
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.NewFailed("invalid request body", err).Send(ctx)
+		response.NewFailedWithCode(400, "invalid request body", err).Send(ctx)
 		return
 	}
 	res, err := c.service.Update(ctx.Request.Context(), ctx.Param("id"), req)

@@ -1,6 +1,8 @@
 package dto
 
-import "github.com/google/uuid"
+import (
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
+)
 
 type CreateDepartmentRequest struct {
 	Name            string     `json:"name" binding:"required"`

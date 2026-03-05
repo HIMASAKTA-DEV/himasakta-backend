@@ -6,8 +6,8 @@ type CreateNrpWhitelistRequest struct {
 }
 
 type UpdateNrpWhitelistRequest struct {
-	Nrp  string `json:"nrp" binding:"required"`
-	Name string `json:"name"`
+	Nrp  *string `json:"nrp"`
+	Name *string `json:"name"`
 }
 
 type CheckNrpWhitelistRequest struct {

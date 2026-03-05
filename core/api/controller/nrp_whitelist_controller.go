@@ -69,7 +69,7 @@ func (c *nrpWhitelistController) Update(ctx *gin.Context) {
 	var req dto.UpdateNrpWhitelistRequest
 
 	if err := ctx.ShouldBindJSON(&req); err != nil {
-		response.NewFailed("invalid request body", err).Send(ctx)
+		response.NewFailedWithCode(400, "invalid request body", err).Send(ctx)
 		return
 	}
 
