@@ -49,6 +49,7 @@ func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (en
 		AuthorId:    req.AuthorId,
 	})
 	return res, myerror.ParseDBError(err, "news")
+	return res, myerror.ParseDBError(err, "news")
 }
 
 func (s *newsService) GetAll(ctx context.Context, metaReq meta.Meta, search string, tags string, title string) ([]entity.News, meta.Meta, error) {
@@ -124,6 +125,8 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 		n.Author = nil
 	}
 
+	res, err := s.repo.Update(ctx, nil, n)
+	return res, myerror.ParseDBError(err, "news")
 	res, err := s.repo.Update(ctx, nil, n)
 	return res, myerror.ParseDBError(err, "news")
 }
