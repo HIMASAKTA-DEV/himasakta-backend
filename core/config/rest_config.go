@@ -109,6 +109,9 @@ func NewRest() (RestConfig, error) {
 	authService := service.NewAuth(jwtService)
 	authController := controller.NewAuth(authService)
 
+	academicCalendarService := service.NewAcademicCalendar(monthlyEventRepo, timelineRepo)
+	academicCalendarController := controller.NewAcademicCalendar(academicCalendarService)
+
 	indexController := controller.NewIndex()
 
 	m := middleware.New(db)
@@ -125,6 +128,7 @@ func NewRest() (RestConfig, error) {
 	routes.News(server, newsController, m)
 	routes.NrpWhitelist(server, nrpWhitelistController, m)
 	routes.Role(server, roleController, m)
+	routes.AcademicCalendar(server, academicCalendarController)
 
 	return RestConfig{
 		server: server,

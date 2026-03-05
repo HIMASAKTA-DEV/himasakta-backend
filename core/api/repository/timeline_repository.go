@@ -16,6 +16,7 @@ type TimelineRepository interface {
 	BulkUpdate(ctx context.Context, tx *gorm.DB, tl []entity.Timeline) ([]entity.Timeline, error)
 	Delete(ctx context.Context, tx *gorm.DB, tl entity.Timeline) error
 	BulkDelete(ctx context.Context, tx *gorm.DB, tl []entity.Timeline) error
+	GetAll(ctx context.Context, tx *gorm.DB) ([]entity.Timeline, error)
 }
 
 type timelineRepository struct {
@@ -118,4 +119,17 @@ func (r *timelineRepository) BulkDelete(ctx context.Context, tx *gorm.DB, tl []e
 		return err
 	}
 	return nil
+}
+
+func (r *timelineRepository) GetAll(ctx context.Context, tx *gorm.DB) ([]entity.Timeline, error) {
+	db := r.db
+	if tx != nil {
+		db = tx
+	}
+
+	var tls []entity.Timeline
+	if err := db.WithContext(ctx).Preload("Progenda").Find(&tls).Error; err != nil {
+		return nil, err
+	}
+	return tls, nil
 }

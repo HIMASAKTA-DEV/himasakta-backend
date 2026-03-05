@@ -13,6 +13,7 @@ type Timeline struct {
 	Date       time.Time  `gorm:"type:date" json:"date"`
 	Info       string     `gorm:"type:varchar(100)" json:"info"`
 	Link       string     `gorm:"type:varchar(100)" json:"link"`
+	Progenda   *Progenda  `gorm:"foreignKey:ProgendaId" json:"progenda"`
 }
 
 func (Timeline) TableName() string {
