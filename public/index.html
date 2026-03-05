@@ -287,6 +287,20 @@
     </div>
 
     <div id="endpoints"></div>
+
+    <footer
+      style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 0.875rem;">
+      <p>HIMASAKTA Backend &copy; 2026</p>
+      <a href="https://github.com/HIMASAKTA-DEV/himasakta-backend" target="_blank"
+        style="color: #2563eb; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;">
+        <svg height="20" width="20" viewBox="0 0 16 16">
+          <path fill="currentColor"
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+          </path>
+        </svg>
+        GitHub Repository
+      </a>
+    </footer>
   </div>
 
   <script>
@@ -370,28 +384,28 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "name": "Kaderisasi",\n      "description": "...",\n      "logo_id": "uuid",\n      "logo": { ... },\n      "social_media_link": "...",\n      "bank_soal_link": "...",\n      "silabus_link": "...",\n      "bank_ref_link": "...",\n      "leader_id": "uuid",\n      "leader": { ... },\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
             path: "/department/:name",
             desc: "Get department by Name or ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "description": "...", "leader_id": "uuid", "leader": { ... }, ... }\n}',
           },
           {
             method: "POST",
             path: "/department",
             desc: "Create department",
-            body: '{\n  "name": "Kaderisasi",\n  "description": "Departemen kaderisasi",\n  "logo_id": null,\n  "social_media_link": "",\n  "bank_soal_link": "",\n  "silabus_link": "",\n  "bank_ref_link": ""\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            body: '{\n  "name": "Kaderisasi",\n  "description": "Departemen kaderisasi",\n  "logo_id": null,\n  "leader_id": "uuid-of-member",\n  "social_media_link": "",\n  "bank_soal_link": "",\n  "silabus_link": "",\n  "bank_ref_link": ""\n}',
+            resp: '{\n  "success": true,\n  "message": "success create department",\n  "data": { "id": "uuid", "name": "Kaderisasi", "leader_id": "...", ... }\n}',
           },
           {
             method: "PUT",
             path: "/department/:id",
             desc: "Update department",
             hasParams: true,
-            body: '{\n  "name": "Updated Name",\n  "description": "Updated desc",\n  "logo_id": "uuid-of-gallery",\n  "social_media_link": "https://...",\n  "bank_soal_link": "https://...",\n  "silabus_link": "https://...",\n  "bank_ref_link": "https://..."\n}',
+            body: '{\n  "name": "Updated Name",\n  "description": "Updated desc",\n  "logo_id": "uuid-of-gallery",\n  "leader_id": "uuid-of-member",\n  "social_media_link": "https://...",\n  "bank_soal_link": "https://...",\n  "silabus_link": "https://...",\n  "bank_ref_link": "https://..."\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {
@@ -419,7 +433,7 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "title": "...",\n      "slug": "...",\n      "tagline": "...",\n      "hashtags": "#OPREC,#HIMASAKTA",\n      "content": "...",\n      "thumbnail_id": "uuid",\n      "thumbnail": { ... },\n      "author_id": "uuid",\n      "author": { ... },\n      "published_at": "...",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
@@ -433,21 +447,21 @@
             path: "/news/:slug",
             desc: "Get news by slug or ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "title": "...", "content": "...", "hashtags": "...", "author_id": "uuid", "author": { ... }, ... }\n}',
           },
           {
             method: "POST",
             path: "/news",
             desc: "Create news article",
-            body: '{\n  "title": "Penerimaan Anggota Baru",\n  "tagline": "Ayo bergabung!",\n  "hashtags": "OPREC,HIMASAKTA",\n  "content": "# Selamat Datang\\nKami membuka pendaftaran.",\n  "thumbnail_id": null,\n  "published_at": "2026-02-01T10:00:00Z"\n}',
-            resp: '{\n  "success": true,\n  "data": { ... }\n}',
+            body: '{\n  "title": "Penerimaan Anggota Baru",\n  "tagline": "Ayo bergabung!",\n  "hashtags": "#OPREC,#HIMASAKTA",\n  "content": "# Selamat Datang\\nKami membuka pendaftaran.",\n  "thumbnail_id": null,\n  "author_id": "uuid-of-member",\n  "published_at": "2026-02-01T10:00:00Z"\n}',
+            resp: '{\n  "success": true,\n  "message": "success create news",\n  "data": { "id": "uuid", "title": "Penerimaan Anggota Baru", "author_id": "...", ... }\n}',
           },
           {
             method: "PUT",
             path: "/news/:id",
             desc: "Update news article",
             hasParams: true,
-            body: '{\n  "title": "Updated Title",\n  "tagline": "Updated tagline",\n  "hashtags": "UPDATED",\n  "content": "Updated content...",\n  "thumbnail_id": "uuid-of-gallery",\n  "published_at": "2026-02-15T10:00:00Z"\n}',
+            body: '{\n  "title": "Updated Title",\n  "tagline": "Updated tagline",\n  "hashtags": "#UPDATED",\n  "content": "Updated content...",\n  "thumbnail_id": "uuid-of-gallery",\n  "author_id": "uuid-of-member",\n  "published_at": "2026-02-15T10:00:00Z"\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {

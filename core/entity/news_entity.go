@@ -17,6 +17,8 @@ type News struct {
 	ThumbnailId *uuid.UUID `gorm:"type:uuid" json:"thumbnail_id"`
 	Thumbnail   *Gallery   `gorm:"foreignKey:ThumbnailId" json:"thumbnail"`
 	PublishedAt time.Time  `gorm:"type:timestamp" json:"published_at"`
+	AuthorId    *uuid.UUID `gorm:"type:uuid" json:"author_id"`
+	Author      *Member    `gorm:"foreignKey:AuthorId" json:"author"`
 }
 
 func (News) TableName() string {

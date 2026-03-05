@@ -41,6 +41,7 @@ func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (en
 		Content:     req.Content,
 		ThumbnailId: req.ThumbnailId,
 		PublishedAt: req.PublishedAt,
+		AuthorId:    req.AuthorId,
 	})
 	return res, myerror.ParseDBError(err, "news")
 }
@@ -108,6 +109,10 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 	}
 	if req.PublishedAt != nil {
 		n.PublishedAt = *req.PublishedAt
+	}
+	if req.AuthorId != nil {
+		n.AuthorId = req.AuthorId
+		n.Author = nil
 	}
 
 	res, err := s.repo.Update(ctx, nil, n)

@@ -37,6 +37,7 @@ func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartment
 		BankSoalLink:    req.BankSoalLink,
 		SilabusLink:     req.SilabusLink,
 		BankRefLink:     req.BankRefLink,
+		LeaderId:        req.LeaderId,
 	})
 	return res, myerror.ParseDBError(err, "department")
 }
@@ -98,6 +99,10 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 	}
 	if req.BankRefLink != "" {
 		d.BankRefLink = req.BankRefLink
+	}
+	if req.LeaderId != nil {
+		d.LeaderId = req.LeaderId
+		d.Leader = nil
 	}
 
 	res, err := s.repo.Update(ctx, nil, d)

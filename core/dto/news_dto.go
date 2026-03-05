@@ -13,6 +13,7 @@ type CreateNewsRequest struct {
 	Content     string     `json:"content" binding:"required"`
 	ThumbnailId *uuid.UUID `json:"thumbnail_id"`
 	PublishedAt time.Time  `json:"published_at"`
+	AuthorId    *uuid.UUID `json:"author_id"`
 }
 
 type UpdateNewsRequest struct {
@@ -22,4 +23,5 @@ type UpdateNewsRequest struct {
 	Content     string     `json:"content"`
 	ThumbnailId *uuid.UUID `json:"thumbnail_id"`
 	PublishedAt *time.Time `json:"published_at"`
+	AuthorId    *uuid.UUID `json:"author_id"`
 }
