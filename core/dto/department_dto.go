@@ -5,23 +5,23 @@ import (
 )
 
 type CreateDepartmentRequest struct {
-	Name            string     `json:"name" binding:"required"`
-	Description     string     `json:"description"`
-	LogoId          *uuid.UUID `json:"logo_id"`
-	SocialMediaLink string     `json:"social_media_link"`
-	BankSoalLink    string     `json:"bank_soal_link"`
-	SilabusLink     string     `json:"silabus_link"`
-	BankRefLink     string     `json:"bank_ref_link"`
-	LeaderId        *uuid.UUID `json:"leader_id"`
+	Name            string        `json:"name" binding:"required"`
+	Description     string        `json:"description"`
+	LogoId          meta.NullUUID `json:"logo_id"`
+	SocialMediaLink string        `json:"social_media_link"`
+	BankSoalLink    string        `json:"bank_soal_link"`
+	SilabusLink     string        `json:"silabus_link"`
+	BankRefLink     string        `json:"bank_ref_link"`
+	LeaderId        meta.NullUUID `json:"leader_id"`
 }
 
 type UpdateDepartmentRequest struct {
-	Name            string     `json:"name"`
-	Description     string     `json:"description"`
-	LogoId          *uuid.UUID `json:"logo_id"`
-	SocialMediaLink string     `json:"social_media_link"`
-	BankSoalLink    string     `json:"bank_soal_link"`
-	SilabusLink     string     `json:"silabus_link"`
-	BankRefLink     string     `json:"bank_ref_link"`
-	LeaderId        *uuid.UUID `json:"leader_id"`
+	Name            *string       `json:"name"`
+	Description     *string       `json:"description"`
+	LogoId          meta.NullUUID `json:"logo_id"`
+	SocialMediaLink *string       `json:"social_media_link"`
+	BankSoalLink    *string       `json:"bank_soal_link"`
+	SilabusLink     *string       `json:"silabus_link"`
+	BankRefLink     *string       `json:"bank_ref_link"`
+	LeaderId        meta.NullUUID `json:"leader_id"`
 }
