@@ -13,6 +13,8 @@ type Department struct {
 	BankSoalLink    string     `gorm:"type:varchar(255)" json:"bank_soal_link"`
 	SilabusLink     string     `gorm:"type:varchar(255)" json:"silabus_link"`
 	BankRefLink     string     `gorm:"type:varchar(255)" json:"bank_ref_link"`
+	LeaderId        *uuid.UUID `gorm:"type:uuid" json:"leader_id"`
+	Leader          *Member    `gorm:"foreignKey:LeaderId" json:"leader"`
 }
 
 func (Department) TableName() string {

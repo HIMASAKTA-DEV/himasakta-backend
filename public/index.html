@@ -14,6 +14,25 @@
       box-sizing: border-box;
     }
 
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HIMASAKTA Interactive API Documentation</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code&display=swap"
+    rel="stylesheet" />
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: "Inter", sans-serif;
+      background: #f8fafc;
+      color: #1e293b;
+      line-height: 1.6;
+    }
     body {
       font-family: "Inter", sans-serif;
       background: #f8fafc;
@@ -26,12 +45,26 @@
       margin: 0 auto;
       padding: 40px 20px;
     }
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 20px;
+    }
 
     header {
       text-align: center;
       margin-bottom: 50px;
     }
+    header {
+      text-align: center;
+      margin-bottom: 50px;
+    }
 
+    h1 {
+      color: #2563eb;
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
     h1 {
       color: #2563eb;
       font-size: 2.5rem;
@@ -46,12 +79,30 @@
       margin-bottom: 40px;
       box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
     }
+    .auth-box {
+      background: white;
+      border: 2px solid #2563eb;
+      border-radius: 12px;
+      padding: 30px;
+      margin-bottom: 40px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    }
 
     .auth-box h2 {
       font-size: 1.25rem;
       margin-bottom: 15px;
     }
+    .auth-box h2 {
+      font-size: 1.25rem;
+      margin-bottom: 15px;
+    }
 
+    .auth-inputs {
+      display: flex;
+      gap: 10px;
+      margin: 20px 0;
+      flex-wrap: wrap;
+    }
     .auth-inputs {
       display: flex;
       gap: 10px;
@@ -66,7 +117,18 @@
       border-radius: 8px;
       font-family: inherit;
     }
+    input,
+    textarea {
+      padding: 10px 15px;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      font-family: inherit;
+    }
 
+    input {
+      flex: 1;
+      min-width: 150px;
+    }
     input {
       flex: 1;
       min-width: 150px;
@@ -82,11 +144,33 @@
       cursor: pointer;
       transition: all 0.2s;
     }
+    button {
+      padding: 10px 24px;
+      background: #2563eb;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
 
     button:hover {
       background: #1d4ed8;
     }
+    button:hover {
+      background: #1d4ed8;
+    }
 
+    #token-display {
+      margin-top: 15px;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: "Fira Code", monospace;
+      font-size: 0.875rem;
+      word-break: break-all;
+      display: none;
+    }
     #token-display {
       margin-top: 15px;
       padding: 15px;
@@ -102,7 +186,17 @@
       color: #166534;
       border: 1px solid #166534;
     }
+    .success {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #166534;
+    }
 
+    .error {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #991b1b;
+    }
     .error {
       background: #fee2e2;
       color: #991b1b;
@@ -116,7 +210,23 @@
       margin-bottom: 20px;
       overflow: hidden;
     }
+    .endpoint {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
 
+    .endpoint-header {
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      background: #fdfdfd;
+      cursor: pointer;
+      border-bottom: 1px solid #e2e8f0;
+    }
     .endpoint-header {
       padding: 20px;
       display: flex;
@@ -136,7 +246,19 @@
       min-width: 60px;
       text-align: center;
     }
+    .method {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 6px;
+      color: white;
+      min-width: 60px;
+      text-align: center;
+    }
 
+    .method.GET {
+      background: #10b981;
+    }
     .method.GET {
       background: #10b981;
     }
@@ -144,7 +266,13 @@
     .method.POST {
       background: #3b82f6;
     }
+    .method.POST {
+      background: #3b82f6;
+    }
 
+    .method.PUT {
+      background: #f59e0b;
+    }
     .method.PUT {
       background: #f59e0b;
     }
@@ -152,7 +280,15 @@
     .method.DELETE {
       background: #ef4444;
     }
+    .method.DELETE {
+      background: #ef4444;
+    }
 
+    .path {
+      font-family: "Fira Code", monospace;
+      font-weight: 500;
+      flex: 1;
+    }
     .path {
       font-family: "Fira Code", monospace;
       font-weight: 500;
@@ -163,7 +299,15 @@
       color: #64748b;
       font-size: 0.875rem;
     }
+    .desc {
+      color: #64748b;
+      font-size: 0.875rem;
+    }
 
+    .endpoint-body {
+      padding: 25px;
+      display: none;
+    }
     .endpoint-body {
       padding: 25px;
       display: none;
@@ -172,7 +316,13 @@
     .endpoint-body.active {
       display: block;
     }
+    .endpoint-body.active {
+      display: block;
+    }
 
+    .fold {
+      margin-bottom: 20px;
+    }
     .fold {
       margin-bottom: 20px;
     }
@@ -185,7 +335,18 @@
       font-size: 0.875rem;
       user-select: none;
     }
+    .fold-title {
+      color: #2563eb;
+      font-weight: 600;
+      cursor: pointer;
+      margin-bottom: 10px;
+      font-size: 0.875rem;
+      user-select: none;
+    }
 
+    .fold-title:hover {
+      text-decoration: underline;
+    }
     .fold-title:hover {
       text-decoration: underline;
     }
@@ -201,7 +362,21 @@
       white-space: pre-wrap;
       overflow-x: auto;
     }
+    .fold-content {
+      display: none;
+      background: #1e293b;
+      color: #f8fafc;
+      padding: 15px;
+      border-radius: 8px;
+      font-family: "Fira Code", monospace;
+      font-size: 0.8rem;
+      white-space: pre-wrap;
+      overflow-x: auto;
+    }
 
+    .fold-content.active {
+      display: block;
+    }
     .fold-content.active {
       display: block;
     }
@@ -211,11 +386,27 @@
       padding-top: 20px;
       margin-top: 20px;
     }
+    .try-section {
+      border-top: 1px solid #e2e8f0;
+      padding-top: 20px;
+      margin-top: 20px;
+    }
 
     .input-group {
       margin-bottom: 15px;
     }
+    .input-group {
+      margin-bottom: 15px;
+    }
 
+    .input-group label {
+      display: block;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-bottom: 5px;
+      text-transform: uppercase;
+    }
     .input-group label {
       display: block;
       font-size: 0.75rem;
@@ -230,7 +421,17 @@
       min-height: 120px;
       font-family: "Fira Code", monospace;
     }
+    textarea {
+      width: 100%;
+      min-height: 120px;
+      font-family: "Fira Code", monospace;
+    }
 
+    .btn-execute {
+      width: 100%;
+      background: #1e293b;
+      margin-top: 10px;
+    }
     .btn-execute {
       width: 100%;
       background: #1e293b;
@@ -241,11 +442,25 @@
       margin-top: 20px;
       display: none;
     }
+    .response-area {
+      margin-top: 20px;
+      display: none;
+    }
 
     .response-area.active {
       display: block;
     }
+    .response-area.active {
+      display: block;
+    }
 
+    .response-status {
+      font-weight: 600;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      font-size: 0.875rem;
+    }
     .response-status {
       font-weight: 600;
       padding: 8px 12px;
@@ -328,7 +543,24 @@
       <h1>🚀 HIMASAKTA API v1</h1>
       <p>Interactive Documentation for Developers</p>
     </header>
+<body>
+  <div class="container">
+    <header>
+      <h1>🚀 HIMASAKTA API v1</h1>
+      <p>Interactive Documentation for Developers</p>
+    </header>
 
+    <div class="auth-box">
+      <h2>🔑 Authentication</h2>
+      <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 15px">Login to get JWT token for testing protected
+        endpoints.</p>
+      <div class="auth-inputs">
+        <input type="text" id="username" placeholder="Username" value="" />
+        <input type="password" id="password" placeholder="Password" value="" />
+        <button onclick="handleLogin()">Login & Authorize</button>
+      </div>
+      <div id="token-display"></div>
+    </div>
     <div class="auth-box">
       <h2>🔑 Authentication</h2>
       <p style="font-size: 0.875rem; color: #64748b; margin-bottom: 15px">Login to get JWT token for testing protected
@@ -342,6 +574,20 @@
     </div>
 
     <div id="endpoints"></div>
+
+    <footer
+      style="margin-top: 60px; padding-top: 30px; border-top: 1px solid #e2e8f0; text-align: center; color: #64748b; font-size: 0.875rem;">
+      <p>HIMASAKTA Backend &copy; 2026</p>
+      <a href="https://github.com/HIMASAKTA-DEV/himasakta-backend" target="_blank"
+        style="color: #2563eb; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px;">
+        <svg height="20" width="20" viewBox="0 0 16 16">
+          <path fill="currentColor"
+            d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z">
+          </path>
+        </svg>
+        GitHub Repository
+      </a>
+    </footer>
   </div>
 
   <script>
@@ -425,28 +671,28 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "name": "Kaderisasi",\n      "description": "...",\n      "logo_id": "uuid",\n      "logo": { ... },\n      "social_media_link": "...",\n      "bank_soal_link": "...",\n      "silabus_link": "...",\n      "bank_ref_link": "...",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "name": "Kaderisasi",\n      "description": "...",\n      "logo_id": "uuid",\n      "logo": { ... },\n      "social_media_link": "...",\n      "bank_soal_link": "...",\n      "silabus_link": "...",\n      "bank_ref_link": "...",\n      "leader_id": "uuid",\n      "leader": { ... },\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
             path: "/department/:name",
             desc: "Get department by Name or ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "description": "...", ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "description": "...", "leader_id": "uuid", "leader": { ... }, ... }\n}',
           },
           {
             method: "POST",
             path: "/department",
             desc: "Create department",
-            body: '{\n  "name": "Kaderisasi",\n  "description": "Departemen kaderisasi",\n  "logo_id": null,\n  "social_media_link": "",\n  "bank_soal_link": "",\n  "silabus_link": "",\n  "bank_ref_link": ""\n}',
-            resp: '{\n  "success": true,\n  "message": "success create department",\n  "data": { "id": "uuid", "name": "Kaderisasi", ... }\n}',
+            body: '{\n  "name": "Kaderisasi",\n  "description": "Departemen kaderisasi",\n  "logo_id": null,\n  "leader_id": "uuid-of-member",\n  "social_media_link": "",\n  "bank_soal_link": "",\n  "silabus_link": "",\n  "bank_ref_link": ""\n}',
+            resp: '{\n  "success": true,\n  "message": "success create department",\n  "data": { "id": "uuid", "name": "Kaderisasi", "leader_id": "...", ... }\n}',
           },
           {
             method: "PUT",
             path: "/department/:id",
             desc: "Update department",
             hasParams: true,
-            body: '{\n  "name": "Updated Name",\n  "description": "Updated desc",\n  "logo_id": "uuid-of-gallery",\n  "social_media_link": "https://...",\n  "bank_soal_link": "https://...",\n  "silabus_link": "https://...",\n  "bank_ref_link": "https://..."\n}',
+            body: '{\n  "name": "Updated Name",\n  "description": "Updated desc",\n  "logo_id": "uuid-of-gallery",\n  "leader_id": "uuid-of-member",\n  "social_media_link": "https://...",\n  "bank_soal_link": "https://...",\n  "silabus_link": "https://...",\n  "bank_ref_link": "https://..."\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {
@@ -474,7 +720,7 @@
               { name: "sort", ph: "asc" },
               { name: "sort_by", ph: "id" },
             ],
-            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "title": "...",\n      "slug": "...",\n      "tagline": "...",\n      "hashtags": "#OPREC,#HIMASAKTA",\n      "content": "...",\n      "thumbnail_id": "uuid",\n      "thumbnail": { ... },\n      "published_at": "...",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
+            resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "title": "...",\n      "slug": "...",\n      "tagline": "...",\n      "hashtags": "#OPREC,#HIMASAKTA",\n      "content": "...",\n      "thumbnail_id": "uuid",\n      "thumbnail": { ... },\n      "author_id": "uuid",\n      "author": { ... },\n      "published_at": "...",\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
           },
           {
             method: "GET",
@@ -488,21 +734,21 @@
             path: "/news/:slug",
             desc: "Get news by slug or ID",
             hasParams: true,
-            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "title": "...", "content": "...", "hashtags": "...", ... }\n}',
+            resp: '{\n  "success": true,\n  "data": { "id": "uuid", "title": "...", "content": "...", "hashtags": "...", "author_id": "uuid", "author": { ... }, ... }\n}',
           },
           {
             method: "POST",
             path: "/news",
             desc: "Create news article",
-            body: '{\n  "title": "Penerimaan Anggota Baru",\n  "tagline": "Ayo bergabung!",\n  "hashtags": "#OPREC,#HIMASAKTA",\n  "content": "# Selamat Datang\\nKami membuka pendaftaran.",\n  "thumbnail_id": null,\n  "published_at": "2026-02-01T10:00:00Z"\n}',
-            resp: '{\n  "success": true,\n  "message": "success create news",\n  "data": { "id": "uuid", "title": "Penerimaan Anggota Baru", ... }\n}',
+            body: '{\n  "title": "Penerimaan Anggota Baru",\n  "tagline": "Ayo bergabung!",\n  "hashtags": "#OPREC,#HIMASAKTA",\n  "content": "# Selamat Datang\\nKami membuka pendaftaran.",\n  "thumbnail_id": null,\n  "author_id": "uuid-of-member",\n  "published_at": "2026-02-01T10:00:00Z"\n}',
+            resp: '{\n  "success": true,\n  "message": "success create news",\n  "data": { "id": "uuid", "title": "Penerimaan Anggota Baru", "author_id": "...", ... }\n}',
           },
           {
             method: "PUT",
             path: "/news/:id",
             desc: "Update news article",
             hasParams: true,
-            body: '{\n  "title": "Updated Title",\n  "tagline": "Updated tagline",\n  "hashtags": "#UPDATED",\n  "content": "Updated content...",\n  "thumbnail_id": "uuid-of-gallery",\n  "published_at": "2026-02-15T10:00:00Z"\n}',
+            body: '{\n  "title": "Updated Title",\n  "tagline": "Updated tagline",\n  "hashtags": "#UPDATED",\n  "content": "Updated content...",\n  "thumbnail_id": "uuid-of-gallery",\n  "author_id": "uuid-of-member",\n  "published_at": "2026-02-15T10:00:00Z"\n}',
             resp: '{\n  "success": true,\n  "data": { ... }\n}',
           },
           {
@@ -873,6 +1119,10 @@
           const id = sec.section.toLowerCase().replace(/\s+/g, "-") + "-" + idx;
           const card = document.createElement("div");
           card.className = "endpoint";
+        sec.items.forEach(function (r, idx) {
+          const id = sec.section.toLowerCase().replace(/\s+/g, "-") + "-" + idx;
+          const card = document.createElement("div");
+          card.className = "endpoint";
 
           const header = document.createElement("div");
           header.className = "endpoint-header";
@@ -880,7 +1130,16 @@
             toggleBody(id);
           };
           header.innerHTML = '<span class="method ' + r.method + '">' + r.method + "</span>" + '<span class="path">' + r.path + "</span>" + '<span class="desc">' + r.desc + "</span>";
+          const header = document.createElement("div");
+          header.className = "endpoint-header";
+          header.onclick = function () {
+            toggleBody(id);
+          };
+          header.innerHTML = '<span class="method ' + r.method + '">' + r.method + "</span>" + '<span class="path">' + r.path + "</span>" + '<span class="desc">' + r.desc + "</span>";
 
+          const body = document.createElement("div");
+          body.className = "endpoint-body";
+          body.id = id;
           const body = document.createElement("div");
           body.className = "endpoint-body";
           body.id = id;
@@ -913,6 +1172,11 @@
               html += '<div class="input-group">' + "<label>" + p.name + "</label>" + '<input type="text" id="' + id + "-p-" + p.name + '" placeholder="' + p.ph + '">' + "</div>";
             });
           }
+          if (r.params) {
+            r.params.forEach(function (p) {
+              html += '<div class="input-group">' + "<label>" + p.name + "</label>" + '<input type="text" id="' + id + "-p-" + p.name + '" placeholder="' + p.ph + '">' + "</div>";
+            });
+          }
 
           if (r.path.includes("/:id")) {
             html += '<div class="input-group">' + "<label>ID (UUID)</label>" + '<input type="text" id="' + id + '-path-id" placeholder="Enter UUID...">' + "</div>";
@@ -937,7 +1201,43 @@
           } else if (r.method !== "GET" && r.body) {
             html += '<div class="input-group">' + "<label>Request Body (JSON)</label>" + '<textarea id="' + id + '-body">' + r.body + "</textarea>" + "</div>";
           }
+          if (r.isFileUpload && r.fileFields) {
+            r.fileFields.forEach(function (f) {
+              if (f.type === "file") {
+                html += '<div class="input-group">' + "<label>" + f.label + "</label>" + '<input type="file" id="' + id + "-file-" + f.name + '" accept="image/*">' + "</div>";
+              } else {
+                html += '<div class="input-group">' + "<label>" + f.label + "</label>" + '<input type="text" id="' + id + "-field-" + f.name + '" placeholder="' + (f.ph || "") + '">' + "</div>";
+              }
+            });
+          } else if (r.method !== "GET" && r.body) {
+            html += '<div class="input-group">' + "<label>Request Body (JSON)</label>" + '<textarea id="' + id + '-body">' + r.body + "</textarea>" + "</div>";
+          }
 
+          html +=
+            '<button class="btn-execute" onclick="exec(\'' +
+            id +
+            "', '" +
+            r.method +
+            "', '" +
+            r.path +
+            "', " +
+            (r.params ? "true" : "false") +
+            ", " +
+            (r.body || r.isFileUpload ? "true" : "false") +
+            ", " +
+            (r.isFileUpload ? "true" : "false") +
+            ')">' +
+            "Execute</button>" +
+            '<div class="response-area" id="' +
+            id +
+            '-res">' +
+            '<div class="response-status" id="' +
+            id +
+            '-status"></div>' +
+            '<pre class="response-body" id="' +
+            id +
+            '-data"></pre>' +
+            "</div></div>";
           html +=
             '<button class="btn-execute" onclick="exec(\'' +
             id +
@@ -982,7 +1282,40 @@
 
     function genFetch(r) {
       let c = 'const token = localStorage.getItem("docs_token");\n\n';
+    function genFetch(r) {
+      let c = 'const token = localStorage.getItem("docs_token");\n\n';
 
+      if (r.isFileUpload) {
+        c += "const formData = new FormData();\n";
+        if (r.fileFields) {
+          r.fileFields.forEach(function (f) {
+            if (f.type === "file") {
+              c += 'formData.append("' + f.name + '", fileInput.files[0]);\n';
+            } else {
+              c += 'formData.append("' + f.name + '", "' + (f.ph || "value") + '");\n';
+            }
+          });
+        }
+        c += '\nfetch("' + API + r.path + '", {\n';
+        c += '  method: "' + r.method + '",\n';
+        c += "  headers: {\n";
+        c += '    "Authorization": "Bearer " + token\n';
+        c += "  },\n";
+        c += "  body: formData\n";
+      } else {
+        c += 'fetch("' + API + r.path + '", {\n';
+        c += '  method: "' + r.method + '",\n';
+        c += "  headers: {\n";
+        c += '    "Content-Type": "application/json",\n';
+        c += '    "Authorization": "Bearer " + token\n';
+        c += "  }";
+        if (r.method !== "GET" && r.body) {
+          c += ",\n  body: " + r.body;
+        }
+      }
+      c += "\n})\n.then(r => r.json())\n.then(console.log);";
+      return c;
+    }
       if (r.isFileUpload) {
         c += "const formData = new FormData();\n";
         if (r.fileFields) {
@@ -1018,7 +1351,13 @@
     function toggleBody(id) {
       document.getElementById(id).classList.toggle("active");
     }
+    function toggleBody(id) {
+      document.getElementById(id).classList.toggle("active");
+    }
 
+    function toggleFold(id) {
+      document.getElementById(id).classList.toggle("active");
+    }
     function toggleFold(id) {
       document.getElementById(id).classList.toggle("active");
     }
@@ -1027,7 +1366,20 @@
       const u = document.getElementById("username").value;
       const p = document.getElementById("password").value;
       const disp = document.getElementById("token-display");
+    function handleLogin() {
+      const u = document.getElementById("username").value;
+      const p = document.getElementById("password").value;
+      const disp = document.getElementById("token-display");
 
+      fetch(API + "/auth/login", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ username: u, password: p }),
+      })
+        .then(async function (res) {
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            const data = await res.json();
       fetch(API + "/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -1059,7 +1411,25 @@
           alert("Login failed: " + e.message);
         });
     }
+            }
+          } else {
+            const text = await res.text();
+            disp.innerHTML = "<strong>✗ Server Error:</strong> Non-JSON response received. Check console.";
+            disp.className = "error";
+            disp.style.display = "block";
+            console.error("Non-JSON login response:", text);
+          }
+        })
+        .catch(function (e) {
+          alert("Login failed: " + e.message);
+        });
+    }
 
+    function exec(id, method, path, hasParams, hasBody, isFileUpload) {
+      const area = document.getElementById(id + "-res");
+      const status = document.getElementById(id + "-status");
+      const dataBox = document.getElementById(id + "-data");
+      const token = localStorage.getItem("docs_token");
     function exec(id, method, path, hasParams, hasBody, isFileUpload) {
       const area = document.getElementById(id + "-res");
       const status = document.getElementById(id + "-status");
@@ -1070,7 +1440,12 @@
       status.textContent = "Executing...";
       status.className = "response-status";
       dataBox.textContent = "";
+      area.classList.add("active");
+      status.textContent = "Executing...";
+      status.className = "response-status";
+      dataBox.textContent = "";
 
+      let url = API + path;
       let url = API + path;
 
       if (path.includes("/:id")) {
@@ -1084,6 +1459,16 @@
         }
       }
 
+      if (path.includes("/:name")) {
+        const nameInput = document.getElementById(id + "-path-name");
+        if (nameInput && nameInput.value) {
+          url = url.replace(":name", nameInput.value);
+        } else {
+          status.textContent = "Error: Name is required";
+          status.className = "response-status error";
+          return;
+        }
+      }
       if (path.includes("/:name")) {
         const nameInput = document.getElementById(id + "-path-name");
         if (nameInput && nameInput.value) {
@@ -1127,14 +1512,51 @@
         });
         if (params.length) url += "?" + params.join("&");
       }
+      if (hasParams) {
+        const params = [];
+        document.querySelectorAll('[id^="' + id + '-p-"]').forEach(function (inp) {
+          if (inp.value) {
+            const name = inp.id.split("-p-")[1];
+            params.push(name + "=" + encodeURIComponent(inp.value));
+          }
+        });
+        if (params.length) url += "?" + params.join("&");
+      }
 
+      const opts = {
+        method: method,
+        headers: {},
+      };
       const opts = {
         method: method,
         headers: {},
       };
 
       if (token) opts.headers["Authorization"] = "Bearer " + token;
+      if (token) opts.headers["Authorization"] = "Bearer " + token;
 
+      if (isFileUpload) {
+        const formData = new FormData();
+        document.querySelectorAll('[id^="' + id + '-file-"]').forEach(function (inp) {
+          if (inp.files && inp.files[0]) {
+            const name = inp.id.split("-file-")[1];
+            formData.append(name, inp.files[0]);
+          }
+        });
+        document.querySelectorAll('[id^="' + id + '-field-"]').forEach(function (inp) {
+          if (inp.value) {
+            const name = inp.id.split("-field-")[1];
+            formData.append(name, inp.value);
+          }
+        });
+        opts.body = formData;
+      } else {
+        opts.headers["Content-Type"] = "application/json";
+        if (hasBody) {
+          const bodyEl = document.getElementById(id + "-body");
+          if (bodyEl) opts.body = bodyEl.value;
+        }
+      }
       if (isFileUpload) {
         const formData = new FormData();
         document.querySelectorAll('[id^="' + id + '-file-"]').forEach(function (inp) {
@@ -1186,6 +1608,34 @@
           dataBox.textContent = e.stack || e.message;
         });
     }
+      const startTime = performance.now();
+      fetch(url, opts)
+        .then(async function (res) {
+          const duration = Math.round(performance.now() - startTime);
+          status.textContent = "Status: " + res.status + " " + res.statusText + " (" + duration + "ms)";
+          status.className = "response-status " + (res.ok ? "success" : "error");
+
+          const contentType = res.headers.get("content-type");
+          if (contentType && contentType.includes("application/json")) {
+            try {
+              const data = await res.json();
+              dataBox.textContent = JSON.stringify(data, null, 2);
+            } catch (e) {
+              const text = await res.text();
+              dataBox.textContent = "JSON Parse Error: " + e.message + "\n\nRaw Response:\n" + text;
+            }
+          } else {
+            const text = await res.text();
+            dataBox.textContent = "Non-JSON Response:\n" + text;
+          }
+        })
+        .catch(function (e) {
+          const duration = Math.round(performance.now() - startTime);
+          status.textContent = "Fetch Error: " + e.message + " (" + duration + "ms)";
+          status.className = "response-status error";
+          dataBox.textContent = e.stack || e.message;
+        });
+    }
 
     window.onload = function () {
       render();
@@ -1201,5 +1651,20 @@
     };
   </script>
 </body>
+    window.onload = function () {
+      render();
+      const saved = localStorage.getItem("docs_token");
+      if (saved) {
+        const d = document.getElementById("token-display");
+        d.innerHTML = "<strong>Token loaded from session</strong>";
+        d.style.background = "#eff6ff";
+        d.style.color = "#1e40af";
+        d.style.border = "1px solid #3b82f6";
+        d.style.display = "block";
+      }
+    };
+  </script>
+</body>
 
+</html>
 </html>

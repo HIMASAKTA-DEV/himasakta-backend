@@ -12,6 +12,7 @@ type CreateDepartmentRequest struct {
 	BankSoalLink    string        `json:"bank_soal_link"`
 	SilabusLink     string        `json:"silabus_link"`
 	BankRefLink     string        `json:"bank_ref_link"`
+	LeaderId        meta.NullUUID `json:"leader_id"`
 }
 
 type UpdateDepartmentRequest struct {
@@ -22,4 +23,5 @@ type UpdateDepartmentRequest struct {
 	BankSoalLink    *string       `json:"bank_soal_link"`
 	SilabusLink     *string       `json:"silabus_link"`
 	BankRefLink     *string       `json:"bank_ref_link"`
+	LeaderId        meta.NullUUID `json:"leader_id"`
 }
