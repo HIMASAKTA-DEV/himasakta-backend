@@ -48,7 +48,7 @@ func (r *departmentRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq 
 		return nil, metaReq, fmt.Errorf("database connection is nil")
 	}
 	var departments []entity.Department
-	tx = tx.WithContext(ctx).Model(&entity.Department{}).Preload("Logo").Preload("Leader")
+	tx = tx.WithContext(ctx).Model(&entity.Department{}).Preload("Logo").Preload("Leader").Preload("Feeds")
 
 	if name != "" {
 		tx = tx.Where("name = ?", name)
@@ -68,7 +68,7 @@ func (r *departmentRepository) GetById(ctx context.Context, tx *gorm.DB, id uuid
 		return entity.Department{}, fmt.Errorf("database connection is nil")
 	}
 	var d entity.Department
-	if err := tx.WithContext(ctx).Preload("Logo").Preload("Leader").Take(&d, "id = ?", id).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Logo").Preload("Leader").Preload("Feeds").Take(&d, "id = ?", id).Error; err != nil {
 		return entity.Department{}, err
 	}
 	return d, nil
@@ -82,7 +82,7 @@ func (r *departmentRepository) GetByName(ctx context.Context, tx *gorm.DB, name 
 		return entity.Department{}, fmt.Errorf("database connection is nil")
 	}
 	var d entity.Department
-	if err := tx.WithContext(ctx).Preload("Logo").Preload("Leader").Take(&d, "name = ?", name).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Logo").Preload("Leader").Preload("Feeds").Take(&d, "name = ?", name).Error; err != nil {
 		return entity.Department{}, err
 	}
 	return d, nil

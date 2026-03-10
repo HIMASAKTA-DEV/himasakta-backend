@@ -12,10 +12,12 @@ type CabinetInfo struct {
 	PeriodStart  string     `gorm:"type:date;not null" json:"period_start"`
 	PeriodEnd    string     `gorm:"type:date;not null" json:"period_end"`
 	LogoId       *uuid.UUID `gorm:"type:uuid" json:"logo_id"`
-	Logo         *Gallery   `gorm:"foreignKey:LogoId" json:"logo"`
-	OrganigramId *uuid.UUID `gorm:"type:uuid" json:"organigram_id"`
-	Organigram   *Gallery   `gorm:"foreignKey:OrganigramId" json:"organigram"`
-	IsActive     *bool      `gorm:"default:true" json:"is_active"`
+	Logo         *Gallery     `gorm:"foreignKey:LogoId" json:"logo"`
+	OrganigramId *uuid.UUID  `gorm:"type:uuid" json:"organigram_id"`
+	Organigram   *Gallery    `gorm:"foreignKey:OrganigramId" json:"organigram"`
+	IsActive     *bool       `gorm:"default:true" json:"is_active"`
+
+	Feeds []Gallery `gorm:"foreignKey:CabinetId" json:"feeds"`
 }
 
 func (CabinetInfo) TableName() string {
