@@ -136,14 +136,18 @@ func (ms *MetaService) buildFilter(db *gorm.DB, meta *meta.Meta) *gorm.DB {
 				}
 			}
 
-			questionMarks := strings.Count(condition, "?")
-
-			filterValues := make([]interface{}, questionMarks)
-			for j := range filterValues {
-				filterValues[j] = filterValue
+			if filterValue == "null" {
+				// Convert "column = ?" to "column IS NULL"
+				nullCondition := strings.Replace(condition, "= ?", "IS NULL", 1)
+				query = query.Where(nullCondition)
+			} else {
+				questionMarks := strings.Count(condition, "?")
+				filterValues := make([]interface{}, questionMarks)
+				for j := range filterValues {
+					filterValues[j] = filterValue
+				}
+				query = query.Where(condition, filterValues...)
 			}
-
-			query = query.Where(condition, filterValues...)
 			if err := query.Error; err != nil {
 				return query
 			}
