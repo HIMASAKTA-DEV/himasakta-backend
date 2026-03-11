@@ -118,12 +118,17 @@ func NewRest() (RestConfig, error) {
 	analyticsService := service.NewAnalyticsService(analyticsRepo)
 	analyticsController := controller.NewAnalyticsController(analyticsService)
 
+	globalSettingRepo := repository.NewGlobalSetting(db)
+	globalSettingService := service.NewGlobalSetting(globalSettingRepo)
+	globalSettingController := controller.NewGlobalSetting(globalSettingService)
+
 	m := middleware.New(db)
 
 	// Register all routes
 	server.GET("/", indexController.Index)
 	routes.Auth(server, authController)
 	routes.Analytics(server, analyticsController, m)
+	routes.GlobalSetting(server, globalSettingController, m)
 	routes.Gallery(server, galleryController, m)
 	routes.Department(server, deptController, m)
 	routes.CabinetInfo(server, cabinetController, m)
