@@ -114,11 +114,16 @@ func NewRest() (RestConfig, error) {
 
 	indexController := controller.NewIndex()
 
+	analyticsRepo := repository.NewAnalyticsRepository(db)
+	analyticsService := service.NewAnalyticsService(analyticsRepo)
+	analyticsController := controller.NewAnalyticsController(analyticsService)
+
 	m := middleware.New(db)
 
 	// Register all routes
 	server.GET("/", indexController.Index)
 	routes.Auth(server, authController)
+	routes.Analytics(server, analyticsController, m)
 	routes.Gallery(server, galleryController, m)
 	routes.Department(server, deptController, m)
 	routes.CabinetInfo(server, cabinetController, m)

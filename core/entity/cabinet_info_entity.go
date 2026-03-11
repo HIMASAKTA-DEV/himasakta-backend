@@ -11,9 +11,9 @@ type CabinetInfo struct {
 	Tagline      string     `gorm:"type:varchar(255)" json:"tagline"`
 	PeriodStart  string     `gorm:"type:date;not null" json:"period_start"`
 	PeriodEnd    string     `gorm:"type:date;not null" json:"period_end"`
-	LogoId       *uuid.UUID `gorm:"type:uuid" json:"logo_id"`
+	LogoId       *uuid.UUID `gorm:"type:uuid;index" json:"logo_id"`
 	Logo         *Gallery     `gorm:"foreignKey:LogoId" json:"logo"`
-	OrganigramId *uuid.UUID  `gorm:"type:uuid" json:"organigram_id"`
+	OrganigramId *uuid.UUID  `gorm:"type:uuid;index" json:"organigram_id"`
 	Organigram   *Gallery    `gorm:"foreignKey:OrganigramId" json:"organigram"`
 	IsActive     *bool       `gorm:"default:true" json:"is_active"`
 

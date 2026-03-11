@@ -29,6 +29,7 @@ func Migrate(db *gorm.DB) error {
 		&entity.NrpWhitelist{},
 		&entity.Timeline{},
 		&entity.Role{},
+		&entity.Visitor{},
 	); err != nil {
 		return err
 	}

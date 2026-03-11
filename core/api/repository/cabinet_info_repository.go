@@ -51,8 +51,7 @@ func (r *cabinetInfoRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq
 	tx = tx.WithContext(ctx).Model(&entity.CabinetInfo{}).Preload("Logo").Preload("Organigram").Preload("Feeds")
 
 	if metaReq.SortBy == "" {
-		metaReq.SortBy = "period_start"
-		metaReq.Sort = "desc"
+		tx = tx.Order("is_active DESC, period_start DESC, period_end DESC")
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.CabinetInfo{})).Find(&infos).Error; err != nil {

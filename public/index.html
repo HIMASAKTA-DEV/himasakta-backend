@@ -835,6 +835,25 @@
         ],
       },
       {
+        section: "Analytics",
+        items: [
+          {
+            method: "POST",
+            path: "/analytics/visit",
+            desc: "Track visitor ping (asynchronous)",
+            params: [{ name: "X-Visitor-Id", ph: "UUID (from localStorage)" }],
+            resp: "202 Accepted",
+          },
+          {
+            method: "GET",
+            path: "/analytics",
+            desc: "Get dashboard statistics (cached 5m)",
+            params: [{ name: "graphlimit", ph: "7d, 3d, 1d (default 7d)" }],
+            resp: '{\n  "success": true,\n  "message": "success get analytics stats",\n  "data": {\n    "VisitorCount": 150,\n    "NewsCount": 12,\n    "DepartmentCount": 8,\n    "ActiveProgendaCount": 5,\n    "ActiveMonthlyEventCount": 3,\n    "ActiveAnggotaCount": 45,\n    "NewVisitorsGraph": [\n      { "timestamp": "2026-03-11T10:00:00Z", "count": 14 },\n      { "timestamp": "2026-03-11T11:00:00Z", "count": 22 }\n    ]\n  }\n}',
+          },
+        ],
+      },
+      {
         section: "NRP Whitelist",
         items: [
           {
@@ -956,7 +975,11 @@
 
           if (r.params) {
             r.params.forEach(function (p) {
-              html += '<div class="input-group">' + "<label>" + p.name + "</label>" + '<input type="text" id="' + id + "-p-" + p.name + '" placeholder="' + p.ph + '">' + "</div>";
+              let suffix = "";
+              if (p.name === "X-Visitor-Id") {
+                suffix = ' <button onclick="genUUID(\'' + id + '-p-X-Visitor-Id\')" style="padding: 2px 8px; font-size: 0.7rem; margin-left: 5px;">Generate</button>';
+              }
+              html += '<div class="input-group">' + "<label>" + p.name + suffix + "</label>" + '<input type="text" id="' + id + "-p-" + p.name + '" placeholder="' + p.ph + '">' + "</div>";
             });
           }
 
@@ -1049,10 +1072,13 @@
       } else {
         c += 'fetch("' + API + r.path + '", {\n';
         c += '  method: "' + r.method + '",\n';
-        c += "  headers: {\n";
+        c += '  headers: {\n';
         c += '    "Content-Type": "application/json",\n';
-        c += '    "Authorization": "Bearer " + token\n';
-        c += "  }";
+        c += '    "Authorization": "Bearer " + token';
+        if (r.path === "/analytics/visit") {
+          c += ',\n    "X-Visitor-Id": "UUID-FROM-LOCALSTORAGE"';
+        }
+        c += '\n  }';
         if (r.method !== "GET" && r.body) {
           c += ",\n  body: " + r.body;
         }
@@ -1153,7 +1179,7 @@
       }
 
       if (path.includes("/:timelineId")) {
-        const tlInput = document.querySelector('[id$="-p-timelineId"]');
+        const tlInput = document.getElementById(id + "-p-timelineId");
         if (tlInput && tlInput.value) {
           url = url.replace(":timelineId", tlInput.value);
         } else {
@@ -1168,6 +1194,7 @@
         document.querySelectorAll('[id^="' + id + '-p-"]').forEach(function (inp) {
           if (inp.value) {
             const name = inp.id.split("-p-")[1];
+            if (path === "/analytics/visit" && name === "X-Visitor-Id") return;
             params.push(name + "=" + encodeURIComponent(inp.value));
           }
         });
@@ -1180,6 +1207,11 @@
       };
 
       if (token) opts.headers["Authorization"] = "Bearer " + token;
+
+      if (path === "/analytics/visit") {
+        const vIdInput = document.getElementById(id + "-p-X-Visitor-Id");
+        if (vIdInput && vIdInput.value) opts.headers["X-Visitor-Id"] = vIdInput.value;
+      }
 
       if (isFileUpload) {
         const formData = new FormData();
@@ -1231,6 +1263,13 @@
           status.className = "response-status error";
           dataBox.textContent = e.stack || e.message;
         });
+    }
+
+    function genUUID(id) {
+      const u = ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, (c) =>
+        (c ^ (crypto.getRandomValues(new Uint8Array(1))[0] & (15 >> (c / 4)))).toString(16)
+      );
+      document.getElementById(id).value = u;
     }
 
     window.onload = function () {
