@@ -30,6 +30,7 @@ func Migrate(db *gorm.DB) error {
 		&entity.Timeline{},
 		&entity.Role{},
 		&entity.Visitor{},
+		&entity.GlobalSetting{},
 	); err != nil {
 		return err
 	}
