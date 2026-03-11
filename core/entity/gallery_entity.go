@@ -8,10 +8,10 @@ type Gallery struct {
 	ImageUrl     string     `gorm:"type:varchar(255);not null" json:"image_url"`
 	Caption      string     `gorm:"type:varchar(255)" json:"caption"`
 	Category     string     `gorm:"type:varchar(100)" json:"category"`
-	DepartmentId *uuid.UUID `gorm:"type:uuid;constraint:OnDelete:SET NULL" json:"department_id"`
+	DepartmentId *uuid.UUID `gorm:"type:uuid;index;constraint:OnDelete:SET NULL" json:"department_id"`
 
-	ProgendaId *uuid.UUID `gorm:"type:uuid;constraint:OnDelete:SET NULL" json:"progenda_id"`
-	CabinetId  *uuid.UUID `gorm:"type:uuid;constraint:OnDelete:SET NULL" json:"cabinet_id"`
+	ProgendaId *uuid.UUID `gorm:"type:uuid;index;constraint:OnDelete:SET NULL" json:"progenda_id"`
+	CabinetId  *uuid.UUID `gorm:"type:uuid;index;constraint:OnDelete:SET NULL" json:"cabinet_id"`
 }
 
 func (Gallery) TableName() string {

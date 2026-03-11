@@ -14,10 +14,10 @@ type News struct {
 	Tagline     string     `gorm:"type:varchar(255)" json:"tagline"`
 	Hashtags    string     `gorm:"type:text" json:"hashtags"` // comma separated
 	Content     string     `gorm:"type:text;not null" json:"content"`
-	ThumbnailId *uuid.UUID `gorm:"type:uuid;constraint:OnDelete:SET NULL" json:"thumbnail_id"`
+	ThumbnailId *uuid.UUID `gorm:"type:uuid;index;constraint:OnDelete:SET NULL" json:"thumbnail_id"`
 	Thumbnail   *Gallery   `gorm:"foreignKey:ThumbnailId" json:"thumbnail"`
 	PublishedAt time.Time  `gorm:"type:timestamp" json:"published_at"`
-	AuthorId    *uuid.UUID `gorm:"type:uuid;constraint:OnDelete:SET NULL" json:"author_id"`
+	AuthorId    *uuid.UUID `gorm:"type:uuid;index;constraint:OnDelete:SET NULL" json:"author_id"`
 	Author      *Member    `gorm:"foreignKey:AuthorId" json:"author"`
 }
 

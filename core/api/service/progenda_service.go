@@ -191,41 +191,9 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 func (s *progendaService) Delete(ctx context.Context, id string) error {
 	uid, _ := uuid.Parse(id)
 
-	tx := s.db.Begin()
-	if tx.Error != nil {
-		return tx.Error
-	}
+	// Skip GetById to avoid expensive preloads. 
+	// The database CASCADE will handle related Timelines.
+	p := entity.Progenda{Id: uid}
 
-	p, err := s.progendaRepo.GetById(ctx, nil, uid)
-	if err != nil {
-		return err
-	}
-
-	//delete timelines
-	var timelines []entity.Timeline
-
-	for _, tl := range p.Timelines {
-		timelines = append(timelines, entity.Timeline{
-			Id:         tl.Id,
-			ProgendaId: &p.Id,
-			Date:       tl.Date,
-			Info:       tl.Info,
-		})
-	}
-	if err := s.timelineRepo.BulkDelete(ctx, tx, timelines); err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	//delete progenda
-	if err := s.progendaRepo.Delete(ctx, nil, p); err != nil {
-		tx.Rollback()
-		return err
-	}
-
-	if err := tx.Commit().Error; err != nil {
-		return err
-	}
-
-	return nil
+	return s.progendaRepo.Delete(ctx, nil, p)
 }
