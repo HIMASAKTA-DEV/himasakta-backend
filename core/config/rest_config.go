@@ -94,7 +94,9 @@ func NewRest() (RestConfig, error) {
 	monthlyEventController := controller.NewMonthlyEvent(monthlyEventService)
 
 	newsRepo := repository.NewNews(db)
-	newsService := service.NewNews(newsRepo)
+	newsTagRepo := repository.NewNewsTag(db)
+	tagRepo := repository.NewTag(db)
+	newsService := service.NewNews(db, newsRepo, newsTagRepo, tagRepo)
 	newsController := controller.NewNews(newsService)
 
 	// ... existing injections ...

@@ -25,29 +25,72 @@ type NewsService interface {
 }
 
 type newsService struct {
-	repo repository.NewsRepository
+	db          *gorm.DB
+	newsRepo    repository.NewsRepository
+	newsTagRepo repository.NewsTagRepository
+	tagRepo     repository.TagRepository
 }
 
-func NewNews(repo repository.NewsRepository) NewsService {
-	return &newsService{repo}
+func NewNews(db *gorm.DB, newsRepo repository.NewsRepository, newsTagRepo repository.NewsTagRepository, tagRepo repository.TagRepository) NewsService {
+	return &newsService{
+		db:          db,
+		newsRepo:    newsRepo,
+		newsTagRepo: newsTagRepo,
+		tagRepo:     tagRepo,
+	}
 }
 
 func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (entity.News, error) {
+	tx := s.db.Begin()
+	newsId := uuid.New()
+
 	hashtags, err := utils.SanitizeHashtags(req.Hashtags)
 	if err != nil {
 		return entity.News{}, err
 	}
 
-	res, err := s.repo.Create(ctx, nil, entity.News{
+	tagEntities, err := utils.SplitHashTags(hashtags)
+	if err != nil {
+		return entity.News{}, err
+	}
+	finalTags, err := s.tagRepo.BulkAdd(ctx, tx, tagEntities)
+	if err != nil {
+		tx.Rollback()
+		return entity.News{}, err
+	}
+
+	var newsTag []entity.NewsTag
+
+	for _, tag := range finalTags {
+		newsTag = append(newsTag, entity.NewsTag{
+			NewsId: newsId,
+			TagId:  tag.Id,
+		})
+	}
+
+	if err := s.newsTagRepo.BulkCreate(ctx, tx, newsTag); err != nil {
+		tx.Rollback()
+		return entity.News{}, err
+	}
+
+	res, err := s.newsRepo.Create(ctx, tx, entity.News{
+		Id:          newsId,
 		Title:       req.Title,
 		Slug:        utils.ToSlug(req.Title),
 		Tagline:     req.Tagline,
-		Hashtags:    hashtags,
 		Content:     req.Content,
+		Hashtags:    finalTags,
 		ThumbnailId: req.ThumbnailId.ID,
 		PublishedAt: req.PublishedAt,
 		AuthorId:    req.AuthorId.ID,
 	})
+	if err != nil {
+		tx.Rollback()
+		return entity.News{}, err
+	}
+
+	tx.Commit()
+
 	return res, myerror.ParseDBError(err, "news")
 }
 
@@ -56,11 +99,11 @@ func (s *newsService) GetAll(ctx context.Context, metaReq meta.Meta, search stri
 	if tags != "" {
 		tagsList = strings.Split(tags, ",")
 	}
-	return s.repo.GetAll(ctx, nil, metaReq, search, tagsList, title)
+	return s.newsRepo.GetAll(ctx, nil, metaReq, search, tagsList, title)
 }
 
 func (s *newsService) GetAutocompletion(ctx context.Context, query string) ([]string, error) {
-	return s.repo.GetAutocompletion(ctx, query)
+	return s.newsRepo.GetAutocompletion(ctx, query)
 }
 
 func (s *newsService) GetBySlug(ctx context.Context, slugOrId string) (entity.News, error) {
@@ -69,9 +112,9 @@ func (s *newsService) GetBySlug(ctx context.Context, slugOrId string) (entity.Ne
 
 	uid, parseErr := uuid.Parse(slugOrId)
 	if parseErr == nil {
-		n, err = s.repo.GetById(ctx, nil, uid)
+		n, err = s.newsRepo.GetById(ctx, nil, uid)
 	} else {
-		n, err = s.repo.GetBySlug(ctx, nil, slugOrId)
+		n, err = s.newsRepo.GetBySlug(ctx, nil, slugOrId)
 	}
 
 	if err != nil {
@@ -85,14 +128,57 @@ func (s *newsService) GetBySlug(ctx context.Context, slugOrId string) (entity.Ne
 
 func (s *newsService) GetById(ctx context.Context, id string) (entity.News, error) {
 	uid, _ := uuid.Parse(id)
-	return s.repo.GetById(ctx, nil, uid)
+	return s.newsRepo.GetById(ctx, nil, uid)
 }
 
 func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsRequest) (entity.News, error) {
+	tx := s.db.Begin()
+
 	uid, _ := uuid.Parse(id)
-	n, err := s.repo.GetById(ctx, nil, uid)
+	n, err := s.newsRepo.GetById(ctx, nil, uid)
+
 	if err != nil {
+		tx.Rollback()
 		return n, err
+	}
+
+	var finalTags []entity.Tag
+	if req.Hashtags != nil {
+
+		hashtags, err := utils.SanitizeHashtags(*req.Hashtags)
+		if err != nil {
+			tx.Rollback()
+			return entity.News{}, err
+		}
+
+		tagEntities, err := utils.SplitHashTags(hashtags)
+		if err != nil {
+			return entity.News{}, err
+		}
+
+		finalTags, err = s.tagRepo.BulkAdd(ctx, tx, tagEntities)
+		if err != nil {
+			tx.Rollback()
+			return entity.News{}, err
+		}
+
+		var newsTag []entity.NewsTag
+
+		for _, tag := range finalTags {
+			newsTag = append(newsTag, entity.NewsTag{
+				NewsId: uid,
+				TagId:  tag.Id,
+			})
+		}
+
+		if err := s.newsTagRepo.DeleteByNews(ctx, tx, uid); err != nil {
+			tx.Rollback()
+			return entity.News{}, err
+		}
+		if err := s.newsTagRepo.BulkCreate(ctx, tx, newsTag); err != nil {
+			tx.Rollback()
+			return entity.News{}, err
+		}
 	}
 
 	if req.Title != nil {
@@ -102,13 +188,15 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 	if req.Tagline != nil {
 		n.Tagline = *req.Tagline
 	}
-	if req.Hashtags != nil {
-		hashtags, err := utils.SanitizeHashtags(*req.Hashtags)
-		if err != nil {
-			return n, err
-		}
-		n.Hashtags = hashtags
-	}
+
+	// if req.Hashtags != nil {
+	// 	hashtags, err := utils.SanitizeHashtags(*req.Hashtags)
+	// 	if err != nil {
+	// 		return n, err
+	// 	}
+	// 	n.Hashtags = hashtags
+	// }
+
 	if req.Content != nil {
 		n.Content = *req.Content
 	}
@@ -124,15 +212,21 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 		n.Author = nil
 	}
 
-	res, err := s.repo.Update(ctx, nil, n)
+	res, err := s.newsRepo.Update(ctx, tx, n)
+	if err != nil {
+		tx.Rollback()
+		return entity.News{}, err
+	}
+	tx.Commit()
+	res.Hashtags = finalTags
 	return res, myerror.ParseDBError(err, "news")
 }
 
 func (s *newsService) Delete(ctx context.Context, id string) error {
 	uid, _ := uuid.Parse(id)
-	n, err := s.repo.GetById(ctx, nil, uid)
+	n, err := s.newsRepo.GetById(ctx, nil, uid)
 	if err != nil {
 		return err
 	}
-	return s.repo.Delete(ctx, nil, n)
+	return s.newsRepo.Delete(ctx, nil, n)
 }

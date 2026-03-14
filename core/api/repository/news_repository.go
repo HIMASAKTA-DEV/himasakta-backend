@@ -51,7 +51,7 @@ func (r *newsRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.M
 	}
 
 	var news []entity.News
-	tx = tx.WithContext(ctx).Model(&entity.News{}).Preload("Thumbnail").Preload("Author")
+	tx = tx.WithContext(ctx).Model(&entity.News{}).Preload("Thumbnail").Preload("Author").Preload("Hashtags")
 
 	if search != "" {
 		tx = tx.Where("title ILIKE ?", "%"+search+"%")
@@ -93,7 +93,7 @@ func (r *newsRepository) GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID)
 		return entity.News{}, fmt.Errorf("database connection is nil")
 	}
 	var n entity.News
-	if err := tx.WithContext(ctx).Preload("Thumbnail").Preload("Author").Take(&n, "id = ?", id).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Thumbnail").Preload("Author").Preload("Hashtags").Take(&n, "id = ?", id).Error; err != nil {
 		return entity.News{}, err
 	}
 	return n, nil
@@ -107,7 +107,7 @@ func (r *newsRepository) GetBySlug(ctx context.Context, tx *gorm.DB, slug string
 		return entity.News{}, fmt.Errorf("database connection is nil")
 	}
 	var n entity.News
-	if err := tx.WithContext(ctx).Preload("Thumbnail").Preload("Author").Take(&n, "slug = ?", slug).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Thumbnail").Preload("Author").Preload("Hashtags").Take(&n, "slug = ?", slug).Error; err != nil {
 		return entity.News{}, err
 	}
 	return n, nil
