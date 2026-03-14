@@ -34,6 +34,10 @@ func (s *globalSettingService) GetWebSettings(ctx context.Context) (dto.WebSetti
 }
 
 func (s *globalSettingService) UpdateWebSettings(ctx context.Context, settings dto.WebSettings) error {
+	if err := settings.Validate(); err != nil {
+		return err
+	}
+
 	val, err := json.Marshal(settings)
 	if err != nil {
 		return err
