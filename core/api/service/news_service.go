@@ -135,7 +135,7 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 	tx := s.db.Begin()
 
 	uid, _ := uuid.Parse(id)
-	n, err := s.newsRepo.GetById(ctx, nil, uid)
+	n, err := s.newsRepo.GetById(ctx, tx, uid)
 
 	if err != nil {
 		tx.Rollback()
@@ -144,41 +144,48 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 
 	var finalTags []entity.Tag
 	if req.Hashtags != nil {
-
-		hashtags, err := utils.SanitizeHashtags(*req.Hashtags)
-		if err != nil {
-			tx.Rollback()
-			return entity.News{}, err
-		}
-
-		tagEntities, err := utils.SplitHashTags(hashtags)
-		if err != nil {
-			return entity.News{}, err
-		}
-
-		finalTags, err = s.tagRepo.BulkAdd(ctx, tx, tagEntities)
-		if err != nil {
-			tx.Rollback()
-			return entity.News{}, err
-		}
-
-		var newsTag []entity.NewsTag
-
-		for _, tag := range finalTags {
-			newsTag = append(newsTag, entity.NewsTag{
-				NewsId: uid,
-				TagId:  tag.Id,
-			})
-		}
-
+		//bulkdelete
 		if err := s.newsTagRepo.DeleteByNews(ctx, tx, uid); err != nil {
 			tx.Rollback()
 			return entity.News{}, err
 		}
-		if err := s.newsTagRepo.BulkCreate(ctx, tx, newsTag); err != nil {
-			tx.Rollback()
-			return entity.News{}, err
+
+		if *req.Hashtags != "" {
+
+			//create and bulkadd entity.Tags
+			hashtags, err := utils.SanitizeHashtags(*req.Hashtags)
+			if err != nil {
+				tx.Rollback()
+				return entity.News{}, err
+			}
+
+			tagEntities, err := utils.SplitHashTags(hashtags)
+			if err != nil {
+				tx.Rollback()
+				return entity.News{}, err
+			}
+
+			finalTags, err = s.tagRepo.BulkAdd(ctx, tx, tagEntities)
+			if err != nil {
+				tx.Rollback()
+				return entity.News{}, err
+			}
+			//create and bulkcreate entity.NewsTag
+			var newsTag []entity.NewsTag
+
+			for _, tag := range finalTags {
+				newsTag = append(newsTag, entity.NewsTag{
+					NewsId: uid,
+					TagId:  tag.Id,
+				})
+			}
+
+			if err := s.newsTagRepo.BulkCreate(ctx, tx, newsTag); err != nil {
+				tx.Rollback()
+				return entity.News{}, err
+			}
 		}
+		n.Hashtags = finalTags
 	}
 
 	if req.Title != nil {
@@ -188,14 +195,6 @@ func (s *newsService) Update(ctx context.Context, id string, req dto.UpdateNewsR
 	if req.Tagline != nil {
 		n.Tagline = *req.Tagline
 	}
-
-	// if req.Hashtags != nil {
-	// 	hashtags, err := utils.SanitizeHashtags(*req.Hashtags)
-	// 	if err != nil {
-	// 		return n, err
-	// 	}
-	// 	n.Hashtags = hashtags
-	// }
 
 	if req.Content != nil {
 		n.Content = *req.Content
