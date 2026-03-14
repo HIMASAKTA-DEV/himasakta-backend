@@ -2,6 +2,7 @@ package controller
 
 import (
 	"net/http"
+	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/service"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
@@ -21,6 +22,19 @@ func NewAnalyticsController(svc service.AnalyticsService) AnalyticsController {
 	return &analyticsController{svc: svc}
 }
 
+func getClientIP(c *gin.Context) string {
+	if ip := c.GetHeader("X-Vercel-Forwarded-For"); ip != "" {
+		return strings.TrimSpace(strings.Split(ip, ",")[0])
+	}
+	if ip := c.GetHeader("X-Forwarded-For"); ip != "" {
+		return strings.TrimSpace(strings.Split(ip, ",")[0])
+	}
+	if ip := c.GetHeader("X-Real-IP"); ip != "" {
+		return strings.TrimSpace(ip)
+	}
+	return c.ClientIP()
+}
+
 func (ctrl *analyticsController) HandleVisit(c *gin.Context) {
 	visitorId := c.GetHeader("X-Visitor-Id")
 	if visitorId == "" {
@@ -28,7 +42,7 @@ func (ctrl *analyticsController) HandleVisit(c *gin.Context) {
 		return
 	}
 
-	clientIp := c.ClientIP()
+	clientIp := getClientIP(c)
 	status, err := ctrl.svc.TrackVisit(c.Request.Context(), visitorId, clientIp)
 	if err != nil {
 		c.JSON(status, response.NewFailed(err.Error(), nil))
