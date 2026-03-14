@@ -28,9 +28,16 @@ func NewAnalyticsRepository(db *gorm.DB) AnalyticsRepository {
 }
 
 func (r *analyticsRepository) UpsertVisitor(ctx context.Context, visitor entity.Visitor) error {
+	updates := map[string]interface{}{
+		"last_seen_at": visitor.LastSeenAt,
+	}
+	if visitor.ClientIp != "" {
+		updates["client_ip"] = visitor.ClientIp
+	}
+
 	return r.db.WithContext(ctx).Clauses(clause.OnConflict{
 		Columns:   []clause.Column{{Name: "id"}},
-		DoUpdates: clause.Assignments(map[string]interface{}{"last_seen_at": visitor.LastSeenAt, "client_ip": visitor.ClientIp}),
+		DoUpdates: clause.Assignments(updates),
 	}).Create(&visitor).Error
 }
 

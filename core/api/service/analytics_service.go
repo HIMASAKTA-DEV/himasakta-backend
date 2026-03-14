@@ -55,6 +55,11 @@ func (s *analyticsService) TrackVisit(ctx context.Context, visitorId string, cli
 		}
 		if !exists {
 			visitor.CreatedAt = time.Now()
+			
+			// Invalidate cache for new visitor
+			s.cacheMutex.Lock()
+			s.cacheTime = time.Time{} // Force refresh on next GetStats
+			s.cacheMutex.Unlock()
 		}
 		if err := s.repo.UpsertVisitor(bgCtx, visitor); err != nil {
 			mylog.Errorf("Failed to upsert visitor: %v", err)

@@ -37,11 +37,12 @@ func NewRest() (RestConfig, error) {
 	// 	log.Printf("Migration failed: %v", err)
 	// }
 
+	app := gin.Default()
 	if mode := os.Getenv("APP_MODE"); mode == "production" || mode == "release" {
 		gin.SetMode(gin.ReleaseMode)
+		// Trust all proxies on Vercel/proxied environments to get real visitor IP
+		app.SetTrustedProxies(nil)
 	}
-
-	app := gin.Default()
 
 	// Register JSON tag names for validator to use in error messages
 	if v, ok := binding.Validator.Engine().(*validator.Validate); ok {

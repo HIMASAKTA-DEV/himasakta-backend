@@ -1,18 +1,24 @@
 package dto
 
+import "fmt"
+
 type WebSettings struct {
-	ExternalSOPLink    string         `json:"ExternalSOPLink"`
-	InternalSOPLink    string         `json:"InternalSOPLink"`
-	DeskripsiHimpunan  string         `json:"DeskripsiHimpunan"`
-	FotoHimpunan       string         `json:"FotoHimpunan"`
-	SocialMedia       SocialMediaDTO `json:"SocialMedia"`
-	InMaintenance      bool           `json:"InMaintenance"`
+	ExternalSOPLink   string           `json:"ExternalSOPLink"`
+	InternalSOPLink   string           `json:"InternalSOPLink"`
+	DeskripsiHimpunan string           `json:"DeskripsiHimpunan"`
+	FotoHimpunan      string           `json:"FotoHimpunan"`
+	SocialMedia       []SocialMediaDTO `json:"SocialMedia"`
+	InMaintenance     bool             `json:"InMaintenance"`
 }
 
 type SocialMediaDTO struct {
-	Instagram string `json:"instagram"`
-	TikTok    string `json:"tiktok"`
-	YouTube   string `json:"youtube"`
-	LinkedIn  string `json:"linkedin"`
-	Linktree  string `json:"linktree"`
+	Name string `json:"name" binding:"required"`
+	Link string `json:"link" binding:"required"`
+}
+
+func (w WebSettings) Validate() error {
+	if len(w.SocialMedia) > 20 {
+		return fmt.Errorf("social media links cannot exceed 20")
+	}
+	return nil
 }
