@@ -3,7 +3,6 @@ package service
 import (
 	"context"
 	"errors"
-	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
@@ -95,11 +94,21 @@ func (s *newsService) Create(ctx context.Context, req dto.CreateNewsRequest) (en
 }
 
 func (s *newsService) GetAll(ctx context.Context, metaReq meta.Meta, search string, tags string, title string) ([]entity.News, meta.Meta, error) {
-	var tagsList []string
-	if tags != "" {
-		tagsList = strings.Split(tags, ",")
+	hashtags, err := utils.SanitizeHashtags(tags)
+	if err != nil {
+		return []entity.News{}, metaReq, err
 	}
-	return s.newsRepo.GetAll(ctx, nil, metaReq, search, tagsList, title)
+
+	tagEntities, err := utils.SplitHashTags(hashtags)
+	if err != nil {
+		return []entity.News{}, metaReq, err
+	}
+	var tagList []string
+	for _, tag := range tagEntities {
+		tagList = append(tagList, tag.Name)
+	}
+
+	return s.newsRepo.GetAll(ctx, nil, metaReq, search, tagList, title)
 }
 
 func (s *newsService) GetAutocompletion(ctx context.Context, query string) ([]string, error) {
