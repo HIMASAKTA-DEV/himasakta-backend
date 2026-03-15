@@ -111,8 +111,12 @@ func NewRest() (RestConfig, error) {
 	roleService := service.NewRole(roleRepo)
 	roleController := controller.NewRole(roleService)
 
+	globalSettingRepo := repository.NewGlobalSetting(db)
+	globalSettingService := service.NewGlobalSetting(globalSettingRepo)
+	globalSettingController := controller.NewGlobalSetting(globalSettingService)
+
 	jwtService := myjwt.NewJWT()
-	authService := service.NewAuth(jwtService)
+	authService := service.NewAuth(jwtService, globalSettingRepo)
 	authController := controller.NewAuth(authService)
 
 	academicCalendarService := service.NewAcademicCalendar(monthlyEventRepo, timelineRepo)
@@ -124,15 +128,11 @@ func NewRest() (RestConfig, error) {
 	analyticsService := service.NewAnalyticsService(analyticsRepo)
 	analyticsController := controller.NewAnalyticsController(analyticsService)
 
-	globalSettingRepo := repository.NewGlobalSetting(db)
-	globalSettingService := service.NewGlobalSetting(globalSettingRepo)
-	globalSettingController := controller.NewGlobalSetting(globalSettingService)
-
 	m := middleware.New(db)
 
 	// Register all routes
 	server.GET("/", indexController.Index)
-	routes.Auth(server, authController)
+	routes.Auth(server, authController, m)
 	routes.Analytics(server, analyticsController, m)
 	routes.GlobalSetting(server, globalSettingController, m)
 	routes.Gallery(server, galleryController, m)

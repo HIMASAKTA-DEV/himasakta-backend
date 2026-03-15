@@ -2,30 +2,49 @@ package service
 
 import (
 	"context"
+	"encoding/json"
 	"errors"
-	"os"
 
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	myjwt "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/jwt"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type AuthService interface {
 	Login(ctx context.Context, req dto.LoginRequest) (dto.LoginResponse, error)
+	UpdateAuth(ctx context.Context, req dto.LoginRequest) error
 }
 
 type authService struct {
-	jwtService myjwt.JWT
+	jwtService        myjwt.JWT
+	globalSettingRepo repository.GlobalSettingRepository
 }
 
-func NewAuth(jwtService myjwt.JWT) AuthService {
-	return &authService{jwtService: jwtService}
+func NewAuth(jwtService myjwt.JWT, globalSettingRepo repository.GlobalSettingRepository) AuthService {
+	return &authService{
+		jwtService:        jwtService,
+		globalSettingRepo: globalSettingRepo,
+	}
 }
 
 func (s *authService) Login(ctx context.Context, req dto.LoginRequest) (dto.LoginResponse, error) {
-	adminUser := os.Getenv("ADMIN_USERNAME")
-	adminPass := os.Getenv("ADMIN_PASSWORD")
+	rawAuth, err := s.globalSettingRepo.GetByKey(ctx, "auth")
+	if err != nil {
+		return dto.LoginResponse{}, err
+	}
 
-	if req.Username != adminUser || req.Password != adminPass {
+	var auth dto.LoginRequest
+	err = json.Unmarshal([]byte(rawAuth.Value), &auth)
+	if err != nil {
+		return dto.LoginResponse{}, err
+	}
+
+	if req.Username != auth.Username {
+		return dto.LoginResponse{}, errors.New("invalid username or password")
+	}
+	if err := bcrypt.CompareHashAndPassword([]byte(auth.Password), []byte(req.Password)); err != nil {
 		return dto.LoginResponse{}, errors.New("invalid username or password")
 	}
 
@@ -37,4 +56,26 @@ func (s *authService) Login(ctx context.Context, req dto.LoginRequest) (dto.Logi
 	return dto.LoginResponse{
 		Token: token,
 	}, nil
+}
+
+func (s *authService) UpdateAuth(ctx context.Context, req dto.LoginRequest) error {
+	newUser := req.Username
+	newPass := req.Password
+
+	hash, _ := bcrypt.GenerateFromPassword([]byte(newPass), bcrypt.DefaultCost)
+
+	err := s.globalSettingRepo.Upsert(ctx, entity.GlobalSetting{
+		Key: "auth",
+		Value: `{
+			"username": "` + newUser + `",
+			"password": "` + string(hash) + `"
+
+		}`,
+	})
+
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
