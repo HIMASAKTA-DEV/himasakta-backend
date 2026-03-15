@@ -3,7 +3,6 @@ package repository
 import (
 	"context"
 	"fmt"
-	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
@@ -58,13 +57,15 @@ func (r *newsRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.M
 	}
 
 	if len(categories) > 0 {
-		var tagConditions []string
-		var tagValues []interface{}
-		for _, tag := range categories {
-			tagConditions = append(tagConditions, "hashtags ILIKE ?")
-			tagValues = append(tagValues, "%"+tag+"%")
-		}
-		tx = tx.Where(fmt.Sprintf("(%s)", strings.Join(tagConditions, " OR ")), tagValues...)
+		// var tagConditions []string
+		// var tagValues []interface{}
+		// for _, tag := range categories {
+		// 	tagConditions = append(tagConditions, "hashtags ILIKE ?")
+		// 	tagValues = append(tagValues, "%"+tag+"%")
+		// }
+		// tx = tx.Where(fmt.Sprintf("(%s)", strings.Join(tagConditions, " OR ")), tagValues...)
+		//return []entity.News{}, metaReq, fmt.Errorf("tes")
+		tx = tx.Joins("JOIN news_tags ON news_tags.news_id = news.id").Joins("JOIN tags ON tags.id = news_tags.tag_id").Where("tags.name IN ?", categories).Distinct()
 	}
 
 	if metaReq.SortBy == "" {
