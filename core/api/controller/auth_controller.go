@@ -9,6 +9,7 @@ import (
 
 type AuthController interface {
 	Login(ctx *gin.Context)
+	UpdateAuth(ctx *gin.Context)
 }
 
 type authController struct {
@@ -33,4 +34,20 @@ func (c *authController) Login(ctx *gin.Context) {
 	}
 
 	response.NewSuccess("login success", res).Send(ctx)
+}
+
+func (c *authController) UpdateAuth(ctx *gin.Context) {
+	var req dto.LoginRequest
+	if err := ctx.ShouldBindJSON(&req); err != nil {
+		response.NewFailedWithCode(400, "invalid request body", err).Send(ctx)
+		return
+	}
+
+	err := c.authService.UpdateAuth(ctx.Request.Context(), req)
+	if err != nil {
+		response.NewFailedWithCode(401, "update failed", err).Send(ctx)
+		return
+	}
+
+	response.NewSuccess("update success", nil).Send(ctx)
 }

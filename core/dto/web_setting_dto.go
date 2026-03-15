@@ -11,6 +11,11 @@ type WebSettings struct {
 	InMaintenance     bool             `json:"InMaintenance"`
 }
 
+type AuthSettings struct {
+	Username string `json:"Username"`
+	Password string `json:"Password"`
+}
+
 type SocialMediaDTO struct {
 	Name string `json:"name" binding:"required"`
 	Link string `json:"link" binding:"required"`
