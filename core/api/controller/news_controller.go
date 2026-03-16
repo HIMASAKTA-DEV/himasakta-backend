@@ -15,6 +15,7 @@ type NewsController interface {
 	Update(ctx *gin.Context)
 	Delete(ctx *gin.Context)
 	Autocompletion(ctx *gin.Context)
+	GetAllTags(ctx *gin.Context)
 }
 
 type newsController struct {
@@ -91,4 +92,15 @@ func (c *newsController) Delete(ctx *gin.Context) {
 		return
 	}
 	response.NewSuccess("success delete news", nil).Send(ctx)
+}
+
+func (c *newsController) GetAllTags(ctx *gin.Context) {
+	search := ctx.Query("search")
+	res, m, err := c.service.GetAllTags(ctx.Request.Context(), meta.New(ctx), search)
+	if err != nil {
+		response.NewFailed("failed get news", err).Send(ctx)
+		return
+	}
+
+	response.NewSuccess("success get tags", res, m).Send(ctx)
 }
