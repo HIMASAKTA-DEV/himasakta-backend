@@ -3,6 +3,7 @@ package service
 import (
 	"context"
 	"errors"
+	"strings"
 
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/repository"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
@@ -21,6 +22,7 @@ type NewsService interface {
 	Update(ctx context.Context, id string, req dto.UpdateNewsRequest) (entity.News, error)
 	Delete(ctx context.Context, id string) error
 	GetAutocompletion(ctx context.Context, query string) ([]string, error)
+	GetAllTags(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Tag, meta.Meta, error)
 }
 
 type newsService struct {
@@ -237,4 +239,14 @@ func (s *newsService) Delete(ctx context.Context, id string) error {
 		return err
 	}
 	return s.newsRepo.Delete(ctx, nil, n)
+}
+
+func (s *newsService) GetAllTags(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Tag, meta.Meta, error) {
+	t := strings.TrimPrefix(search, "#")
+	res, metaReq, err := s.tagRepo.GetAll(ctx, nil, metaReq, t)
+	if err != nil {
+		return []entity.Tag{}, metaReq, err
+	}
+
+	return res, metaReq, nil
 }

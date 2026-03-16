@@ -11,7 +11,8 @@ func News(app *gin.Engine, c controller.NewsController, m middleware.Middleware)
 	{
 		r.GET("", c.GetAll)
 		r.GET("/autocompletion", c.Autocompletion)
-		r.GET("/:slug", c.GetById)
+		r.GET("/s/:slug", c.GetById)
+		r.GET("/tags", c.GetAllTags)
 
 		p := r.Group("")
 		p.Use(m.AuthMiddleware(), m.OnlyAllow("superadmin"))

@@ -94,9 +94,6 @@ func NewRest() (RestConfig, error) {
 	monthlyEventController := controller.NewMonthlyEvent(monthlyEventService)
 
 	tagRepo := repository.NewTag(db)
-	tagService := service.NewTag(tagRepo)
-	tagController := controller.NewTag(tagService)
-
 	newsRepo := repository.NewNews(db)
 	newsTagRepo := repository.NewNewsTag(db)
 	newsService := service.NewNews(db, newsRepo, newsTagRepo, tagRepo)
@@ -145,7 +142,7 @@ func NewRest() (RestConfig, error) {
 	routes.NrpWhitelist(server, nrpWhitelistController, m)
 	routes.Role(server, roleController, m)
 	routes.AcademicCalendar(server, academicCalendarController)
-	routes.Tag(server, tagController)
+	//routes.Tag(server, tagController)
 
 	return RestConfig{
 		server: server,
