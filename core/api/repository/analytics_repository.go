@@ -50,6 +50,8 @@ func (r *analyticsRepository) GetStats(ctx context.Context) (dto.AnalyticsStatsR
 	r.db.WithContext(ctx).Model(&entity.Progenda{}).Count(&stats.ActiveProgendaCount) // Assuming all are active for now
 	r.db.WithContext(ctx).Model(&entity.MonthlyEvent{}).Count(&stats.ActiveMonthlyEventCount)
 	r.db.WithContext(ctx).Model(&entity.Member{}).Count(&stats.ActiveAnggotaCount)
+	r.db.WithContext(ctx).Model(&entity.Gallery{}).Count(&stats.ActiveGalleryCount)
+	r.db.WithContext(ctx).Model(&entity.NrpWhitelist{}).Count(&stats.ActiveNRPWhitelistCount)
 
 	return stats, nil
 }

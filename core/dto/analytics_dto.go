@@ -13,6 +13,8 @@ type AnalyticsStatsResponse struct {
 	ActiveProgendaCount      int64                `json:"ActiveProgendaCount"`
 	ActiveMonthlyEventCount int64                `json:"ActiveMonthlyEventCount"`
 	ActiveAnggotaCount      int64                `json:"ActiveAnggotaCount"`
+	ActiveGalleryCount      int64                `json:"ActiveGalleryCount"`
+	ActiveNRPWhitelistCount int64                `json:"ActiveNRPWhitelistCount"`
 	NewVisitorsGraph        []VisitorsGraphPoint `json:"NewVisitorsGraph"`
 }
 
