@@ -1,7 +1,7 @@
 package middleware
 
 import (
-	"fmt"
+	"log"
 	"net/http"
 	"strings"
 
@@ -35,8 +35,8 @@ func (m Middleware) OnlyAllow(roles ...string) gin.HandlerFunc {
 			}
 		}
 
-		fmt.Println(userRole)
-		fmt.Println(roles)
+		log.Println(userRole)
+		log.Println(roles)
 
 		res := response.NewFailed(MESSAGE_USER_NOT_AUTHORIZED, ErrRoleNotAllowed)
 		res.SendWithAbort(ctx)
@@ -68,7 +68,9 @@ func (m Middleware) AuthMiddleware() gin.HandlerFunc {
 				return
 			}
 
-			res := response.NewFailed(MESSAGE_FAILED_VERIFY_TOKEN, myerror.ErrGeneral)
+
+			log.Printf("verify token error: %v\n", err)
+			res := response.NewFailed(MESSAGE_FAILED_VERIFY_TOKEN, ErrTokenInvalid)
 			res.SendWithAbort(ctx)
 			return
 		}
@@ -99,6 +101,7 @@ func (m Middleware) OptionalAuthMiddleware() gin.HandlerFunc {
 
 		idToken, err := m.jwtService.GetClaims(authHeader)
 		if err != nil {
+			log.Printf("optional verify token error: %v\n", err)
 			ctx.Next()
 			return
 		}
