@@ -17,11 +17,12 @@ type NrpWhitelistController interface {
 }
 
 type nrpWhitelistController struct {
-	service service.NrpWhitelistService
+	service           service.NrpWhitelistService
+	departmentService service.DepartmentService
 }
 
-func NewNrpWhitelist(s service.NrpWhitelistService) NrpWhitelistController {
-	return &nrpWhitelistController{s}
+func NewNrpWhitelist(s service.NrpWhitelistService, ds service.DepartmentService) NrpWhitelistController {
+	return &nrpWhitelistController{s, ds}
 }
 
 func (c *nrpWhitelistController) CheckWhitelist(ctx *gin.Context) {
@@ -37,8 +38,22 @@ func (c *nrpWhitelistController) CheckWhitelist(ctx *gin.Context) {
 		response.NewFailedWithCode(403, "NRP is not allowed", err).Send(ctx)
 		return
 	}
-	response.NewSuccess("NRP is allowed", res).Send(ctx)
 
+	if req.DepartmentId != "" {
+		dept, err := c.departmentService.GetByIdContent(ctx.Request.Context(), req.DepartmentId)
+		if err != nil {
+			response.NewFailedWithCode(404, "department id is invalid or not found", err).Send(ctx)
+			return
+		}
+
+		response.NewSuccess("NRP is allowed", gin.H{
+			"whitelist":  res,
+			"department": dept,
+		}).Send(ctx)
+		return
+	}
+
+	response.NewSuccess("NRP is allowed", res).Send(ctx)
 }
 
 func (c *nrpWhitelistController) Create(ctx *gin.Context) {

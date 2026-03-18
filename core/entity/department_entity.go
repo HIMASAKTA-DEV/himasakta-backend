@@ -9,7 +9,9 @@ type Department struct {
 	Description     string     `gorm:"type:text" json:"description"`
 	LogoId          *uuid.UUID `gorm:"type:uuid;index" json:"logo_id"`
 	Logo            *Gallery   `gorm:"foreignKey:LogoId;constraint:OnDelete:SET NULL" json:"logo"`
-	SocialMediaLink string     `gorm:"type:varchar(255)" json:"social_media_link"`
+	InstagramLink   string     `gorm:"type:varchar(255)" json:"instagram_link"`
+	YoutubeLink     string     `gorm:"type:varchar(255)" json:"youtube_link"`
+	TwitterLink     string     `gorm:"type:varchar(255)" json:"twitter_link"`
 	BankSoalLink    string     `gorm:"type:varchar(255)" json:"bank_soal_link"`
 	SilabusLink     string     `gorm:"type:varchar(255)" json:"silabus_link"`
 	BankRefLink     string     `gorm:"type:varchar(255)" json:"bank_ref_link"`

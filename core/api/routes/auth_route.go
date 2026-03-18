@@ -10,6 +10,7 @@ func Auth(app *gin.Engine, authController controller.AuthController, m middlewar
 	routes := app.Group("/api/v1/auth")
 	{
 		routes.POST("/login", authController.Login)
+		routes.POST("/validate", m.AuthMiddleware(), authController.Validate)
 
 		p := routes.Group("")
 		p.Use(m.AuthMiddleware(), m.OnlyAllow("superadmin"))

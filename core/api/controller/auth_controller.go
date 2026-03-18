@@ -10,6 +10,7 @@ import (
 type AuthController interface {
 	Login(ctx *gin.Context)
 	UpdateAuth(ctx *gin.Context)
+	Validate(ctx *gin.Context)
 }
 
 type authController struct {
@@ -50,4 +51,8 @@ func (c *authController) UpdateAuth(ctx *gin.Context) {
 	}
 
 	response.NewSuccess("update success", nil).Send(ctx)
+}
+
+func (c *authController) Validate(ctx *gin.Context) {
+	response.NewSuccess("token is valid", nil).Send(ctx)
 }

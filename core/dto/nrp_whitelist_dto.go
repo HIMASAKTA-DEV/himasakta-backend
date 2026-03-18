@@ -11,5 +11,6 @@ type UpdateNrpWhitelistRequest struct {
 }
 
 type CheckNrpWhitelistRequest struct {
-	Nrp string `json:"nrp" binding:"required"`
+	Nrp          string `json:"nrp" binding:"required"`
+	DepartmentId string `json:"departmentid"`
 }

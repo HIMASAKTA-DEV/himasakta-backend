@@ -102,7 +102,7 @@ func NewRest() (RestConfig, error) {
 	// ... existing injections ...
 	nrpWhitelistRepo := repository.NewNrpWhitelist(db)
 	nrpWhitelistService := service.NewNrpWhitelist(nrpWhitelistRepo)
-	nrpWhitelistController := controller.NewNrpWhitelist(nrpWhitelistService)
+	nrpWhitelistController := controller.NewNrpWhitelist(nrpWhitelistService, deptService)
 
 	roleRepo := repository.NewRole(db)
 	roleService := service.NewRole(roleRepo)

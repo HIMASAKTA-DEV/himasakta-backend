@@ -401,6 +401,12 @@
             },
             {
               method: "POST",
+              path: "/auth/validate",
+              desc: "Validate JWT token (no body needed)",
+              resp: '{\n  "success": true,\n  "message": "token is valid",\n  "data": null\n}',
+            },
+            {
+              method: "POST",
               path: "/auth/update",
               desc: "Update username and password",
               body: '{\n  "username": "admin",\n  "password": "admin"\n}',
@@ -474,7 +480,7 @@
                 { name: "sort", ph: "asc" },
                 { name: "sort_by", ph: "id" },
               ],
-              resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "name": "Kaderisasi",\n      "description": "...",\n      "logo_id": "uuid",\n      "logo": { ... },\n      "social_media_link": "...",\n      "bank_soal_link": "...",\n      "silabus_link": "...",\n      "bank_ref_link": "...",\n      "leader_id": "uuid",\n      "leader": { ... },\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
+              resp: '{\n  "success": true,\n  "data": [\n    {\n      "id": "uuid",\n      "name": "Kaderisasi",\n      "description": "...",\n      "logo_id": "uuid",\n      "logo": { ... },\n      "instagram_link": "...",\n      "youtube_link": "...",\n      "twitter_link": "...",\n      "bank_soal_link": "...",\n      "silabus_link": "...",\n      "bank_ref_link": "...",\n      "leader_id": "uuid",\n      "leader": { ... },\n      "created_at": "...",\n      "updated_at": "..."\n    }\n  ],\n  "meta": { ... }\n}',
             },
             {
               method: "GET",
@@ -487,7 +493,7 @@
               method: "POST",
               path: "/department",
               desc: "Create department",
-              body: '{\n  "name": "Kaderisasi",\n  "description": "Departemen kaderisasi",\n  "logo_id": null,\n  "leader_id": "uuid-of-member",\n  "social_media_link": "",\n  "bank_soal_link": "",\n  "silabus_link": "",\n  "bank_ref_link": ""\n}',
+              body: '{\n  "name": "Kaderisasi",\n  "description": "Departemen kaderisasi",\n  "logo_id": null,\n  "leader_id": "uuid-of-member",\n  "instagram_link": "",\n  "youtube_link": "",\n  "twitter_link": "",\n  "bank_soal_link": "",\n  "silabus_link": "",\n  "bank_ref_link": ""\n}',
               resp: '{\n  "success": true,\n  "message": "success create department",\n  "data": { "id": "uuid", "name": "Kaderisasi", "leader_id": "...", ... }\n}',
             },
             {
@@ -495,7 +501,7 @@
               path: "/department/:id",
               desc: "Update department",
               hasParams: true,
-              body: '{\n  "name": "Updated Name",\n  "description": "Updated desc",\n  "logo_id": "uuid-of-gallery",\n  "leader_id": "uuid-of-member",\n  "social_media_link": "https://...",\n  "bank_soal_link": "https://...",\n  "silabus_link": "https://...",\n  "bank_ref_link": "https://..."\n}',
+              body: '{\n  "name": "Updated Name",\n  "description": "Updated desc",\n  "logo_id": "uuid-of-gallery",\n  "leader_id": "uuid-of-member",\n  "instagram_link": "https://...",\n  "youtube_link": "https://...",\n  "twitter_link": "https://...",\n  "bank_soal_link": "https://...",\n  "silabus_link": "https://...",\n  "bank_ref_link": "https://..."\n}',
               resp: '{\n  "success": true,\n  "data": { ... }\n}',
             },
             {
@@ -913,9 +919,9 @@
             {
               method: "POST",
               path: "/nrp-whitelist",
-              desc: "Check if NRP is allowed",
-              body: '{\n  "nrp": "5025211014"\n}',
-              resp: '{\n  "success": true,\n  "message": "NRP is allowed",\n  "data": null\n}',
+              desc: "Check if NRP is allowed to access sensitive data",
+              body: '{\n  "nrp": "123456",\n  "departmentid": "optional-uuid"\n}',
+              resp: '{\n  "success": true,\n  "message": "NRP is allowed",\n  "data": {\n    "whitelist": { ... result ... },\n    "department": { ... department info if departmentid provided ... }\n  }\n}',
             },
             {
               method: "DELETE",

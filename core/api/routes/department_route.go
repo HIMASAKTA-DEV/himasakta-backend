@@ -9,8 +9,8 @@ import (
 func Department(app *gin.Engine, c controller.DepartmentController, m middleware.Middleware) {
 	r := app.Group("/api/v1/department")
 	{
-		r.GET("", c.GetAll)
-		r.GET("/:name", c.GetById)
+		r.GET("", m.OptionalAuthMiddleware(), c.GetAll)
+		r.GET("/:name", m.OptionalAuthMiddleware(), c.GetById)
 
 		p := r.Group("")
 		p.Use(m.AuthMiddleware(), m.OnlyAllow("superadmin"))

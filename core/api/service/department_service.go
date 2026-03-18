@@ -33,7 +33,9 @@ func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartment
 		Name:            req.Name,
 		Description:     req.Description,
 		LogoId:          req.LogoId.ID,
-		SocialMediaLink: req.SocialMediaLink,
+		InstagramLink:   req.InstagramLink,
+		YoutubeLink:     req.YoutubeLink,
+		TwitterLink:     req.TwitterLink,
 		BankSoalLink:    req.BankSoalLink,
 		SilabusLink:     req.SilabusLink,
 		BankRefLink:     req.BankRefLink,
@@ -88,8 +90,14 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 		d.LogoId = req.LogoId.ID
 		d.Logo = nil
 	}
-	if req.SocialMediaLink != nil {
-		d.SocialMediaLink = *req.SocialMediaLink
+	if req.InstagramLink != nil {
+		d.InstagramLink = *req.InstagramLink
+	}
+	if req.YoutubeLink != nil {
+		d.YoutubeLink = *req.YoutubeLink
+	}
+	if req.TwitterLink != nil {
+		d.TwitterLink = *req.TwitterLink
 	}
 	if req.BankSoalLink != nil {
 		d.BankSoalLink = *req.BankSoalLink

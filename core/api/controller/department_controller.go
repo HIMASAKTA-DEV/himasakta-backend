@@ -45,6 +45,14 @@ func (c *departmentController) GetAll(ctx *gin.Context) {
 		response.NewFailed("failed get departments", err).Send(ctx)
 		return
 	}
+
+	role := ctx.GetString("role")
+	if role != "superadmin" {
+		for i := range res {
+			res[i].BankRefLink = ""
+		}
+	}
+
 	response.NewSuccess("success get departments", res, m).Send(ctx)
 }
 
@@ -54,6 +62,12 @@ func (c *departmentController) GetById(ctx *gin.Context) {
 		response.NewFailed("failed get department", err).Send(ctx)
 		return
 	}
+
+	role := ctx.GetString("role")
+	if role != "superadmin" {
+		res.BankRefLink = ""
+	}
+
 	response.NewSuccess("success get department", res).Send(ctx)
 }
 
