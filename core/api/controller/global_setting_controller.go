@@ -25,7 +25,7 @@ func NewGlobalSetting(svc service.GlobalSettingService) GlobalSettingController 
 func (ctrl *globalSettingController) GetWebSettings(c *gin.Context) {
 	settings, err := ctrl.svc.GetWebSettings(c.Request.Context())
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, response.NewFailed(err.Error(), nil))
+		c.JSON(http.StatusInternalServerError, response.NewFailed("failed get web settings", err))
 		return
 	}
 
@@ -35,12 +35,12 @@ func (ctrl *globalSettingController) GetWebSettings(c *gin.Context) {
 func (ctrl *globalSettingController) UpdateWebSettings(c *gin.Context) {
 	var req dto.WebSettings
 	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, response.NewFailed(err.Error(), nil))
+		c.JSON(http.StatusBadRequest, response.NewFailed("invalid request body", err))
 		return
 	}
 
 	if err := ctrl.svc.UpdateWebSettings(c.Request.Context(), req); err != nil {
-		c.JSON(http.StatusInternalServerError, response.NewFailed(err.Error(), nil))
+		c.JSON(http.StatusInternalServerError, response.NewFailed("failed update web settings", err))
 		return
 	}
 

@@ -8,6 +8,10 @@ import (
 )
 
 func ParseValidationError(err error) string {
+	if err == nil {
+		return ""
+	}
+
 	if errs, ok := err.(validator.ValidationErrors); ok {
 		var errMsgs []string
 		for _, e := range errs {
