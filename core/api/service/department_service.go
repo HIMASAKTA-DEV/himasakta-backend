@@ -50,15 +50,15 @@ func (s *departmentService) GetAll(ctx context.Context, metaReq meta.Meta, name 
 	return s.repo.GetAll(ctx, nil, metaReq, name)
 }
 
-func (s *departmentService) GetByIdContent(ctx context.Context, idOrName string) (entity.Department, error) {
+func (s *departmentService) GetByIdContent(ctx context.Context, idOrSlug string) (entity.Department, error) {
 	var d entity.Department
 	var err error
 
-	uid, parseErr := uuid.Parse(idOrName)
+	uid, parseErr := uuid.Parse(idOrSlug)
 	if parseErr == nil {
 		d, err = s.repo.GetById(ctx, nil, uid)
 	} else {
-		d, err = s.repo.GetBySlug(ctx, nil, idOrName)
+		d, err = s.repo.GetBySlug(ctx, nil, idOrSlug)
 	}
 
 	if err != nil {

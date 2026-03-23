@@ -57,7 +57,7 @@ func (c *departmentController) GetAll(ctx *gin.Context) {
 }
 
 func (c *departmentController) GetById(ctx *gin.Context) {
-	res, err := c.service.GetByIdContent(ctx.Request.Context(), ctx.Param("name"))
+	res, err := c.service.GetByIdContent(ctx.Request.Context(), ctx.Param("slug"))
 	if err != nil {
 		response.NewFailed("failed get department", err).Send(ctx)
 		return
