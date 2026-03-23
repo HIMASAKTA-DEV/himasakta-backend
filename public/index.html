@@ -484,10 +484,10 @@
             },
             {
               method: "GET",
-              path: "/department/:name",
-              desc: "Get department by Name or ID",
+              path: "/department/:slug",
+              desc: "Get department by Slug or ID",
               hasParams: true,
-              resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "description": "...", "leader_id": "uuid", "leader": { ... }, ... }\n}',
+              resp: '{\n  "success": true,\n  "data": { "id": "uuid", "name": "...", "slug": "...", "description": "...", "leader_id": "uuid", "leader": { ... }, ... }\n}',
             },
             {
               method: "POST",

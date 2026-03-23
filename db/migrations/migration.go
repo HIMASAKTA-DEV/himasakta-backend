@@ -1,15 +1,15 @@
 package migrations
 
 import (
-	"fmt"
-
+	"log"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
+	//"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"gorm.io/gorm"
 )
 
 func Migrate(db *gorm.DB) error {
-	fmt.Println(mylog.ColorizeInfo("\n=========== Start Migrate ==========="))
+	log.Println(mylog.ColorizeInfo("\n=========== Start Migrate ==========="))
 
 	mylog.Infof("Migrating Tables...")
 

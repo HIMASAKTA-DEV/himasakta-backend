@@ -14,7 +14,7 @@ type DepartmentRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, department entity.Department) (entity.Department, error)
 	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entity.Department, error)
-	GetByName(ctx context.Context, tx *gorm.DB, name string) (entity.Department, error)
+	GetBySlug(ctx context.Context, tx *gorm.DB, slug string) (entity.Department, error)
 	Update(ctx context.Context, tx *gorm.DB, department entity.Department) (entity.Department, error)
 	Delete(ctx context.Context, tx *gorm.DB, department entity.Department) error
 }
@@ -74,7 +74,7 @@ func (r *departmentRepository) GetById(ctx context.Context, tx *gorm.DB, id uuid
 	return d, nil
 }
 
-func (r *departmentRepository) GetByName(ctx context.Context, tx *gorm.DB, name string) (entity.Department, error) {
+func (r *departmentRepository) GetBySlug(ctx context.Context, tx *gorm.DB, slug string) (entity.Department, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -82,7 +82,7 @@ func (r *departmentRepository) GetByName(ctx context.Context, tx *gorm.DB, name 
 		return entity.Department{}, fmt.Errorf("database connection is nil")
 	}
 	var d entity.Department
-	if err := tx.WithContext(ctx).Preload("Logo").Preload("Leader").Preload("Feeds").Take(&d, "name = ?", name).Error; err != nil {
+	if err := tx.WithContext(ctx).Preload("Logo").Preload("Leader").Preload("Feeds").Take(&d, "slug = ?", slug).Error; err != nil {
 		return entity.Department{}, err
 	}
 	return d, nil

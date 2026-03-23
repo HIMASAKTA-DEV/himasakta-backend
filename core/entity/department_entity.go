@@ -6,6 +6,7 @@ type Department struct {
 	Timestamp
 	Id              uuid.UUID  `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
 	Name            string     `gorm:"type:varchar(255);not null;unique" json:"name"`
+	Slug            string     `gorm:"type:varchar(255);not null;unique" json:"slug"`
 	Description     string     `gorm:"type:text" json:"description"`
 	LogoId          *uuid.UUID `gorm:"type:uuid;index" json:"logo_id"`
 	Logo            *Gallery   `gorm:"foreignKey:LogoId;constraint:OnDelete:SET NULL" json:"logo"`

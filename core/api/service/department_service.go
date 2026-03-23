@@ -9,6 +9,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	myerror "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/error"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
 )
@@ -31,6 +32,7 @@ func NewDepartment(repo repository.DepartmentRepository) DepartmentService {
 func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartmentRequest) (entity.Department, error) {
 	res, err := s.repo.Create(ctx, nil, entity.Department{
 		Name:            req.Name,
+		Slug:            utils.ToSlug(req.Name),
 		Description:     req.Description,
 		LogoId:          req.LogoId.ID,
 		InstagramLink:   req.InstagramLink,
@@ -56,7 +58,7 @@ func (s *departmentService) GetByIdContent(ctx context.Context, idOrName string)
 	if parseErr == nil {
 		d, err = s.repo.GetById(ctx, nil, uid)
 	} else {
-		d, err = s.repo.GetByName(ctx, nil, idOrName)
+		d, err = s.repo.GetBySlug(ctx, nil, idOrName)
 	}
 
 	if err != nil {
@@ -82,6 +84,7 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 
 	if req.Name != nil {
 		d.Name = *req.Name
+		d.Slug = utils.ToSlug(*req.Name)
 	}
 	if req.Description != nil {
 		d.Description = *req.Description
