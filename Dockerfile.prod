@@ -31,4 +31,4 @@ COPY --from=builder /app/core/pkg/email/template ./core/pkg/email/template
 EXPOSE 8012
 
 # Run binary
-CMD ["./main"]
+CMD ["./main", "--migrate"]
