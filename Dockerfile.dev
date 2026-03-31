@@ -15,7 +15,6 @@ RUN go mod download
 COPY . .
 
 # Create necessary directories
-RUN mkdir -p /app/assets/image
 RUN mkdir -p /app/assets/uploads
 
 # Expose port 8811 to the outside world

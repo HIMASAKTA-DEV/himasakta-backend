@@ -24,6 +24,8 @@ COPY --from=builder /app/main .
 
 COPY --from=builder /app/assets/uploads ./assets/uploads
 
+COPY --from=builder /app/public ./public
+
 COPY --from=builder /app/core/pkg/email/template ./core/pkg/email/template
 
 EXPOSE 8012
