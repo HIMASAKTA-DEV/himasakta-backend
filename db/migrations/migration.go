@@ -17,23 +17,32 @@ func Migrate(db *gorm.DB) error {
 		return err
 	}
 
-	// migrate table
-	if err := db.AutoMigrate(
-		&entity.Gallery{},
+	allEntities := []interface{}{
+		&entity.Role{},
 		&entity.Department{},
 		&entity.CabinetInfo{},
-		&entity.Member{},
-		&entity.Progenda{},
-		&entity.MonthlyEvent{},
-		&entity.News{},
-		&entity.NrpWhitelist{},
-		&entity.Timeline{},
-		&entity.Role{},
-		&entity.Visitor{},
 		&entity.GlobalSetting{},
+		&entity.NrpWhitelist{},
+		&entity.Visitor{},
+		&entity.MonthlyEvent{},
 		&entity.Tag{},
+		&entity.Gallery{},
+		&entity.Progenda{},
+		&entity.Timeline{},
+		&entity.Member{},
+		&entity.News{},
 		&entity.NewsTag{},
-	); err != nil {
+	}
+
+	// Phase 1: Create all tables without FK constraints (handles circular Gallery↔Progenda)
+	db.Config.DisableForeignKeyConstraintWhenMigrating = true
+	if err := db.AutoMigrate(allEntities...); err != nil {
+		return err
+	}
+
+	// Phase 2: Re-run with FKs enabled to add foreign key constraints
+	db.Config.DisableForeignKeyConstraintWhenMigrating = false
+	if err := db.AutoMigrate(allEntities...); err != nil {
 		return err
 	}
 
