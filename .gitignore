@@ -12,3 +12,4 @@ Dokumentasi-Flexoo-Template
 .env*.local
 
 vps
+.ssh

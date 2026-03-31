@@ -29,11 +29,11 @@ jobs:
             fi
 
             cd $APP_DIR
-            git fetch origin main
-            git reset --hard origin/main
+
+            git pull origin main
 
             cd "$HOME/himasakta-app"
 
-            sudo docker compose down backend
-            sudo docker compose up -d --build backend
+            sudo docker compose -p group2 down
+            sudo docker compose -p group2 up -d --build
           EOF
