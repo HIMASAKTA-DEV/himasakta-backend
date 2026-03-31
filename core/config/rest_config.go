@@ -57,17 +57,17 @@ func NewRest() (RestConfig, error) {
 
 	app.Use(gzip.Gzip(gzip.DefaultCompression))
 
-	s3, err := storage.NewAwsS3()
+	fileStorage, err := storage.NewFileStorage()
 	if err != nil {
 		return RestConfig{}, fmt.Errorf("storage initialization failed: %w", err)
 	}
-	server := NewRouter(app, s3)
+	server := NewRouter(app, fileStorage)
 	_ = middleware.New(db)
 
 	// Injections
 	galleryRepo := repository.NewGallery(db)
 	galleryService := service.NewGallery(galleryRepo)
-	galleryController := controller.NewGallery(galleryService, s3)
+	galleryController := controller.NewGallery(galleryService, fileStorage)
 
 	deptRepo := repository.NewDepartment(db)
 	deptService := service.NewDepartment(deptRepo)

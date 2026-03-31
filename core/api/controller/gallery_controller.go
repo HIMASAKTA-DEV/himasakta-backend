@@ -22,11 +22,11 @@ type GalleryController interface {
 
 type galleryController struct {
 	galleryService service.GalleryService
-	s3Storage      storage.AwsS3
+	storage        storage.FileStorage
 }
 
-func NewGallery(galleryService service.GalleryService, s3Storage storage.AwsS3) GalleryController {
-	return &galleryController{galleryService, s3Storage}
+func NewGallery(galleryService service.GalleryService, fileStorage storage.FileStorage) GalleryController {
+	return &galleryController{galleryService, fileStorage}
 }
 
 func (c *galleryController) Create(ctx *gin.Context) {
@@ -70,14 +70,14 @@ func (c *galleryController) Create(ctx *gin.Context) {
 
 	// Upload to S3
 	filename := fmt.Sprintf("%s-%s", uuid.New().String(), file.Filename)
-	objectKey, err := c.s3Storage.UploadFile(filename, file, "gallery",
+	objectKey, err := c.storage.UploadFile(filename, file, "gallery",
 		"image/jpeg", "image/png", "image/webp", "image/gif", "image/heif", "image/heic", "image/bmp", "image/tiff", "image/avif")
 	if err != nil {
 		response.NewFailed("failed to upload image to storage", err).Send(ctx)
 		return
 	}
 
-	imageUrl := c.s3Storage.GetPublicLink(objectKey)
+	imageUrl := c.storage.GetPublicLink(objectKey)
 
 	req := dto.CreateGalleryRequest{
 		ImageUrl:     imageUrl,
@@ -91,7 +91,7 @@ func (c *galleryController) Create(ctx *gin.Context) {
 	result, err := c.galleryService.Create(ctx.Request.Context(), req)
 	if err != nil {
 		// Attempt to cleanup uploaded file if db creation fails
-		_ = c.s3Storage.DeleteFile(objectKey)
+		_ = c.storage.DeleteFile(objectKey)
 		response.NewFailed("failed create gallery", err).Send(ctx)
 		return
 	}

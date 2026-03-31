@@ -13,11 +13,11 @@ import (
 func New() *gorm.DB {
 	var DBDSN string
 
-	// Vercel / Supabase integration usually provides POSTGRES_URL
+	// Full connection string (e.g. Supabase, Vercel, or custom)
 	if postgresURL := os.Getenv("POSTGRES_URL"); postgresURL != "" {
 		DBDSN = postgresURL
 	} else if pgHost := os.Getenv("POSTGRES_HOST"); pgHost != "" {
-		// Individual POSTGRES_* variables from Vercel/Supabase
+		// Individual POSTGRES_* variables
 		DBDSN = fmt.Sprintf(
 			"host=%s user=%s password=%s dbname=%s port=%s sslmode=%s",
 			pgHost,

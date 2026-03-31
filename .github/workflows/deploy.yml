@@ -1,0 +1,39 @@
+name: Deploy Backend
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Setup SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.SSH_PRIVATE_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Deploy
+        run: |
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+            set -e
+
+            APP_DIR=$HOME/himasakta-app/backend
+
+            if [ ! -d "$APP_DIR" ]; then
+              git clone https://github.com/HIMASAKTA-DEV/himasakta-backend.git $APP_DIR
+            fi
+
+            cd $APP_DIR
+            git fetch origin main
+            git reset --hard origin/main
+
+            cd "$HOME/himasakta-app"
+
+            sudo docker compose down backend
+            sudo docker compose up -d --build backend
+          EOF

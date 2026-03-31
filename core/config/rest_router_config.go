@@ -13,7 +13,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func NewRouter(server *gin.Engine, s3 storage.AwsS3) *gin.Engine {
+func NewRouter(server *gin.Engine, fs storage.FileStorage) *gin.Engine {
 	server.NoRoute(func(ctx *gin.Context) {
 		ctx.JSON(http.StatusNotFound, gin.H{
 			"status":  http.StatusNotFound,
@@ -61,7 +61,7 @@ func NewRouter(server *gin.Engine, s3 storage.AwsS3) *gin.Engine {
 	// 	}).Send(ctx)
 	// })
 
-	server.Static("/api/static", "./public/uploads")
+	server.Static("/api/static", "./assets/uploads")
 	return server
 }
 

@@ -18,14 +18,7 @@ import (
 
 type (
 	AwsS3 interface {
-		UploadFile(filename string, file *multipart.FileHeader, folderName string, mv ...string) (string, error)
-		UpdateFile(objectKey string, f *multipart.FileHeader, mv ...string) (string, error)
-		DeleteFile(objectKey string) error
-		GetPublicLink(objectKey string) string
-		GetObjectKeyFromLink(link string) string
-		Begin() AwsS3
-		Commit()
-		Rollback()
+		FileStorage
 	}
 
 	action struct {
@@ -229,7 +222,7 @@ func (a *awsS3) GetPublicLink(objectKey string) string {
 	return publicURL
 }
 
-func (a *awsS3) Begin() AwsS3 {
+func (a *awsS3) Begin() FileStorage {
 	a.actions = []action{}
 	a.isRollback = true
 
