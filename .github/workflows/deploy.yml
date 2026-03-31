@@ -29,7 +29,6 @@ jobs:
             fi
 
             cd $APP_DIR
-
             git pull origin main
 
             cd "$HOME/himasakta-app"
