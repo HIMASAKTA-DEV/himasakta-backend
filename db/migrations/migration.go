@@ -1,10 +1,13 @@
 package migrations
 
 import (
+	"encoding/json"
 	"log"
+	"os"
+
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
-	//"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
+	"golang.org/x/crypto/bcrypt"
 	"gorm.io/gorm"
 )
 
@@ -34,19 +37,59 @@ func Migrate(db *gorm.DB) error {
 		&entity.NewsTag{},
 	}
 
-	// Phase 1: Create all tables without FK constraints (handles circular Gallery↔Progenda)
 	db.Config.DisableForeignKeyConstraintWhenMigrating = true
 	if err := db.AutoMigrate(allEntities...); err != nil {
 		return err
 	}
 
-	// Phase 2: Re-run with FKs enabled to add foreign key constraints
 	db.Config.DisableForeignKeyConstraintWhenMigrating = false
 	if err := db.AutoMigrate(allEntities...); err != nil {
 		return err
 	}
 
+	if err := seedAdmin(db); err != nil {
+		mylog.Errorf("Failed to seed admin: %v", err)
+	}
+
 	mylog.Infof("Migration completed successfully")
 
+	return nil
+}
+
+func seedAdmin(db *gorm.DB) error {
+	var existing entity.GlobalSetting
+	result := db.Where("key = ?", "auth").First(&existing)
+	if result.Error == nil {
+		mylog.Infof("Admin credentials already exist, skipping seed")
+		return nil
+	}
+
+	username := os.Getenv("ADMIN_USERNAME")
+	password := os.Getenv("ADMIN_PASSWORD")
+	if username == "" || password == "" {
+		mylog.Infof("ADMIN_USERNAME or ADMIN_PASSWORD not set, skipping admin seed")
+		return nil
+	}
+
+	hash, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return err
+	}
+
+	authJSON, _ := json.Marshal(map[string]string{
+		"username": username,
+		"password": string(hash),
+	})
+
+	setting := entity.GlobalSetting{
+		Key:   "auth",
+		Value: string(authJSON),
+	}
+
+	if err := db.Create(&setting).Error; err != nil {
+		return err
+	}
+
+	mylog.Infof("Initial admin credentials seeded (user: %s)", username)
 	return nil
 }
