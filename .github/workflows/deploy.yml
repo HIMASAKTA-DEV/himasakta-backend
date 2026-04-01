@@ -19,12 +19,14 @@ jobs:
 
       - name: Deploy
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
+          ssh -i ~/.ssh/id_ed25519 ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << 'EOF'
             set -e
 
             APP_DIR=$HOME/himasakta-app/backend
 
-            if [ ! -d "$APP_DIR" ]; then
+            if [ ! -d "$APP_DIR/.git" ]; then
+              echo "Repository backend belum ada, melakukan git clone..."
+              rm -rf $APP_DIR
               git clone https://github.com/HIMASAKTA-DEV/himasakta-backend.git $APP_DIR
             fi
 
@@ -33,6 +35,5 @@ jobs:
 
             cd "$HOME/himasakta-app"
 
-            sudo docker compose -p group2 down
-            sudo docker compose -p group2 up -d --build
+            sudo docker compose -p group2 up -d --build backend
           EOF
