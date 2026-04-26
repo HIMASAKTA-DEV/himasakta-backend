@@ -1,7 +1,5 @@
 # HIMASAKTA Web API
 
-## About
-
 <p align="center">
   <img src="docs/api_flow.png" alt="API Architecture" />
   <br>

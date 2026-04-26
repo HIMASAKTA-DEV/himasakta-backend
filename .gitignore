@@ -3,6 +3,8 @@
 
 tmp/
 public/uploads/
+assets/uploads/
+
 logs/
 tests/
 Dokumentasi-Flexoo-Template
