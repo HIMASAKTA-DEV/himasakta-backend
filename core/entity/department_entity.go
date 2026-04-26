@@ -13,6 +13,8 @@ type Department struct {
 	InstagramLink   string     `gorm:"type:varchar(255)" json:"instagram_link"`
 	YoutubeLink     string     `gorm:"type:varchar(255)" json:"youtube_link"`
 	TwitterLink     string     `gorm:"type:varchar(255)" json:"twitter_link"`
+	LinkedinLink    string     `gorm:"type:varchar(255)" json:"linkedin_link"`
+	TiktokLink      string     `gorm:"type:varchar(255)" json:"tiktok_link"`
 	BankSoalLink    string     `gorm:"type:varchar(255)" json:"bank_soal_link"`
 	SilabusLink     string     `gorm:"type:varchar(255)" json:"silabus_link"`
 	BankRefLink     string     `gorm:"type:varchar(255)" json:"bank_ref_link"`

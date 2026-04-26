@@ -15,6 +15,7 @@ type Progenda struct {
 	TwitterLink   string      `gorm:"type:varchar(255)" json:"twitter_link"`
 	LinkedinLink  string      `gorm:"type:varchar(255)" json:"linkedin_link"`
 	YoutubeLink   string      `gorm:"type:varchar(255)" json:"youtube_link"`
+	TiktokLink    string      `gorm:"type:varchar(255)" json:"tiktok_link"`
 	DepartmentId  *uuid.UUID  `gorm:"type:uuid;constraint:OnDelete:SET NULL" json:"department_id"`
 	Department    *Department `gorm:"foreignKey:DepartmentId" json:"department"`
 

@@ -11,6 +11,8 @@ type CreateDepartmentRequest struct {
 	InstagramLink   string        `json:"instagram_link"`
 	YoutubeLink     string        `json:"youtube_link"`
 	TwitterLink     string        `json:"twitter_link"`
+	LinkedinLink    string        `json:"linkedin_link"`
+	TiktokLink      string        `json:"tiktok_link"`
 	BankSoalLink    string        `json:"bank_soal_link"`
 	SilabusLink     string        `json:"silabus_link"`
 	BankRefLink     string        `json:"bank_ref_link"`
@@ -24,6 +26,8 @@ type UpdateDepartmentRequest struct {
 	InstagramLink   *string       `json:"instagram_link"`
 	YoutubeLink     *string       `json:"youtube_link"`
 	TwitterLink     *string       `json:"twitter_link"`
+	LinkedinLink    *string       `json:"linkedin_link"`
+	TiktokLink      *string       `json:"tiktok_link"`
 	BankSoalLink    *string       `json:"bank_soal_link"`
 	SilabusLink     *string       `json:"silabus_link"`
 	BankRefLink     *string       `json:"bank_ref_link"`

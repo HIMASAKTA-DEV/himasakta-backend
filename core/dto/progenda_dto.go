@@ -23,6 +23,8 @@ type CreateProgendaRequest struct {
 	TwitterLink   string        `json:"twitter_link"`
 	LinkedinLink  string        `json:"linkedin_link"`
 	YoutubeLink   string        `json:"youtube_link"`
+	TiktokLink    string        `json:"tiktok_link"`
+	
 	DepartmentId  meta.NullUUID `json:"department_id"`
 
 	Timelines []CreateTimelineRequest `json:"timelines"`
@@ -44,6 +46,7 @@ type UpdateProgendaRequest struct {
 	TwitterLink   *string       `json:"twitter_link"`
 	LinkedinLink  *string       `json:"linkedin_link"`
 	YoutubeLink   *string       `json:"youtube_link"`
+	TiktokLink    *string       `json:"tiktok_link"`
 	DepartmentId  meta.NullUUID `json:"department_id"`
 
 	Timelines []UpdateTimelineRequest `json:"timelines"`

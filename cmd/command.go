@@ -10,6 +10,7 @@ import (
 	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db/migrations"
+	dbexport "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbexport"
 	seeders "github.com/HIMASAKTA-DEV/himasakta-backend/db/seeder"
 	"gorm.io/gorm"
 )
@@ -28,6 +29,7 @@ func getParams(db *gorm.DB) error {
 	seeder := false
 	watch := false
 	test := false
+	export := false
 
 	for _, arg := range os.Args[1:] {
 		if arg == "--migrate" {
@@ -41,6 +43,9 @@ func getParams(db *gorm.DB) error {
 		}
 		if arg == "--test" {
 			test = true
+		}
+		if arg == "--export" {
+			export = true
 		}
 	}
 	if migrate {
@@ -65,7 +70,6 @@ func getParams(db *gorm.DB) error {
 			return fmt.Errorf("watching failed: %w", err)
 		}
 		mylog.Infof("Start watching program")
-		os.Exit(0)
 	}
 
 	if test {
@@ -73,10 +77,19 @@ func getParams(db *gorm.DB) error {
 			mylog.Errorf("API tests failed: %v", err)
 			os.Exit(1)
 		}
-		os.Exit(0)
 	}
 
-	if seeder || watch || test {
+	if export {
+		if db == nil {
+			return fmt.Errorf("export failed: database connection is nil")
+		}
+		if err := dbexport.ExportDB(db); err != nil {
+			return fmt.Errorf("export failed: %w", err)
+		}
+		mylog.Infof("Export completed successfully")
+	}
+
+	if seeder || watch || test || export {
 		os.Exit(0)
 	}
 

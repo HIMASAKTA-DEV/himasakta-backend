@@ -51,6 +51,7 @@ func (s *progendaService) Create(ctx context.Context, req dto.CreateProgendaRequ
 		TwitterLink:   req.TwitterLink,
 		LinkedinLink:  req.LinkedinLink,
 		YoutubeLink:   req.YoutubeLink,
+		TiktokLink:    req.TiktokLink,
 		DepartmentId:  req.DepartmentId.ID,
 	})
 	if err != nil {
@@ -141,6 +142,9 @@ func (s *progendaService) Update(ctx context.Context, id string, req dto.UpdateP
 	}
 	if req.YoutubeLink != nil {
 		p.YoutubeLink = *req.YoutubeLink
+	}
+	if req.TiktokLink != nil {
+		p.TiktokLink = *req.TiktokLink
 	}
 	if req.DepartmentId.Valid {
 		p.DepartmentId = req.DepartmentId.ID

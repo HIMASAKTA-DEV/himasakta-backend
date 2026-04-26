@@ -38,6 +38,8 @@ func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartment
 		InstagramLink:   req.InstagramLink,
 		YoutubeLink:     req.YoutubeLink,
 		TwitterLink:     req.TwitterLink,
+		LinkedinLink:    req.LinkedinLink,
+		TiktokLink:      req.TiktokLink,
 		BankSoalLink:    req.BankSoalLink,
 		SilabusLink:     req.SilabusLink,
 		BankRefLink:     req.BankRefLink,
@@ -101,6 +103,12 @@ func (s *departmentService) Update(ctx context.Context, id string, req dto.Updat
 	}
 	if req.TwitterLink != nil {
 		d.TwitterLink = *req.TwitterLink
+	}
+	if req.LinkedinLink != nil {
+		d.LinkedinLink = *req.LinkedinLink
+	}
+	if req.TiktokLink != nil {
+		d.TiktokLink = *req.TiktokLink
 	}
 	if req.BankSoalLink != nil {
 		d.BankSoalLink = *req.BankSoalLink
