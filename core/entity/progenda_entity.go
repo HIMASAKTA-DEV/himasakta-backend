@@ -5,7 +5,7 @@ import "github.com/google/uuid"
 type Progenda struct {
 	Timestamp
 	Id            uuid.UUID   `gorm:"type:uuid;primaryKey;default:uuid_generate_v4()" json:"id"`
-	Name          string      `gorm:"type:varchar(255);not null;unique" json:"name"`
+	Name          string      `gorm:"type:varchar(255);not null;" json:"name"`
 	ThumbnailId   *uuid.UUID  `gorm:"type:uuid;constraint:OnDelete:SET NULL" json:"thumbnail_id"`
 	Thumbnail     *Gallery    `gorm:"foreignKey:ThumbnailId" json:"thumbnail"`
 	Goal          string      `gorm:"type:text" json:"goal"`
