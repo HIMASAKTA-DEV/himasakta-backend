@@ -8,11 +8,12 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type DepartmentRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, department entity.Department) (entity.Department, error)
-	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error)
+	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.Department, meta.Meta, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entity.Department, error)
 	GetBySlug(ctx context.Context, tx *gorm.DB, slug string) (entity.Department, error)
 	Update(ctx context.Context, tx *gorm.DB, department entity.Department) (entity.Department, error)
@@ -40,7 +41,7 @@ func (r *departmentRepository) Create(ctx context.Context, tx *gorm.DB, d entity
 	return d, nil
 }
 
-func (r *departmentRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error) {
+func (r *departmentRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.Department, meta.Meta, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -50,8 +51,16 @@ func (r *departmentRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq 
 	var departments []entity.Department
 	tx = tx.WithContext(ctx).Model(&entity.Department{}).Preload("Logo").Preload("Leader").Preload("Feeds")
 
-	if name != "" {
-		tx = tx.Where("name = ?", name)
+	if search != "" {
+		tx = tx.Where("name ILIKE ?", "%"+search+"%")
+	}
+
+	if metaReq.SortBy == "" {
+		if search != "" {
+			tx = tx.Order(clause.Expr{SQL: "CASE WHEN name ILIKE ? THEN 1 WHEN name ILIKE ? THEN 2 ELSE 3 END ASC, created_at DESC", Vars: []interface{}{search, search + "%"}})
+		} else {
+			tx = tx.Order("created_at DESC") // Add a default order if not specified
+		}
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.Department{})).Find(&departments).Error; err != nil {

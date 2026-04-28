@@ -8,11 +8,12 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type CabinetInfoRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, ci entity.CabinetInfo) (entity.CabinetInfo, error)
-	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta) ([]entity.CabinetInfo, meta.Meta, error)
+	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.CabinetInfo, meta.Meta, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entity.CabinetInfo, error)
 	GetCurrentCabinet(ctx context.Context, tx *gorm.DB) (entity.CabinetInfo, error)
 	Update(ctx context.Context, tx *gorm.DB, ci entity.CabinetInfo) (entity.CabinetInfo, error)
@@ -40,7 +41,7 @@ func (r *cabinetInfoRepository) Create(ctx context.Context, tx *gorm.DB, ci enti
 	return ci, nil
 }
 
-func (r *cabinetInfoRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta) ([]entity.CabinetInfo, meta.Meta, error) {
+func (r *cabinetInfoRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.CabinetInfo, meta.Meta, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -50,8 +51,16 @@ func (r *cabinetInfoRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq
 	var infos []entity.CabinetInfo
 	tx = tx.WithContext(ctx).Model(&entity.CabinetInfo{}).Preload("Logo").Preload("Organigram").Preload("Feeds")
 
+	if search != "" {
+		tx = tx.Where("tagline ILIKE ?", "%"+search+"%")
+	}
+
 	if metaReq.SortBy == "" {
-		tx = tx.Order("is_active DESC, period_start DESC, period_end DESC")
+		if search != "" {
+			tx = tx.Order(clause.Expr{SQL: "CASE WHEN tagline ILIKE ? THEN 1 WHEN tagline ILIKE ? THEN 2 ELSE 3 END ASC, is_active DESC, period_start DESC, period_end DESC", Vars: []interface{}{search, search + "%"}})
+		} else {
+			tx = tx.Order("is_active DESC, period_start DESC, period_end DESC")
+		}
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.CabinetInfo{})).Find(&infos).Error; err != nil {

@@ -49,8 +49,8 @@ func (c *memberController) GetAll(ctx *gin.Context) {
 		return
 	}
 
-	name := ctx.Query("name")
-	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), name)
+	search := ctx.Query("search")
+	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), search)
 	if err != nil {
 		response.NewFailed("failed get members", err).Send(ctx)
 		return

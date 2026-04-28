@@ -8,11 +8,12 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type GalleryRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, gallery entity.Gallery) (entity.Gallery, error)
-	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, caption string) ([]entity.Gallery, meta.Meta, error)
+	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.Gallery, meta.Meta, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entity.Gallery, error)
 	Update(ctx context.Context, tx *gorm.DB, gallery entity.Gallery) (entity.Gallery, error)
 	Delete(ctx context.Context, tx *gorm.DB, gallery entity.Gallery) error
@@ -42,7 +43,7 @@ func (r *galleryRepository) Create(ctx context.Context, tx *gorm.DB, gallery ent
 	return gallery, nil
 }
 
-func (r *galleryRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, caption string) ([]entity.Gallery, meta.Meta, error) {
+func (r *galleryRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.Gallery, meta.Meta, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -52,8 +53,16 @@ func (r *galleryRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq met
 	var galleries []entity.Gallery
 	tx = tx.WithContext(ctx).Model(&entity.Gallery{})
 
+	if search != "" {
+		tx = tx.Where("caption ILIKE ? OR category ILIKE ?", "%"+search+"%", "%"+search+"%")
+	}
+
 	if metaReq.SortBy == "" {
-		tx = tx.Order("created_at DESC")
+		if search != "" {
+			tx = tx.Order(clause.Expr{SQL: "CASE WHEN caption ILIKE ? THEN 1 WHEN category ILIKE ? THEN 2 WHEN caption ILIKE ? THEN 3 WHEN category ILIKE ? THEN 4 ELSE 5 END ASC, created_at DESC", Vars: []interface{}{search, search, search + "%", search + "%"}})
+		} else {
+			tx = tx.Order("created_at DESC")
+		}
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.Gallery{})).Find(&galleries).Error; err != nil {

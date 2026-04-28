@@ -100,8 +100,8 @@ func (c *galleryController) Create(ctx *gin.Context) {
 }
 
 func (c *galleryController) GetAll(ctx *gin.Context) {
-	caption := ctx.Query("caption")
-	galleries, metaRes, err := c.galleryService.GetAll(ctx.Request.Context(), meta.New(ctx), caption)
+	search := ctx.Query("search")
+	galleries, metaRes, err := c.galleryService.GetAll(ctx.Request.Context(), meta.New(ctx), search)
 	if err != nil {
 		response.NewFailed("failed get galleries", err).Send(ctx)
 		return

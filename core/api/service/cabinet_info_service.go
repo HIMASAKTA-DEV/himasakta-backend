@@ -12,7 +12,7 @@ import (
 
 type CabinetInfoService interface {
 	Create(ctx context.Context, req dto.CreateCabinetInfoRequest) (entity.CabinetInfo, error)
-	GetAll(ctx context.Context, metaReq meta.Meta) ([]entity.CabinetInfo, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.CabinetInfo, meta.Meta, error)
 	GetCurrentCabinet(ctx context.Context) (entity.CabinetInfo, error)
 	GetById(ctx context.Context, id string) (entity.CabinetInfo, error)
 	Update(ctx context.Context, id string, req dto.UpdateCabinetInfoRequest) (entity.CabinetInfo, error)
@@ -41,8 +41,8 @@ func (s *cabinetInfoService) Create(ctx context.Context, req dto.CreateCabinetIn
 	})
 }
 
-func (s *cabinetInfoService) GetAll(ctx context.Context, metaReq meta.Meta) ([]entity.CabinetInfo, meta.Meta, error) {
-	return s.repo.GetAll(ctx, nil, metaReq)
+func (s *cabinetInfoService) GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.CabinetInfo, meta.Meta, error) {
+	return s.repo.GetAll(ctx, nil, metaReq, search)
 }
 
 func (s *cabinetInfoService) GetCurrentCabinet(ctx context.Context) (entity.CabinetInfo, error) {

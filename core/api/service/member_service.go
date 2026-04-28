@@ -13,7 +13,7 @@ import (
 
 type MemberService interface {
 	Create(ctx context.Context, req dto.CreateMemberRequest) (entity.Member, error)
-	GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Member, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Member, meta.Meta, error)
 	GetAllGrouped(ctx context.Context) ([]dto.MemberGroupResponse, error)
 	GetById(ctx context.Context, id string) (entity.Member, error)
 	Update(ctx context.Context, id string, req dto.UpdateMemberRequest) (entity.Member, error)
@@ -41,8 +41,8 @@ func (s *memberService) Create(ctx context.Context, req dto.CreateMemberRequest)
 	return res, myerror.ParseDBError(err, "member")
 }
 
-func (s *memberService) GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Member, meta.Meta, error) {
-	return s.repo.GetAll(ctx, nil, metaReq, name)
+func (s *memberService) GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Member, meta.Meta, error) {
+	return s.repo.GetAll(ctx, nil, metaReq, search)
 }
 
 func (s *memberService) GetAllGrouped(ctx context.Context) ([]dto.MemberGroupResponse, error) {

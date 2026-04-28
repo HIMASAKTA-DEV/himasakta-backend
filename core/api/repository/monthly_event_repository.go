@@ -9,11 +9,12 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type MonthlyEventRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, e entity.MonthlyEvent) (entity.MonthlyEvent, error)
-	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, title string) ([]entity.MonthlyEvent, meta.Meta, error)
+	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.MonthlyEvent, meta.Meta, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entity.MonthlyEvent, error)
 	GetThisMonth(ctx context.Context, tx *gorm.DB) ([]entity.MonthlyEvent, error)
 	Update(ctx context.Context, tx *gorm.DB, e entity.MonthlyEvent) (entity.MonthlyEvent, error)
@@ -41,7 +42,7 @@ func (r *monthlyEventRepository) Create(ctx context.Context, tx *gorm.DB, e enti
 	return e, nil
 }
 
-func (r *monthlyEventRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, title string) ([]entity.MonthlyEvent, meta.Meta, error) {
+func (r *monthlyEventRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.MonthlyEvent, meta.Meta, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -51,12 +52,16 @@ func (r *monthlyEventRepository) GetAll(ctx context.Context, tx *gorm.DB, metaRe
 	var events []entity.MonthlyEvent
 	tx = tx.WithContext(ctx).Model(&entity.MonthlyEvent{}).Preload("Thumbnail")
 
-	if title != "" {
-		tx = tx.Where("title = ?", title)
+	if search != "" {
+		tx = tx.Where("title ILIKE ?", "%"+search+"%")
 	}
 
 	if metaReq.SortBy == "" {
-		tx = tx.Order("created_at DESC")
+		if search != "" {
+			tx = tx.Order(clause.Expr{SQL: "CASE WHEN title ILIKE ? THEN 1 WHEN title ILIKE ? THEN 2 ELSE 3 END ASC, created_at DESC", Vars: []interface{}{search, search + "%"}})
+		} else {
+			tx = tx.Order("created_at DESC")
+		}
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.MonthlyEvent{})).Find(&events).Error; err != nil {

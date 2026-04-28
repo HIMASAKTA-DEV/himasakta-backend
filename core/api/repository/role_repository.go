@@ -8,11 +8,12 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type RoleRepository interface {
 	Create(ctx context.Context, tx *gorm.DB, r entity.Role) (entity.Role, error)
-	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, name string) ([]entity.Role, meta.Meta, error)
+	GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.Role, meta.Meta, error)
 	GetById(ctx context.Context, tx *gorm.DB, id uuid.UUID) (entity.Role, error)
 	Update(ctx context.Context, tx *gorm.DB, r entity.Role) (entity.Role, error)
 	Delete(ctx context.Context, tx *gorm.DB, r entity.Role) error
@@ -39,7 +40,7 @@ func (r *roleRepository) Create(ctx context.Context, tx *gorm.DB, role entity.Ro
 	return role, nil
 }
 
-func (r *roleRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, name string) ([]entity.Role, meta.Meta, error) {
+func (r *roleRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.Meta, search string) ([]entity.Role, meta.Meta, error) {
 	if tx == nil {
 		tx = r.db
 	}
@@ -49,8 +50,16 @@ func (r *roleRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq meta.M
 	var roles []entity.Role
 	tx = tx.WithContext(ctx).Model(&entity.Role{})
 
-	if name != "" {
-		tx = tx.Where("name ILIKE ?", "%"+name+"%")
+	if search != "" {
+		tx = tx.Where("name ILIKE ?", "%"+search+"%")
+	}
+
+	if metaReq.SortBy == "" {
+		if search != "" {
+			tx = tx.Order(clause.Expr{SQL: "CASE WHEN name ILIKE ? THEN 1 WHEN name ILIKE ? THEN 2 ELSE 3 END ASC, level ASC", Vars: []interface{}{search, search + "%"}})
+		} else {
+			tx = tx.Order("level ASC") // Assuming level ASC is a good default for roles, or created_at
+		}
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.Role{})).Find(&roles).Error; err != nil {

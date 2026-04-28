@@ -39,8 +39,8 @@ func (c *departmentController) Create(ctx *gin.Context) {
 }
 
 func (c *departmentController) GetAll(ctx *gin.Context) {
-	name := ctx.Query("name")
-	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), name)
+	search := ctx.Query("search")
+	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), search)
 	if err != nil {
 		response.NewFailed("failed get departments", err).Send(ctx)
 		return

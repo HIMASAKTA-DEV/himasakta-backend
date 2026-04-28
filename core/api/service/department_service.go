@@ -16,7 +16,7 @@ import (
 
 type DepartmentService interface {
 	Create(ctx context.Context, req dto.CreateDepartmentRequest) (entity.Department, error)
-	GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Department, meta.Meta, error)
 	GetByIdContent(ctx context.Context, idOrName string) (entity.Department, error)
 	Update(ctx context.Context, id string, req dto.UpdateDepartmentRequest) (entity.Department, error)
 	Delete(ctx context.Context, id string) error
@@ -48,8 +48,8 @@ func (s *departmentService) Create(ctx context.Context, req dto.CreateDepartment
 	return res, myerror.ParseDBError(err, "department")
 }
 
-func (s *departmentService) GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Department, meta.Meta, error) {
-	return s.repo.GetAll(ctx, nil, metaReq, name)
+func (s *departmentService) GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Department, meta.Meta, error) {
+	return s.repo.GetAll(ctx, nil, metaReq, search)
 }
 
 func (s *departmentService) GetByIdContent(ctx context.Context, idOrSlug string) (entity.Department, error) {

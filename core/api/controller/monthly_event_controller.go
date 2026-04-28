@@ -40,8 +40,8 @@ func (c *monthlyEventController) Create(ctx *gin.Context) {
 }
 
 func (c *monthlyEventController) GetAll(ctx *gin.Context) {
-	title := ctx.Query("title")
-	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), title)
+	search := ctx.Query("search")
+	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), search)
 	if err != nil {
 		response.NewFailed("failed get monthly events", err).Send(ctx)
 		return

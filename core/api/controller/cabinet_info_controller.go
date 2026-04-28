@@ -43,7 +43,8 @@ func (c *cabinetInfoController) Create(ctx *gin.Context) {
 }
 
 func (c *cabinetInfoController) GetAll(ctx *gin.Context) {
-	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx))
+	search := ctx.Query("search")
+	res, m, err := c.service.GetAll(ctx.Request.Context(), meta.New(ctx), search)
 	if err != nil {
 		response.NewFailed("failed get cabinet infos", err).Send(ctx)
 		return

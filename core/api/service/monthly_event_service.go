@@ -13,7 +13,7 @@ import (
 
 type MonthlyEventService interface {
 	Create(ctx context.Context, req dto.CreateMonthlyEventRequest) (entity.MonthlyEvent, error)
-	GetAll(ctx context.Context, metaReq meta.Meta, title string) ([]entity.MonthlyEvent, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.MonthlyEvent, meta.Meta, error)
 	GetThisMonth(ctx context.Context) ([]entity.MonthlyEvent, error)
 	GetById(ctx context.Context, id string) (entity.MonthlyEvent, error)
 	Update(ctx context.Context, id string, req dto.UpdateMonthlyEventRequest) (entity.MonthlyEvent, error)
@@ -39,8 +39,8 @@ func (s *monthlyEventService) Create(ctx context.Context, req dto.CreateMonthlyE
 	return res, myerror.ParseDBError(err, "event")
 }
 
-func (s *monthlyEventService) GetAll(ctx context.Context, metaReq meta.Meta, title string) ([]entity.MonthlyEvent, meta.Meta, error) {
-	return s.repo.GetAll(ctx, nil, metaReq, title)
+func (s *monthlyEventService) GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.MonthlyEvent, meta.Meta, error) {
+	return s.repo.GetAll(ctx, nil, metaReq, search)
 }
 
 func (s *monthlyEventService) GetThisMonth(ctx context.Context) ([]entity.MonthlyEvent, error) {

@@ -12,7 +12,7 @@ import (
 
 type RoleService interface {
 	Create(ctx context.Context, req dto.CreateRoleRequest) (entity.Role, error)
-	GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Role, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Role, meta.Meta, error)
 	GetById(ctx context.Context, id string) (entity.Role, error)
 	Update(ctx context.Context, id string, req dto.UpdateRoleRequest) (entity.Role, error)
 	Delete(ctx context.Context, id string) error
@@ -34,8 +34,8 @@ func (s *roleService) Create(ctx context.Context, req dto.CreateRoleRequest) (en
 	})
 }
 
-func (s *roleService) GetAll(ctx context.Context, metaReq meta.Meta, name string) ([]entity.Role, meta.Meta, error) {
-	return s.repo.GetAll(ctx, nil, metaReq, name)
+func (s *roleService) GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Role, meta.Meta, error) {
+	return s.repo.GetAll(ctx, nil, metaReq, search)
 }
 
 func (s *roleService) GetById(ctx context.Context, id string) (entity.Role, error) {

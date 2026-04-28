@@ -12,7 +12,7 @@ import (
 
 type GalleryService interface {
 	Create(ctx context.Context, req dto.CreateGalleryRequest) (entity.Gallery, error)
-	GetAll(ctx context.Context, metaReq meta.Meta, caption string) ([]entity.Gallery, meta.Meta, error)
+	GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Gallery, meta.Meta, error)
 	GetById(ctx context.Context, id string) (entity.Gallery, error)
 	Update(ctx context.Context, id string, req dto.UpdateGalleryRequest) (entity.Gallery, error)
 	Delete(ctx context.Context, id string) error
@@ -37,8 +37,8 @@ func (s *galleryService) Create(ctx context.Context, req dto.CreateGalleryReques
 	})
 }
 
-func (s *galleryService) GetAll(ctx context.Context, metaReq meta.Meta, caption string) ([]entity.Gallery, meta.Meta, error) {
-	return s.galleryRepo.GetAll(ctx, nil, metaReq, caption)
+func (s *galleryService) GetAll(ctx context.Context, metaReq meta.Meta, search string) ([]entity.Gallery, meta.Meta, error) {
+	return s.galleryRepo.GetAll(ctx, nil, metaReq, search)
 }
 
 func (s *galleryService) GetById(ctx context.Context, id string) (entity.Gallery, error) {

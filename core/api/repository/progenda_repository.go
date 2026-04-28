@@ -8,6 +8,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/google/uuid"
 	"gorm.io/gorm"
+	"gorm.io/gorm/clause"
 )
 
 type ProgendaRepository interface {
@@ -58,7 +59,11 @@ func (r *progendaRepository) GetAll(ctx context.Context, tx *gorm.DB, metaReq me
 	}
 
 	if metaReq.SortBy == "" {
-		tx = tx.Order("created_at DESC")
+		if search != "" {
+			tx = tx.Order(clause.Expr{SQL: "CASE WHEN name ILIKE ? THEN 1 WHEN name ILIKE ? THEN 2 ELSE 3 END ASC, created_at DESC", Vars: []interface{}{search, search + "%"}})
+		} else {
+			tx = tx.Order("created_at DESC")
+		}
 	}
 
 	if err := WithFilters(tx, &metaReq, AddModels(entity.Progenda{})).Find(&progendas).Error; err != nil {
