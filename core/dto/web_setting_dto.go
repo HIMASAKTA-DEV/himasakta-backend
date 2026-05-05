@@ -3,12 +3,15 @@ package dto
 import "fmt"
 
 type WebSettings struct {
-	ExternalSOPLink   string           `json:"ExternalSOPLink"`
-	InternalSOPLink   string           `json:"InternalSOPLink"`
-	DeskripsiHimpunan string           `json:"DeskripsiHimpunan"`
-	FotoHimpunan      string           `json:"FotoHimpunan"`
-	SocialMedia       []SocialMediaDTO `json:"SocialMedia"`
-	InMaintenance     bool             `json:"InMaintenance"`
+	ExternalSOPLink     string           `json:"ExternalSOPLink"`
+	InternalSOPLink     string           `json:"InternalSOPLink"`
+	DeskripsiHimpunan   string           `json:"DeskripsiHimpunan"`
+	VisiHimpunan        string           `json:"VisiHimpunan"`
+	MisiHimpunan        string           `json:"MisiHimpunan"`
+	FotoHimpunan        string           `json:"FotoHimpunan"`
+	FotoSejarahHimpunan string           `json:"FotoSejarahHimpunan"`
+	SocialMedia         []SocialMediaDTO `json:"SocialMedia"`
+	InMaintenance       bool             `json:"InMaintenance"`
 }
 
 type AuthSettings struct {

@@ -13,6 +13,5 @@ Dokumentasi-Flexoo-Template
 *.exe
 .env*.local
 
-vps
 .ssh
-export*.sql
+vps/

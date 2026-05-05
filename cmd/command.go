@@ -11,6 +11,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db/migrations"
 	dbexport "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbexport"
+	dbimport "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbimport"
 	seeders "github.com/HIMASAKTA-DEV/himasakta-backend/db/seeder"
 	"gorm.io/gorm"
 )
@@ -30,8 +31,11 @@ func getParams(db *gorm.DB) error {
 	watch := false
 	test := false
 	export := false
+	importFile := ""
+	storageTarget := ""
 
-	for _, arg := range os.Args[1:] {
+	for i := 0; i < len(os.Args[1:]); i++ {
+		arg := os.Args[1+i]
 		if arg == "--migrate" {
 			migrate = true
 		}
@@ -46,6 +50,16 @@ func getParams(db *gorm.DB) error {
 		}
 		if arg == "--export" {
 			export = true
+		}
+		if arg == "--aws" {
+			storageTarget = "s3"
+		}
+		if arg == "--local" {
+			storageTarget = "local"
+		}
+		if arg == "--import" && i+1 < len(os.Args[1:]) {
+			importFile = os.Args[1+i+1]
+			i++
 		}
 	}
 	if migrate {
@@ -89,7 +103,17 @@ func getParams(db *gorm.DB) error {
 		mylog.Infof("Export completed successfully")
 	}
 
-	if seeder || watch || test || export {
+	if importFile != "" {
+		if db == nil {
+			return fmt.Errorf("import failed: database connection is nil")
+		}
+		if err := dbimport.ImportDB(db, importFile, storageTarget); err != nil {
+			return fmt.Errorf("import failed: %w", err)
+		}
+		mylog.Infof("Import completed successfully")
+	}
+
+	if seeder || watch || test || export || importFile != "" {
 		os.Exit(0)
 	}
 
