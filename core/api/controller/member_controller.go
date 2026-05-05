@@ -5,6 +5,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,6 +36,7 @@ func (c *memberController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create member", err).Send(ctx)
 		return
 	}
+	utils.ResolveMember(utils.GetBaseURL(ctx), &res)
 	response.NewSuccessCreated("success create member", res).Send(ctx)
 }
 
@@ -44,6 +46,10 @@ func (c *memberController) GetAll(ctx *gin.Context) {
 		if err != nil {
 			response.NewFailed("failed get members grouped", err).Send(ctx)
 			return
+		}
+		baseURL := utils.GetBaseURL(ctx)
+		for key := range res {
+			utils.ResolveMembers(baseURL, res[key])
 		}
 		response.NewSuccess("success get members grouped", res).Send(ctx)
 		return
@@ -55,6 +61,7 @@ func (c *memberController) GetAll(ctx *gin.Context) {
 		response.NewFailed("failed get members", err).Send(ctx)
 		return
 	}
+	utils.ResolveMembers(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get members", res, m).Send(ctx)
 }
 
@@ -64,6 +71,7 @@ func (c *memberController) GetById(ctx *gin.Context) {
 		response.NewFailed("failed get member", err).Send(ctx)
 		return
 	}
+	utils.ResolveMember(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success get member", res).Send(ctx)
 }
 
@@ -78,6 +86,7 @@ func (c *memberController) Update(ctx *gin.Context) {
 		response.NewFailed("failed update member", err).Send(ctx)
 		return
 	}
+	utils.ResolveMember(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success update member", res).Send(ctx)
 }
 

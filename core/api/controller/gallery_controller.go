@@ -8,6 +8,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/storage"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
 )
@@ -90,12 +91,12 @@ func (c *galleryController) Create(ctx *gin.Context) {
 
 	result, err := c.galleryService.Create(ctx.Request.Context(), req)
 	if err != nil {
-		// Attempt to cleanup uploaded file if db creation fails
 		_ = c.storage.DeleteFile(objectKey)
 		response.NewFailed("failed create gallery", err).Send(ctx)
 		return
 	}
 
+	utils.ResolveGallery(utils.GetBaseURL(ctx), &result)
 	response.NewSuccessCreated("success create gallery", result).Send(ctx)
 }
 
@@ -107,6 +108,7 @@ func (c *galleryController) GetAll(ctx *gin.Context) {
 		return
 	}
 
+	utils.ResolveGalleries(utils.GetBaseURL(ctx), galleries)
 	response.NewSuccess("success get galleries", galleries, metaRes).Send(ctx)
 }
 
@@ -118,6 +120,7 @@ func (c *galleryController) GetById(ctx *gin.Context) {
 		return
 	}
 
+	utils.ResolveGallery(utils.GetBaseURL(ctx), &result)
 	response.NewSuccess("success get gallery", result).Send(ctx)
 }
 
@@ -135,6 +138,7 @@ func (c *galleryController) Update(ctx *gin.Context) {
 		return
 	}
 
+	utils.ResolveGallery(utils.GetBaseURL(ctx), &result)
 	response.NewSuccess("success update gallery", result).Send(ctx)
 }
 

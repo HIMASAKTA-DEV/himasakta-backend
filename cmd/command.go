@@ -10,9 +10,9 @@ import (
 	mylog "github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/logger"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db/migrations"
+	dbclean "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbclean"
 	dbexport "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbexport"
 	dbimport "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbimport"
-	dbclean "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbclean"
 	seeders "github.com/HIMASAKTA-DEV/himasakta-backend/db/seeder"
 	"gorm.io/gorm"
 )

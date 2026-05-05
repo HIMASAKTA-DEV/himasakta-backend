@@ -5,6 +5,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,6 +36,7 @@ func (c *progendaController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create progenda", err).Send(ctx)
 		return
 	}
+	utils.ResolveProgenda(utils.GetBaseURL(ctx), &res)
 	response.NewSuccessCreated("success create progenda", res).Send(ctx)
 }
 
@@ -47,6 +49,7 @@ func (c *progendaController) GetAll(ctx *gin.Context) {
 		response.NewFailed("failed get progendas", err).Send(ctx)
 		return
 	}
+	utils.ResolveProgendas(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get progendas", res, m).Send(ctx)
 }
 
@@ -56,6 +59,7 @@ func (c *progendaController) GetById(ctx *gin.Context) {
 		response.NewFailed("failed get progenda", err).Send(ctx)
 		return
 	}
+	utils.ResolveProgenda(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success get progenda", res).Send(ctx)
 }
 
@@ -70,6 +74,7 @@ func (c *progendaController) Update(ctx *gin.Context) {
 		response.NewFailed("failed update progenda", err).Send(ctx)
 		return
 	}
+	utils.ResolveProgenda(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success update progenda", res).Send(ctx)
 }
 

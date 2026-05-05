@@ -45,24 +45,8 @@ func ImportDB(db *gorm.DB, zipPath string, storageTarget string) error {
 		return fmt.Errorf("database.sql not found in zip archive")
 	}
 
-	oldPrefix := ""
-	if metaFile != nil {
-		if err := parseMeta(metaFile, &oldPrefix); err != nil {
-			log.Printf("Warning: failed to parse metadata.json: %v", err)
-		}
-	}
-
-	if storageTarget == "" {
-		storageTarget = os.Getenv("STORAGE_TYPE")
-		if storageTarget == "" {
-			storageTarget = "local"
-		}
-	}
-	newPrefix := getStoragePrefix(storageTarget)
-
-	log.Printf("URL prefix replacement: %q -> %q", oldPrefix, newPrefix)
 	log.Println("Importing database records...")
-	if err := importSQL(db, sqlFile, oldPrefix, newPrefix); err != nil {
+	if err := importSQL(db, sqlFile); err != nil {
 		return fmt.Errorf("failed to import sql: %w", err)
 	}
 
@@ -81,42 +65,7 @@ func ImportDB(db *gorm.DB, zipPath string, storageTarget string) error {
 	return nil
 }
 
-func parseMeta(f *zip.File, oldPrefix *string) error {
-	rc, err := f.Open()
-	if err != nil {
-		return err
-	}
-	defer rc.Close()
-
-	var meta struct {
-		OldPrefix string
-	}
-	if err := json.NewDecoder(rc).Decode(&meta); err != nil {
-		return err
-	}
-	*oldPrefix = meta.OldPrefix
-	return nil
-}
-
-func getStoragePrefix(storageType string) string {
-	if storageType == "s3" {
-		if customPref := os.Getenv("S3_PUBLIC_URL_PREFIX"); customPref != "" {
-			return customPref
-		}
-		bucket := os.Getenv("S3_BUCKET")
-		region := os.Getenv("AWS_REGION")
-		return fmt.Sprintf("https://%s.s3.%s.amazonaws.com/", bucket, region)
-	}
-
-	appURL := os.Getenv("APP_URL")
-	if appURL == "" {
-		appURL = "http://localhost:8080"
-	}
-	appURL = strings.TrimRight(appURL, "/")
-	return fmt.Sprintf("%s/api/static/", appURL)
-}
-
-func importSQL(db *gorm.DB, sqlFile *zip.File, oldPrefix, newPrefix string) error {
+func importSQL(db *gorm.DB, sqlFile *zip.File) error {
 	rc, err := sqlFile.Open()
 	if err != nil {
 		return err
@@ -129,10 +78,6 @@ func importSQL(db *gorm.DB, sqlFile *zip.File, oldPrefix, newPrefix string) erro
 	}
 
 	sqlString := string(sqlBytes)
-
-	if oldPrefix != "" && newPrefix != "" && oldPrefix != newPrefix {
-		sqlString = strings.ReplaceAll(sqlString, oldPrefix, newPrefix)
-	}
 
 	sqlDB, err := db.DB()
 	if err != nil {

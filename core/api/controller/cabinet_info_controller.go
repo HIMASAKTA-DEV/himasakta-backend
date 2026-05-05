@@ -7,6 +7,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
 )
@@ -39,6 +40,7 @@ func (c *cabinetInfoController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create cabinet info", err).Send(ctx)
 		return
 	}
+	utils.ResolveCabinetInfo(utils.GetBaseURL(ctx), &res)
 	response.NewSuccessCreated("success create cabinet info", res).Send(ctx)
 }
 
@@ -49,6 +51,7 @@ func (c *cabinetInfoController) GetAll(ctx *gin.Context) {
 		response.NewFailed("failed get cabinet infos", err).Send(ctx)
 		return
 	}
+	utils.ResolveCabinetInfos(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get cabinet infos", res, m).Send(ctx)
 }
 
@@ -65,6 +68,7 @@ func (c *cabinetInfoController) GetCurrentCabinet(ctx *gin.Context) {
 		response.NewFailed("failed get current cabinet info", err).Send(ctx)
 		return
 	}
+	utils.ResolveCabinetInfo(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success get current cabinet info", res).Send(ctx)
 }
 
@@ -74,6 +78,7 @@ func (c *cabinetInfoController) GetById(ctx *gin.Context) {
 		response.NewFailed("failed get cabinet info", err).Send(ctx)
 		return
 	}
+	utils.ResolveCabinetInfo(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success get cabinet info", res).Send(ctx)
 }
 
@@ -88,6 +93,7 @@ func (c *cabinetInfoController) Update(ctx *gin.Context) {
 		response.NewFailed("failed update cabinet info", err).Send(ctx)
 		return
 	}
+	utils.ResolveCabinetInfo(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success update cabinet info", res).Send(ctx)
 }
 

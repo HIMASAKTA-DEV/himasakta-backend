@@ -62,21 +62,6 @@ func ExportDB(db *gorm.DB) error {
 	zipWriter := zip.NewWriter(zipFile)
 	defer zipWriter.Close()
 
-	storageType := os.Getenv("STORAGE_TYPE")
-	if storageType == "" {
-		storageType = "local"
-	}
-
-	metaHeader, err := zipWriter.Create("metadata.json")
-	if err != nil {
-		return err
-	}
-	oldPrefix := getStoragePrefix(storageType)
-	metaJson := fmt.Sprintf(`{"OldPrefix": "%s"}`, oldPrefix)
-	if _, err := io.WriteString(metaHeader, metaJson); err != nil {
-		return err
-	}
-
 	log.Printf("Exporting database to SQL dump...")
 	sqlHeader, err := zipWriter.Create("database.sql")
 	if err != nil {
@@ -84,6 +69,11 @@ func ExportDB(db *gorm.DB) error {
 	}
 	if err := writeSQLDump(db, sqlHeader); err != nil {
 		return err
+	}
+
+	storageType := os.Getenv("STORAGE_TYPE")
+	if storageType == "" {
+		storageType = "local"
 	}
 
 	log.Printf("Exporting storage files from %s...", storageType)
@@ -373,24 +363,6 @@ func toSnakeCase(s string) string {
 		result.WriteRune(r)
 	}
 	return strings.ToLower(result.String())
-}
-
-func getStoragePrefix(storageType string) string {
-	if storageType == "s3" {
-		if customPref := os.Getenv("S3_PUBLIC_URL_PREFIX"); customPref != "" {
-			return customPref
-		}
-		bucket := os.Getenv("S3_BUCKET")
-		region := os.Getenv("AWS_REGION")
-		return fmt.Sprintf("https://%s.s3.%s.amazonaws.com/", bucket, region)
-	}
-
-	appURL := os.Getenv("APP_URL")
-	if appURL == "" {
-		appURL = "http://localhost:8080"
-	}
-	appURL = strings.TrimRight(appURL, "/")
-	return fmt.Sprintf("%s/api/static/", appURL)
 }
 
 func formatValue(val reflect.Value) string {

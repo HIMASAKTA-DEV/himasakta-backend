@@ -5,6 +5,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -36,6 +37,7 @@ func (c *monthlyEventController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create monthly event", err).Send(ctx)
 		return
 	}
+	utils.ResolveMonthlyEvent(utils.GetBaseURL(ctx), &res)
 	response.NewSuccessCreated("success create monthly event", res).Send(ctx)
 }
 
@@ -46,6 +48,7 @@ func (c *monthlyEventController) GetAll(ctx *gin.Context) {
 		response.NewFailed("failed get monthly events", err).Send(ctx)
 		return
 	}
+	utils.ResolveMonthlyEvents(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get monthly events", res, m).Send(ctx)
 }
 
@@ -55,6 +58,7 @@ func (c *monthlyEventController) GetThisMonth(ctx *gin.Context) {
 		response.NewFailed("failed get this month events", err).Send(ctx)
 		return
 	}
+	utils.ResolveMonthlyEvents(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get this month events", res).Send(ctx)
 }
 
@@ -64,6 +68,7 @@ func (c *monthlyEventController) GetById(ctx *gin.Context) {
 		response.NewFailed("failed get monthly event", err).Send(ctx)
 		return
 	}
+	utils.ResolveMonthlyEvent(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success get monthly event", res).Send(ctx)
 }
 
@@ -78,6 +83,7 @@ func (c *monthlyEventController) Update(ctx *gin.Context) {
 		response.NewFailed("failed update monthly event", err).Send(ctx)
 		return
 	}
+	utils.ResolveMonthlyEvent(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success update monthly event", res).Send(ctx)
 }
 

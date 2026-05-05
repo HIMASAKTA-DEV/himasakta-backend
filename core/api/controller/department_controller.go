@@ -5,6 +5,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -35,6 +36,7 @@ func (c *departmentController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create department", err).Send(ctx)
 		return
 	}
+	utils.ResolveDepartment(utils.GetBaseURL(ctx), &res)
 	response.NewSuccessCreated("success create department", res).Send(ctx)
 }
 
@@ -53,6 +55,7 @@ func (c *departmentController) GetAll(ctx *gin.Context) {
 		}
 	}
 
+	utils.ResolveDepartments(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get departments", res, m).Send(ctx)
 }
 
@@ -68,6 +71,7 @@ func (c *departmentController) GetById(ctx *gin.Context) {
 		res.BankRefLink = ""
 	}
 
+	utils.ResolveDepartment(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success get department", res).Send(ctx)
 }
 
@@ -82,6 +86,7 @@ func (c *departmentController) Update(ctx *gin.Context) {
 		response.NewFailed("failed update department", err).Send(ctx)
 		return
 	}
+	utils.ResolveDepartment(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success update department", res).Send(ctx)
 }
 

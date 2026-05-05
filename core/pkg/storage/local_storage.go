@@ -7,31 +7,21 @@ import (
 	"os"
 	"strings"
 	"sync"
-
-	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 )
 
 const uploadBasePath = "assets/uploads"
 
 type localStorage struct {
-	appURL     string
 	actions    []action
 	isRollback bool
 }
 
 func NewLocalStorage() (FileStorage, error) {
-	appURL := os.Getenv("APP_URL")
-	if appURL == "" {
-		appURL = "http://localhost:8080"
-	}
-	appURL = strings.TrimRight(appURL, "/")
-
 	if err := os.MkdirAll(uploadBasePath, 0755); err != nil {
 		return nil, fmt.Errorf("failed to create upload directory: %w", err)
 	}
 
 	return &localStorage{
-		appURL:     appURL,
 		actions:    nil,
 		isRollback: false,
 	}, nil
@@ -142,11 +132,11 @@ func (l *localStorage) DeleteFile(objectKey string) error {
 }
 
 func (l *localStorage) GetPublicLink(objectKey string) string {
-	return fmt.Sprintf("%s/api/static/%s", l.appURL, objectKey)
+	return fmt.Sprintf("/api/static/%s", objectKey)
 }
 
 func (l *localStorage) GetObjectKeyFromLink(link string) string {
-	prefix := fmt.Sprintf("%s/api/static/", l.appURL)
+	prefix := "/api/static/"
 	if !strings.HasPrefix(link, prefix) {
 		return ""
 	}

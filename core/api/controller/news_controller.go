@@ -5,6 +5,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/meta"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -37,6 +38,7 @@ func (c *newsController) Create(ctx *gin.Context) {
 		response.NewFailed("failed create news", err).Send(ctx)
 		return
 	}
+	utils.ResolveNews(utils.GetBaseURL(ctx), &res)
 	response.NewSuccessCreated("success create news", res).Send(ctx)
 }
 
@@ -49,6 +51,7 @@ func (c *newsController) GetAll(ctx *gin.Context) {
 		response.NewFailed("failed get news", err).Send(ctx)
 		return
 	}
+	utils.ResolveNewsList(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get news", res, m).Send(ctx)
 }
 
@@ -59,6 +62,7 @@ func (c *newsController) Autocompletion(ctx *gin.Context) {
 		response.NewFailed("failed get autocompletion", err).Send(ctx)
 		return
 	}
+	utils.ResolveNewsList(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get autocompletion", res).Send(ctx)
 }
 
@@ -68,6 +72,7 @@ func (c *newsController) GetById(ctx *gin.Context) {
 		response.NewFailed("failed get news", err).Send(ctx)
 		return
 	}
+	utils.ResolveNews(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success get news", res).Send(ctx)
 }
 
@@ -82,6 +87,7 @@ func (c *newsController) Update(ctx *gin.Context) {
 		response.NewFailed("failed update news", err).Send(ctx)
 		return
 	}
+	utils.ResolveNews(utils.GetBaseURL(ctx), &res)
 	response.NewSuccess("success update news", res).Send(ctx)
 }
 

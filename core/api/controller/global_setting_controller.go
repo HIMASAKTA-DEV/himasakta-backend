@@ -6,6 +6,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/api/service"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/dto"
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/pkg/response"
+	"github.com/HIMASAKTA-DEV/himasakta-backend/core/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -28,6 +29,8 @@ func (ctrl *globalSettingController) GetWebSettings(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, response.NewFailed("failed get web settings", err))
 		return
 	}
+
+	utils.ResolveWebSettings(utils.GetBaseURL(c), &settings)
 
 	c.JSON(http.StatusOK, response.NewSuccess("success get web settings", settings))
 }
