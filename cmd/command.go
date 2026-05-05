@@ -12,6 +12,7 @@ import (
 	"github.com/HIMASAKTA-DEV/himasakta-backend/db/migrations"
 	dbexport "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbexport"
 	dbimport "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbimport"
+	dbclean "github.com/HIMASAKTA-DEV/himasakta-backend/scripts/dbclean"
 	seeders "github.com/HIMASAKTA-DEV/himasakta-backend/db/seeder"
 	"gorm.io/gorm"
 )
@@ -31,6 +32,7 @@ func getParams(db *gorm.DB) error {
 	watch := false
 	test := false
 	export := false
+	clean := false
 	importFile := ""
 	storageTarget := ""
 
@@ -51,6 +53,9 @@ func getParams(db *gorm.DB) error {
 		if arg == "--export" {
 			export = true
 		}
+		if arg == "--clean" {
+			clean = true
+		}
 		if arg == "--aws" {
 			storageTarget = "s3"
 		}
@@ -62,7 +67,17 @@ func getParams(db *gorm.DB) error {
 			i++
 		}
 	}
-	if migrate {
+	if clean {
+		if err := dbclean.CleanData(db); err != nil {
+			return fmt.Errorf("clean failed: %w", err)
+		}
+		mylog.Infof("Database and storage cleaned successfully")
+		
+		if err := migrations.Migrate(db); err != nil {
+			return fmt.Errorf("migration after clean failed: %w", err)
+		}
+		mylog.Infof("Schema recreated successfully")
+	} else if migrate {
 		if err := migrations.Migrate(db); err != nil {
 			return fmt.Errorf("migration failed: %w", err)
 		}
@@ -113,7 +128,7 @@ func getParams(db *gorm.DB) error {
 		mylog.Infof("Import completed successfully")
 	}
 
-	if seeder || watch || test || export || importFile != "" {
+	if clean || seeder || watch || test || export || importFile != "" {
 		os.Exit(0)
 	}
 

@@ -29,15 +29,15 @@ type tableExport struct {
 func getAllTables() []tableExport {
 	return []tableExport{
 		{"global_settings", entity.GlobalSetting{}, &[]entity.GlobalSetting{}},
+		{"tags", entity.Tag{}, &[]entity.Tag{}},
 		{"roles", entity.Role{}, &[]entity.Role{}},
 		{"departments", entity.Department{}, &[]entity.Department{}},
 		{"cabinet_infos", entity.CabinetInfo{}, &[]entity.CabinetInfo{}},
 		{"galleries", entity.Gallery{}, &[]entity.Gallery{}},
 		{"progendas", entity.Progenda{}, &[]entity.Progenda{}},
 		{"timelines", entity.Timeline{}, &[]entity.Timeline{}},
-		{"members", entity.Member{}, &[]entity.Member{}},
 		{"monthly_events", entity.MonthlyEvent{}, &[]entity.MonthlyEvent{}},
-		{"tags", entity.Tag{}, &[]entity.Tag{}},
+		{"members", entity.Member{}, &[]entity.Member{}},
 		{"news", entity.News{}, &[]entity.News{}},
 		{"news_tags", entity.NewsTag{}, &[]entity.NewsTag{}},
 		{"nrp_whitelists", entity.NrpWhitelist{}, &[]entity.NrpWhitelist{}},
@@ -62,7 +62,21 @@ func ExportDB(db *gorm.DB) error {
 	zipWriter := zip.NewWriter(zipFile)
 	defer zipWriter.Close()
 
-	// 1. Write SQL dump
+	storageType := os.Getenv("STORAGE_TYPE")
+	if storageType == "" {
+		storageType = "local"
+	}
+
+	metaHeader, err := zipWriter.Create("metadata.json")
+	if err != nil {
+		return err
+	}
+	oldPrefix := getStoragePrefix(storageType)
+	metaJson := fmt.Sprintf(`{"OldPrefix": "%s"}`, oldPrefix)
+	if _, err := io.WriteString(metaHeader, metaJson); err != nil {
+		return err
+	}
+
 	log.Printf("Exporting database to SQL dump...")
 	sqlHeader, err := zipWriter.Create("database.sql")
 	if err != nil {
@@ -70,12 +84,6 @@ func ExportDB(db *gorm.DB) error {
 	}
 	if err := writeSQLDump(db, sqlHeader); err != nil {
 		return err
-	}
-
-	// 2. Export storage
-	storageType := os.Getenv("STORAGE_TYPE")
-	if storageType == "" {
-		storageType = "local"
 	}
 
 	log.Printf("Exporting storage files from %s...", storageType)
@@ -87,8 +95,6 @@ func ExportDB(db *gorm.DB) error {
 		if err := exportLocalStorage(zipWriter); err != nil {
 			return err
 		}
-	} else {
-		log.Printf("Unknown storage type: %s, skipping storage export", storageType)
 	}
 
 	log.Printf("Export complete: %s", zipFilename)
@@ -98,6 +104,7 @@ func ExportDB(db *gorm.DB) error {
 func writeSQLDump(db *gorm.DB, w io.Writer) error {
 	fmt.Fprintln(w, "-- Database export generated at", time.Now().Format(time.RFC3339))
 	fmt.Fprintln(w, `CREATE EXTENSION IF NOT EXISTS "uuid-ossp";`)
+	fmt.Fprintln(w, `SET session_replication_role = 'replica';`)
 	fmt.Fprintln(w, "")
 
 	tables := getAllTables()
@@ -135,8 +142,18 @@ func writeSQLDump(db *gorm.DB, w io.Writer) error {
 		fmt.Fprintln(w, "")
 	}
 
+	fmt.Fprintln(w, `SET session_replication_role = 'origin';`)
 	log.Printf("SQL Export complete (%d total rows)", totalRows)
 	return nil
+}
+
+func isCompressedMedia(name string) bool {
+	ext := strings.ToLower(filepath.Ext(name))
+	switch ext {
+	case ".jpg", ".jpeg", ".png", ".webp", ".gif", ".mp4", ".mov", ".mp3", ".zip", ".gz", ".avif":
+		return true
+	}
+	return false
 }
 
 func exportLocalStorage(zw *zip.Writer) error {
@@ -166,7 +183,11 @@ func exportLocalStorage(zw *zip.Writer) error {
 			return err
 		}
 		fileHeader.Name = zipEntryPath
-		fileHeader.Method = zip.Deflate
+		if isCompressedMedia(path) {
+			fileHeader.Method = zip.Store
+		} else {
+			fileHeader.Method = zip.Deflate
+		}
 
 		writer, err := zw.CreateHeader(fileHeader)
 		if err != nil {
@@ -212,9 +233,7 @@ func exportS3Storage(zw *zip.Writer) error {
 	}
 	if accessKey != "" && secretKey != "" {
 		options = append(options, config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
-			accessKey,
-			secretKey,
-			"",
+			accessKey, secretKey, "",
 		)))
 	}
 
@@ -254,7 +273,14 @@ func exportS3Storage(zw *zip.Writer) error {
 			}
 
 			zipEntryPath := "storage/" + key
-			writer, err := zw.Create(zipEntryPath)
+			header := &zip.FileHeader{Name: zipEntryPath}
+			if isCompressedMedia(key) {
+				header.Method = zip.Store
+			} else {
+				header.Method = zip.Deflate
+			}
+
+			writer, err := zw.CreateHeader(header)
 			if err != nil {
 				resp.Body.Close()
 				return err
@@ -335,7 +361,36 @@ func getColumnName(field reflect.StructField) string {
 		return parts[0]
 	}
 
-	return ""
+	return toSnakeCase(field.Name)
+}
+
+func toSnakeCase(s string) string {
+	var result strings.Builder
+	for i, r := range s {
+		if i > 0 && r >= 'A' && r <= 'Z' {
+			result.WriteRune('_')
+		}
+		result.WriteRune(r)
+	}
+	return strings.ToLower(result.String())
+}
+
+func getStoragePrefix(storageType string) string {
+	if storageType == "s3" {
+		if customPref := os.Getenv("S3_PUBLIC_URL_PREFIX"); customPref != "" {
+			return customPref
+		}
+		bucket := os.Getenv("S3_BUCKET")
+		region := os.Getenv("AWS_REGION")
+		return fmt.Sprintf("https://%s.s3.%s.amazonaws.com/", bucket, region)
+	}
+
+	appURL := os.Getenv("APP_URL")
+	if appURL == "" {
+		appURL = "http://localhost:8080"
+	}
+	appURL = strings.TrimRight(appURL, "/")
+	return fmt.Sprintf("%s/api/static/", appURL)
 }
 
 func formatValue(val reflect.Value) string {

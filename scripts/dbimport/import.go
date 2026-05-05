@@ -2,9 +2,9 @@ package dbimport
 
 import (
 	"archive/zip"
-	"bufio"
 	"bytes"
 	"context"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -29,9 +29,12 @@ func ImportDB(db *gorm.DB, zipPath string, storageTarget string) error {
 
 	var sqlFile *zip.File
 	var storageFiles []*zip.File
+	var metaFile *zip.File
 
 	for _, f := range r.File {
-		if f.Name == "database.sql" {
+		if f.Name == "metadata.json" {
+			metaFile = f
+		} else if f.Name == "database.sql" {
 			sqlFile = f
 		} else if strings.HasPrefix(f.Name, "storage/") && !f.FileInfo().IsDir() {
 			storageFiles = append(storageFiles, f)
@@ -42,9 +45,11 @@ func ImportDB(db *gorm.DB, zipPath string, storageTarget string) error {
 		return fmt.Errorf("database.sql not found in zip archive")
 	}
 
-	log.Println("Importing database records...")
-	if err := importSQL(db, sqlFile); err != nil {
-		return fmt.Errorf("failed to import sql: %w", err)
+	oldPrefix := ""
+	if metaFile != nil {
+		if err := parseMeta(metaFile, &oldPrefix); err != nil {
+			log.Printf("Warning: failed to parse metadata.json: %v", err)
+		}
 	}
 
 	if storageTarget == "" {
@@ -52,6 +57,13 @@ func ImportDB(db *gorm.DB, zipPath string, storageTarget string) error {
 		if storageTarget == "" {
 			storageTarget = "local"
 		}
+	}
+	newPrefix := getStoragePrefix(storageTarget)
+
+	log.Printf("URL prefix replacement: %q -> %q", oldPrefix, newPrefix)
+	log.Println("Importing database records...")
+	if err := importSQL(db, sqlFile, oldPrefix, newPrefix); err != nil {
+		return fmt.Errorf("failed to import sql: %w", err)
 	}
 
 	log.Printf("Importing %d storage files to %s...", len(storageFiles), storageTarget)
@@ -63,43 +75,73 @@ func ImportDB(db *gorm.DB, zipPath string, storageTarget string) error {
 		if err := importLocalStorage(storageFiles); err != nil {
 			return err
 		}
-	} else {
-		log.Printf("Unknown storage target: %s. Skipping storage import.", storageTarget)
 	}
 
 	log.Println("Import complete.")
 	return nil
 }
 
-func importSQL(db *gorm.DB, sqlFile *zip.File) error {
+func parseMeta(f *zip.File, oldPrefix *string) error {
+	rc, err := f.Open()
+	if err != nil {
+		return err
+	}
+	defer rc.Close()
+
+	var meta struct {
+		OldPrefix string
+	}
+	if err := json.NewDecoder(rc).Decode(&meta); err != nil {
+		return err
+	}
+	*oldPrefix = meta.OldPrefix
+	return nil
+}
+
+func getStoragePrefix(storageType string) string {
+	if storageType == "s3" {
+		if customPref := os.Getenv("S3_PUBLIC_URL_PREFIX"); customPref != "" {
+			return customPref
+		}
+		bucket := os.Getenv("S3_BUCKET")
+		region := os.Getenv("AWS_REGION")
+		return fmt.Sprintf("https://%s.s3.%s.amazonaws.com/", bucket, region)
+	}
+
+	appURL := os.Getenv("APP_URL")
+	if appURL == "" {
+		appURL = "http://localhost:8080"
+	}
+	appURL = strings.TrimRight(appURL, "/")
+	return fmt.Sprintf("%s/api/static/", appURL)
+}
+
+func importSQL(db *gorm.DB, sqlFile *zip.File, oldPrefix, newPrefix string) error {
 	rc, err := sqlFile.Open()
 	if err != nil {
 		return err
 	}
 	defer rc.Close()
 
-	scanner := bufio.NewScanner(rc)
-	buf := make([]byte, 0, 64*1024)
-	scanner.Buffer(buf, 1024*1024)
-
-	var stmt strings.Builder
-	for scanner.Scan() {
-		line := scanner.Text()
-		if strings.HasPrefix(line, "--") || strings.TrimSpace(line) == "" {
-			continue
-		}
-		stmt.WriteString(line)
-		if strings.HasSuffix(strings.TrimSpace(line), ";") {
-			q := stmt.String()
-			if err := db.Exec(q).Error; err != nil {
-				log.Printf("Failed to execute statement: %s\nError: %v", q, err)
-			}
-			stmt.Reset()
-		}
+	sqlBytes, err := io.ReadAll(rc)
+	if err != nil {
+		return fmt.Errorf("failed to read database.sql: %w", err)
 	}
 
-	if err := scanner.Err(); err != nil {
-		return err
+	sqlString := string(sqlBytes)
+
+	if oldPrefix != "" && newPrefix != "" && oldPrefix != newPrefix {
+		sqlString = strings.ReplaceAll(sqlString, oldPrefix, newPrefix)
+	}
+
+	sqlDB, err := db.DB()
+	if err != nil {
+		return fmt.Errorf("failed to get underlying db: %w", err)
+	}
+
+	_, err = sqlDB.Exec(sqlString)
+	if err != nil {
+		return fmt.Errorf("failed to execute sql dump: %w", err)
 	}
 
 	return nil
@@ -158,9 +200,7 @@ func importS3Storage(files []*zip.File) error {
 	}
 	if accessKey != "" && secretKey != "" {
 		options = append(options, config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(
-			accessKey,
-			secretKey,
-			"",
+			accessKey, secretKey, "",
 		)))
 	}
 
@@ -197,8 +237,7 @@ func importS3Storage(files []*zip.File) error {
 			sample = content
 		}
 		mimetype := http.DetectContentType(sample)
-		
-		// Map html/css to their proper types if needed, but for images octet/stream detector returns valid image mimetypes
+
 		if strings.HasSuffix(key, ".svg") {
 			mimetype = "image/svg+xml"
 		} else if strings.HasSuffix(key, ".json") {
