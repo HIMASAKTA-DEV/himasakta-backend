@@ -30,7 +30,9 @@ func (ctrl *globalSettingController) GetWebSettings(c *gin.Context) {
 		return
 	}
 
-	utils.ResolveWebSettings(utils.GetBaseURL(c), &settings)
+	baseURL := utils.GetBaseURL(c)
+	settings.FotoHimpunan = utils.ResolveImageURL(baseURL, settings.FotoHimpunan)
+	settings.FotoSejarahHimpunan = utils.ResolveImageURL(baseURL, settings.FotoSejarahHimpunan)
 
 	c.JSON(http.StatusOK, response.NewSuccess("success get web settings", settings))
 }

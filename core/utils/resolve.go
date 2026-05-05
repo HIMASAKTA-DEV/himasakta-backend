@@ -1,8 +1,6 @@
 package utils
 
 import (
-	"strings"
-
 	"github.com/HIMASAKTA-DEV/himasakta-backend/core/entity"
 )
 
@@ -106,16 +104,4 @@ func ResolveMonthlyEvents(baseURL string, es []entity.MonthlyEvent) {
 	}
 }
 
-func ResolveWebSettings(baseURL string, s *map[string]interface{}) {
-	if s == nil {
-		return
-	}
-	m := *s
-	for key, val := range m {
-		if str, ok := val.(string); ok {
-			if strings.HasPrefix(str, "/api/static/") {
-				m[key] = baseURL + str
-			}
-		}
-	}
-}
+

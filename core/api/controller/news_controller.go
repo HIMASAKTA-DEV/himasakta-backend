@@ -62,7 +62,6 @@ func (c *newsController) Autocompletion(ctx *gin.Context) {
 		response.NewFailed("failed get autocompletion", err).Send(ctx)
 		return
 	}
-	utils.ResolveNewsList(utils.GetBaseURL(ctx), res)
 	response.NewSuccess("success get autocompletion", res).Send(ctx)
 }
 

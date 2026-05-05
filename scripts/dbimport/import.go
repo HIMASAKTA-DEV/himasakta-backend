@@ -4,7 +4,6 @@ import (
 	"archive/zip"
 	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -29,12 +28,9 @@ func ImportDB(db *gorm.DB, zipPath string, storageTarget string) error {
 
 	var sqlFile *zip.File
 	var storageFiles []*zip.File
-	var metaFile *zip.File
 
 	for _, f := range r.File {
-		if f.Name == "metadata.json" {
-			metaFile = f
-		} else if f.Name == "database.sql" {
+		if f.Name == "database.sql" {
 			sqlFile = f
 		} else if strings.HasPrefix(f.Name, "storage/") && !f.FileInfo().IsDir() {
 			storageFiles = append(storageFiles, f)

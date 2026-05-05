@@ -49,7 +49,7 @@ func (c *memberController) GetAll(ctx *gin.Context) {
 		}
 		baseURL := utils.GetBaseURL(ctx)
 		for key := range res {
-			utils.ResolveMembers(baseURL, res[key])
+			utils.ResolveMembers(baseURL, res[key].Members)
 		}
 		response.NewSuccess("success get members grouped", res).Send(ctx)
 		return
